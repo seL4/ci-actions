@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: License
-description: Runs the FSFE reuse license tool
+name: 'License Check'
+description: 'Runs the FSFE reuse license tool'
 author: Gerwin Klein <gerwin.klein@csiro.au>
 
 runs:

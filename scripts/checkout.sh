@@ -10,4 +10,5 @@
 : ${DEPTH:=1}
 
 echo "Cloning ${REPO_URL}@${GITHUB_REF}"
+echo ${GITHUB_SHA}
 git clone -q --no-tags --depth ${DEPTH} -b ${GITHUB_REF} ${REPO_URL} .

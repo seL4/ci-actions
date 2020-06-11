@@ -1,0 +1,15 @@
+{
+  "name": "license-check",
+  "version": "1.0.0",
+  "description": "Runs the FSFE reuse license tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gerwin Klein <gerwin.klein@data61.csiro.au>",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/exec": "^1.0.4"
+  }
+}

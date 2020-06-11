@@ -16,6 +16,9 @@ work more generally, although you might want to prefer the offical [FSFE
 action][2], which also provides arguments and parameters (but does not check
 out the target repository).
 
+[1]: https://github.com/fsfe/reuse-tool
+[2]: https://github.com/fsfe/reuse-action
+
 ## Content
 
 The main action happens in [`steps.sh`](steps.sh), the JavaScript entry point

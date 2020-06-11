@@ -6,11 +6,11 @@
 
 set -e
 
-../scripts/install-python.sh
+${SCRIPTS}/install-python.sh
 
 pip3 install -q reuse
 PATH=$PATH:$HOME/.local/bin
 
-../scripts/checkout.sh
+${SCRIPTS}/checkout.sh
 
 reuse lint

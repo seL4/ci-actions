@@ -33,6 +33,8 @@ None
 Put this into a `.github/workflows/` yaml file, e.g. `license.yml`:
 
 ```yaml
+name: License
+
 on:
   push:
     branches:

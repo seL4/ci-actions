@@ -6,11 +6,11 @@
 
 set -e
 
-sudo apt-get install -qq python3.7 > /dev/null
+../scripts/install-python.sh
 
 pip3 install -q reuse
 PATH=$PATH:$HOME/.local/bin
 
-git clone -q --no-tags --depth 1 "https://github.com/${GITHUB_REPOSITORY}.git" .
+../scripts/checkout.sh
 
 reuse lint

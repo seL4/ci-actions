@@ -10,4 +10,7 @@
 : ${DEPTH:=1}
 
 echo "Cloning ${REPO_URL}@${GITHUB_REF}"
-git clone -q --no-tags --depth ${DEPTH} -b ${GITHUB_REF} ${REPO_URL} .
+git init -q .
+git remote add origin ${REPO_URL}
+git fetch -q --no-tags --depth ${DEPTH} origin +${GITHUB_REF}:refs/heads/test-revision
+git checkout -q test-revision

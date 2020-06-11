@@ -1,0 +1,14 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: ci-actions
+Upstream-Contact: seL4 foundation
+Source: https://github.com/seL4/ci-actions
+
+# Sample paragraph, commented out:
+
+Files: license-check/node_modules/*
+Copyright: GitHub
+License: MIT
+
+Files: license-check/package*.json
+Copyright: GitHub
+License: BSD-2-Clause

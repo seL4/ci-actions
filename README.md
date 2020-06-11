@@ -1,3 +1,8 @@
+<!--
+  Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+  SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # CI actions for seL4 repositories
 
 This repository collects definitions for continuous integration (CI)

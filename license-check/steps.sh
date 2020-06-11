@@ -6,7 +6,7 @@
 
 set -e
 
-sudo apt-get -qq install -qq python3.7 > /dev/null
+sudo apt-get install -qq python3.7 > /dev/null
 
 pip3 install -q reuse
 PATH=$PATH:$HOME/.local/bin

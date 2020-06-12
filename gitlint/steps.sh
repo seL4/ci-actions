@@ -14,10 +14,9 @@ install-python.sh
 echo "Installing gitlint tool"
 pip install -q gitlint
 
-DEPTH=2 checkout.sh
-
-echo "Fetching base"
-git fetch -q --depth 1 --no-tags origin +refs/heads/${GITHUB_BASE_REF}:refs/heads/${GITHUB_BASE_REF}
+checkout.sh
+# fetch pull request base
+fetch-base.sh
 
 echo "::endgroup::"
 

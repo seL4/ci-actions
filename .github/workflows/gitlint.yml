@@ -1,0 +1,14 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: Gitlint
+
+on: [pull_request]
+
+jobs:
+  gitlint:
+    name: Gitlint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: lsf37/ci-actions/gitlint@master

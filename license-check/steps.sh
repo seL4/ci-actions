@@ -6,9 +6,14 @@
 
 set -e
 
+echo "::group::Setting up"
 install-python.sh
+
+echo "Installing reuse tool"
 pip3 install -q reuse
 
 checkout.sh
+echo "::endgroup::"
 
+echo
 reuse lint

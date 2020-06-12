@@ -5,10 +5,10 @@ Source: https://github.com/seL4/ci-actions
 
 # Sample paragraph, commented out:
 
-Files: license-check/node_modules/*
+Files: js/node_modules/*
 Copyright: GitHub
 License: MIT
 
-Files: license-check/package*.json
+Files: js/package*.json
 Copyright: GitHub
 License: BSD-2-Clause

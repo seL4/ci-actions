@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: Gitlint
+# Actions to run on pull requests
+
+name: PR
 
 on: [pull_request]
 
@@ -12,3 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: lsf37/ci-actions/gitlint@master
+
+  whitespace:
+    name: 'Trailing Whitespace'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: lsf37/ci-actions/git-diff-check@master

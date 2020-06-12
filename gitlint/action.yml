@@ -7,6 +7,9 @@ description: 'Runs the gitlint tool on pull requests'
 author: Gerwin Klein <gerwin.klein@csiro.au>
 
 inputs:
+  config:
+    description: 'Path within target repo to a custom .gitlint file'
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

@@ -6,6 +6,12 @@ name: 'License Check'
 description: 'Runs the FSFE reuse license tool'
 author: Gerwin Klein <gerwin.klein@csiro.au>
 
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'license-check'
+
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: '../js/index.js'

@@ -1,0 +1,19 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Git Diff Check'
+description: |
+  Runs git diff --check to check for trailing whitespace and
+  merge conflict markers.
+author: Gerwin Klein <gerwin.klein@csiro.au>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'git-diff-check'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

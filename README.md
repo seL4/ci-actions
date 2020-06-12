@@ -3,6 +3,8 @@
   SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
+![CI](https://github.com/lsf37/ci-actions/workflows/CI/badge.svg)
+
 # CI actions for seL4 repositories
 
 This repository collects definitions for continuous integration (CI)

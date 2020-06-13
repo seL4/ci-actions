@@ -11,7 +11,7 @@ The gitlint configuration is taken from the first of the following:
 
 - the config argument
 - a file `.gitlint` in the top-level directory of the target repository
-- the file `.gitlint` in <https://github.com/seL4/sel4_tools/misc>
+- the file `.gitlint` in directory `misc/` of <https://github.com/seL4/sel4_tools/>
 
 [1]: https://jorisroovers.com/gitlint/
 

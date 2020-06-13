@@ -51,3 +51,7 @@ jobs:
     steps:
     - uses: lsf37/ci-actions/link-check@master
 ```
+
+## Build
+
+Run `make` to build the Docker image for local testing. The image is deployed to dockerhub automatically on push to the `master` branch when relevant files change.

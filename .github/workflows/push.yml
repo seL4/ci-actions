@@ -19,10 +19,9 @@ jobs:
     - uses: lsf37/ci-actions/license-check@master
 
   links:
-    name: Link Checker
+    name: Links
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: peter-evans/link-checker@v1
-        id: lc
-      - run: exit ${{ steps.lc.outputs.exit_code }}
+      - uses: lsf37/ci-actions/link-check@master
+        with:
+          exclude: js/node_modules

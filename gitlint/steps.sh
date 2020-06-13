@@ -19,7 +19,7 @@ checkout.sh
 fetch-base.sh
 
 # determine .gitlint config
-if [ ! -z ${INPUT_CONFIG+x} ]
+if [ -n "${INPUT_CONFIG}" ]
 then
   echo "Using arg ${INPUT_CONFIG}"
   CONFIG="--config ${INPUT_CONFIG}"

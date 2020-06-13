@@ -23,4 +23,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://lsf37/link-check:0.4'
+  image: 'docker://lsf37/link-check:latest'

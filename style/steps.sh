@@ -23,8 +23,6 @@ checkout.sh
 
 echo "::endgroup::"
 
-STYLE="${SEL4_TOOLS}/misc/style.sh"
-
 echo
 if [ -n "${GITHUB_BASE_REF}" ]
 then
@@ -32,10 +30,11 @@ then
   echo "Checking the following files:"
   echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
   echo
-  git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 ${STYLE}
+  git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 \
+    ${SEL4_TOOLS}/misc/style.sh
 else
   # not running in pull request
-  ${STYLE} .
+  ${SEL4_TOOLS}/misc/style-all.sh
 fi
 
 [ -z "$(git status -uno --porcelain)" ] \

@@ -17,7 +17,7 @@ should work more generally.
 ## Content
 
 This is a minimal Docker action. It mostly uses Docker instead of JavaScript,
-so it can run of a pre-built `liche` binary.
+so it can run a pre-built `liche` binary.
 
 ## Arguments
 

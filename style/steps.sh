@@ -19,23 +19,23 @@ sudo apt-get install -qq astyle > /dev/null
 
 checkout.sh
 # fetch pull request base if PR
-[ ! -z ${GITHUB_BASE_REF+x} ] && fetch-base.sh
+[ -n "${GITHUB_BASE_REF}" ] && fetch-base.sh
 
 echo "::endgroup::"
 
 STYLE="${SEL4_TOOLS}/misc/style.sh"
 
 echo
-if [ -z ${GITHUB_BASE_REF+x} ]
+if [ -n "${GITHUB_BASE_REF}" ]
 then
-  # not running in pull request
-  ${STYLE} .
-else
   # running in a pull request
   echo "Checking the following files:"
   echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
   echo
   git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 ${STYLE}
+else
+  # not running in pull request
+  ${STYLE} .
 fi
 
 [ -z "$(git status -uno --porcelain)" ] \

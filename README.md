@@ -28,3 +28,4 @@ The following GitHub actions are available:
 - [`git diff --check`](git-diff-check/)
 - [License Check](license-check/)
 - [Link Check](link-check/)
+- [Portable Shell Script](bashisms/) check

@@ -1,0 +1,17 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Style'
+description: 'Runs coding style checks of the seL4 Foundation'
+author: Gerwin Klein <gerwin.klein@csiro.au>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'style'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

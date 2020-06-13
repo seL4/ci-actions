@@ -15,7 +15,7 @@ install-python.sh
 echo "Installing seL4 python deps"
 pip install -q sel4-deps
 
-echo "Installing astyle"
+echo "Installing devscripts"
 sudo apt-get install -qq devscripts > /dev/null
 
 . ${SCRIPTS}/fetch-sel4-tools.sh

@@ -20,3 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: lsf37/ci-actions/git-diff-check@master
+
+  shell:
+    name: 'Portable Shell'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: lsf37/ci-actions/bashisms@master

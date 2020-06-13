@@ -15,5 +15,9 @@ pip3 install -q reuse
 checkout.sh
 echo "::endgroup::"
 
+# Specific to l4v: remove symbolic link `isabelle`, because it leads outside
+# the repo.
+[ -L isabele ] && rm isabelle
+
 echo
 reuse lint

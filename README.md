@@ -12,6 +12,19 @@ tasks/actions for the repositories of the seL4 foundation.
 
 The idea is to concentrate most of the GitHub workflow definitions here in a
 single repository to avoid duplication and to make it easier to replicate a
-smilar CI setup on other platforms.
+similar CI setup on other platforms.
 
-## work in progress, do not use yet
+Currently, everything is fairly GitHub-specific, but that could change over
+time.
+
+Shared JavaScript is in [`js/`](js/), and shared shell scripts in [`scripts/`](scripts/)
+
+## Availabe actions
+
+The following GitHub actions are available:
+
+- [Style](style/)
+- [Gitlint](gitlint/)
+- [`git diff --check`](git-diff-check/)
+- [License Check](license-check/)
+- [Link Check](link-check/)

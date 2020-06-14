@@ -21,4 +21,4 @@ inputs:
 
 runs:
   using: 'docker'
-  main: 'docker://lsf37/preprocess:latest'
+  image: 'docker://lsf37/preprocess:latest'

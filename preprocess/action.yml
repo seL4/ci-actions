@@ -1,0 +1,24 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Preprocess'
+description: |
+  Runs the preprocess check on pull requests for the seL4 repository.
+  The prepocess check succeeds if the preprocessed C source did not
+  change for any of the verified seL4 configurations.
+author: Gerwin Klein <gerwin.klein@csiro.au>
+
+inputs:
+  L4V_ARCH:
+    description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
+    required: true
+
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'gitlint'
+
+runs:
+  using: 'docker'
+  main: 'docker://lsf37/preprocess:latest'

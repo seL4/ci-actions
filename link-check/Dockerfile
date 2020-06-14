@@ -6,7 +6,7 @@
 
 FROM lsf37/liche:f57a5d1c5
 
-RUN apk add git
+RUN apk add git bash
 COPY scripts/checkout.sh link-check/steps.sh /usr/bin/
 
 ENTRYPOINT steps.sh

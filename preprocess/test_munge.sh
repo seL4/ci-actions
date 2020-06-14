@@ -40,7 +40,7 @@ do
         c)  COLOR=''
             ;;
         p)  REPO_DIR="${OPTARG}"
-            if ! [[ -d ${REPO_DIR} ]]
+            if ! [ -d "${REPO_DIR}" ]
             then
                 echo >&2 "-p: ${REPO_DIR} is not a directory (cwd: $(pwd))"
                 exit 1
@@ -63,14 +63,14 @@ shift $((OPTIND - 1))
 REF1=$1
 REF2=$2
 
-[[ -z ${DUMP+x} ]] && trap "rm -f ckernel_*.txt" EXIT
+[ -z ${DUMP+x} ] && trap "rm -f ckernel_*.txt" EXIT
 
-[[ -z ${REF1} ]] && (echo >&2 "At least 1 ref is required"; exit 1)
-[[ $# -gt 2 ]] && echo "Ignoring ${@:3}"
+[ -z ${REF1} ] && (echo >&2 "At least 1 ref is required"; exit 1)
+[ $# -gt 2 ] && echo "Ignoring ${@:3}"
 
 # Find the script directory
-SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
-[[ -d ${SCRIPT_DIR} ]] || (echo >&2 "no script dir"; exit 1)
+SCRIPT_DIR=$(cd $(dirname "$0") && pwd)
+[ -d "${SCRIPT_DIR}" ] || (echo >&2 "no script dir"; exit 1)
 
 MAKE_MUNGE=${SCRIPT_DIR}/make_munge.sh
 
@@ -89,9 +89,9 @@ fi
 sort -o ckernel_names_1.txt ckernel_names.txt
 rm ckernel_names.txt
 mv kernel_all.txt kernel_all_1.txt
-[[ -z ${AST+x} ]] || mv ckernel_ast.txt ckernel_ast_1.txt
+[ -z ${AST+x} ] || mv ckernel_ast.txt ckernel_ast_1.txt
 
-if [[ -z ${VERBOSE} ]]
+if [ -z ${VERBOSE} ]
 then
     ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF2} >/dev/null 2>&1
 else
@@ -100,7 +100,7 @@ fi
 sort -o ckernel_names_2.txt ckernel_names.txt
 rm ckernel_names.txt
 mv kernel_all.txt kernel_all_2.txt
-[[ -z ${AST+x} ]] || mv ckernel_ast.txt ckernel_ast_2.txt
+[ -z ${AST+x} ] || mv ckernel_ast.txt ckernel_ast_2.txt
 
 ERRORS=false
 # Check for differences in

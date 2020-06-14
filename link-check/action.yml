@@ -20,6 +20,8 @@ inputs:
     description: 'Document root for absolute links'
   num_requests:
     description: 'Maximum number of concurrent requests'
+  verbose:
+    description: 'Print more information if set (default unset)'
 
 runs:
   using: 'docker'

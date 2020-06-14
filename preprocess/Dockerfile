@@ -47,6 +47,7 @@ COPY preprocess/make_munge.sh \
      preprocess/test_munge.sh \
      preprocess/steps.sh \
      scripts/checkout-manifest.sh \
+     scripts/fetch-pr.sh \
      /usr/bin/
 
 WORKDIR /usr/bin

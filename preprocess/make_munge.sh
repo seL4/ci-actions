@@ -7,7 +7,7 @@
 
 set -e
 
-function usage () {
+function usage {
     cat <<EOF 1>&2
 USAGE: make_munge.sh [-h|-o <dir>|-p <dir>] [git-ref]
   -o         Output directory
@@ -16,6 +16,11 @@ USAGE: make_munge.sh [-h|-o <dir>|-p <dir>] [git-ref]
   -h         Print help
   git-ref    Use this seL4 ref, default HEAD
 EOF
+}
+
+function fail {
+  echo $1 >&2
+  exit 1
 }
 
 # Defaults
@@ -40,8 +45,7 @@ do
             OUT_DIR=${OPTARG}
             if [ ! -d "${OUT_DIR}" ]
             then
-                echo >&2 "-o: ${OUT_DIR} is not a directory (cwd: $(pwd))"
-                exit 1
+                fail "-o: ${OUT_DIR} is not a directory (cwd: $(pwd))"
             fi
             ;;
         a)  BUILD_AST=true
@@ -49,12 +53,11 @@ do
         p)  REPO_DIR="${OPTARG}"
             if ! [ -d "${REPO_DIR}" ]
             then
-                echo >&2 "-p: ${REPO_DIR} is not a directory (cwd: $(pwd))"
-                exit 1
+                fail "-p: ${REPO_DIR} is not a directory (cwd: $(pwd))"
             fi
             ;;
         *)
-            echo "Invalid option: -${OPTARG}" >&2
+            fail "Invalid option: -${OPTARG}"
     esac
 done
 
@@ -64,19 +67,19 @@ shift $((OPTIND - 1))
 
 # Find the l4v/ base folder
 : ${L4V_DIR:=$(cd "${REPO_DIR}/l4v" && pwd)}
-[ -d "${L4V_DIR}" ] || (echo "Couldn't find l4v; tried ${L4V_DIR}" >&2; exit 1)
+[ -d "${L4V_DIR}" ] || fail "Couldn't find l4v; tried ${L4V_DIR}"
 
 # Find the c-parser directory
 : ${CPARSER_DIR:=$(cd "${L4V_DIR}/tools/c-parser" && pwd)}
-[ -d "${CPARSER_DIR}" ] || (echo "Couldn't find c-parser; tried ${CPARSER_DIR}" >&2; exit 1)
+[ -d "${CPARSER_DIR}" ] || fail "Couldn't find c-parser; tried ${CPARSER_DIR}"
 
 # Find the seL4/ base folder
 : ${SEL4_DIR:=$(cd "${REPO_DIR}/seL4" && pwd)}
-[ -d "${SEL4_DIR}" ] || (echo "Couldn't find seL4; tried ${SEL4_DIR}" >&2; exit 1)
+[ -d "${SEL4_DIR}" ] || fail "Couldn't find seL4; tried ${SEL4_DIR}"
 
 # Create temporary directory to work in
 MUN_TMP=$(mktemp --tmpdir -d munge-seL4.XXXXXXXX) || \
-    (echo "Error creating temporary directory" >&2; exit 1)
+    fail "Error creating temporary directory"
 trap "rm -rf ${MUN_TMP}" EXIT
 mkdir -p "${MUN_TMP}"
 
@@ -94,21 +97,18 @@ SEL4_CLONE=${MUN_TMP}/sel4-clone
 
 # Clone seL4 repo into temporary folder
 git clone -q -n "${SEL4_DIR}" "${SEL4_CLONE}" || \
-    ( echo "Error cloning seL4 repo from \n ${SEL4_DIR}" >&2 && \
-          exit 1 )
+    fail "Error cloning seL4 repo from \n ${SEL4_DIR}"
 
 # Getting correct reference
 if [ -n "${SEL4REF_RAW}" ]
 then
     SEL4REF=$(git -C "${SEL4_DIR}" rev-parse --short "${SEL4REF_RAW}") || \
-        ( echo "Error retrieving reference ${SEL4REF_RAW} on local seL4 repo" >&2 && \
-              exit 1 )
+        fail "Error retrieving reference ${SEL4REF_RAW} on local seL4 repo"
 fi
 
 # Checking out the reference
 git -C "${SEL4_CLONE}" checkout -q "${SEL4REF}" || \
-    ( echo "Error checking out reference in temporary repo" >&2 && \
-          exit 1 )
+    fail "Error checking out reference in temporary repo"
 
 # Save the current kernel_all.c_pp
 if [ -f "${CKERNEL}" ]

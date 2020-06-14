@@ -23,7 +23,7 @@ SEL4REF=HEAD
 OUT_DIR=.
 
 # Script directory
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 # If no path given, assume local checkout
 REPO_DIR="${SCRIPT_DIR}/../.."
 
@@ -38,7 +38,7 @@ do
             ;;
         o)
             OUT_DIR=${OPTARG}
-            if ! [[ -d ${OUT_DIR} ]]
+            if [ ! -d "${OUT_DIR}" ]
             then
                 echo >&2 "-o: ${OUT_DIR} is not a directory (cwd: $(pwd))"
                 exit 1
@@ -47,7 +47,7 @@ do
         a)  BUILD_AST=true
             ;;
         p)  REPO_DIR="${OPTARG}"
-            if ! [[ -d ${REPO_DIR} ]]
+            if ! [ -d "${REPO_DIR}" ]
             then
                 echo >&2 "-p: ${REPO_DIR} is not a directory (cwd: $(pwd))"
                 exit 1
@@ -59,20 +59,20 @@ do
 done
 
 shift $((OPTIND - 1))
-[[ $# -gt 0 ]] && SEL4REF_RAW=$1 && shift
-[[ $# -gt 0 ]] && echo >&2 "Ignoring arguments: $*"
+[ $# -gt 0 ] && SEL4REF_RAW=$1 && shift
+[ $# -gt 0 ] && echo >&2 "Ignoring arguments: $*"
 
 # Find the l4v/ base folder
 : ${L4V_DIR:=$(cd "${REPO_DIR}/l4v" && pwd)}
-[[ -d ${L4V_DIR} ]] || (echo "Couldn't find l4v; tried ${L4V_DIR}" >&2; exit 1)
+[ -d "${L4V_DIR}" ] || (echo "Couldn't find l4v; tried ${L4V_DIR}" >&2; exit 1)
 
 # Find the c-parser directory
 : ${CPARSER_DIR:=$(cd "${L4V_DIR}/tools/c-parser" && pwd)}
-[[ -d ${CPARSER_DIR} ]] || (echo "Couldn't find c-parser; tried ${CPARSER_DIR}" >&2; exit 1)
+[ -d "${CPARSER_DIR}" ] || (echo "Couldn't find c-parser; tried ${CPARSER_DIR}" >&2; exit 1)
 
 # Find the seL4/ base folder
 : ${SEL4_DIR:=$(cd "${REPO_DIR}/seL4" && pwd)}
-[[ -d ${SEL4_DIR} ]] || (echo "Couldn't find seL4; tried ${SEL4_DIR}" >&2; exit 1)
+[ -d "${SEL4_DIR}" ] || (echo "Couldn't find seL4; tried ${SEL4_DIR}" >&2; exit 1)
 
 # Create temporary directory to work in
 MUN_TMP=$(mktemp --tmpdir -d munge-seL4.XXXXXXXX) || \
@@ -98,7 +98,7 @@ git clone -q -n "${SEL4_DIR}" "${SEL4_CLONE}" || \
           exit 1 )
 
 # Getting correct reference
-if [[ -n ${SEL4REF_RAW} ]]
+if [ -n "${SEL4REF_RAW}" ]
 then
     SEL4REF=$(git -C "${SEL4_DIR}" rev-parse --short "${SEL4REF_RAW}") || \
         ( echo "Error retrieving reference ${SEL4REF_RAW} on local seL4 repo" >&2 && \
@@ -111,7 +111,7 @@ git -C "${SEL4_CLONE}" checkout -q "${SEL4REF}" || \
           exit 1 )
 
 # Save the current kernel_all.c_pp
-if [[ -f ${CKERNEL} ]]
+if [ -f "${CKERNEL}" ]
 then
     mv "${CKERNEL}" "${CKERNEL}.orig"
     # move back kernel_all.c_pp
@@ -124,15 +124,15 @@ make -C "${CKERNEL_DIR}" "SOURCE_ROOT=${SEL4_CLONE}" "${CKERNEL_REL}"
 # does the c-parser exist?
 CPARSER_EXE_REL=standalone-parser/${L4V_ARCH}/c-parser
 CPARSER_EXE=${CPARSER_DIR}/${CPARSER_EXE_REL}
-[[ -x ${CPARSER_EXE} ]] || (echo "Building c-parser..." ; make -C "${CPARSER_DIR}" "cparser_tools")
+[ -x "${CPARSER_EXE}" ] || (echo "Building c-parser..." ; make -C "${CPARSER_DIR}" "cparser_tools")
 
 # build name munge file
 "${CPARSER_EXE}" "${CPARSER_FLAGS}" "--munge_info_fname=${NAMES_FILE}" "${CKERNEL}"
 # build ast
-[[ -z ${BUILD_AST+x} ]] || "${CPARSER_EXE}" "${CPARSER_FLAGS}" --ast "${CKERNEL}" >"${AST_FILE}"
+[ -z ${BUILD_AST+x} ] || "${CPARSER_EXE}" "${CPARSER_FLAGS}" --ast "${CKERNEL}" >"${AST_FILE}"
 
 mv "${CKERNEL}" "${OUT_DIR}/kernel_all.txt"
 
 # copy generated results to OUT_DIR
 cp "${NAMES_FILE}" "${OUT_DIR}/ckernel_names.txt"
-[[ -z ${BUILD_AST+x} ]] || cp "${AST_FILE}" "${OUT_DIR}/ckernel_ast.txt"
+[ -z ${BUILD_AST+x} ] || cp "${AST_FILE}" "${OUT_DIR}/ckernel_ast.txt"

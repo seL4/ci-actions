@@ -7,7 +7,7 @@
 
 set -e
 
-function usage {
+usage() {
     cat <<EOF 1>&2
 USAGE: make_munge.sh [-h|-o <dir>|-p <dir>] [git-ref]
   -o         Output directory
@@ -18,7 +18,7 @@ USAGE: make_munge.sh [-h|-o <dir>|-p <dir>] [git-ref]
 EOF
 }
 
-function fail {
+fail() {
   echo $1 >&2
   exit 1
 }

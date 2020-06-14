@@ -29,5 +29,4 @@ fi
 
 
 echo
-set -x
-/liche ${INP[@]} && set +x && echo "No broken links!"
+(set -x; /liche ${INP[@]}) && echo "No broken links!"

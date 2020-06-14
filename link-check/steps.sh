@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
 #
@@ -10,23 +10,15 @@ echo "::group::Setting up"
 checkout.sh
 echo "::endgroup::"
 
-INP=()
-
-[ -n "${INPUT_DOC_ROOT}" ] && INP+=("-d" "${INPUT_DOC_ROOT}")
-[ -n "${INPUT_TIMEOUT}" ] && INP+=("-t" "${INPUT_TIMEOUT}")
-[ -n "${INPUT_NUM_REQUESTS}" ] && INP+=("-c" "${INPUT_NUM_REQUESTS}")
-[ -n "${INPUT_EXCLUDE}" ] && INP+=("-x" "${INPUT_EXCLUDE}")
-[ -n "${INPUT_VERBOSE}" ] && INP+=("-v")
-
-
-if [ -n "${INPUT_FILES}" ]
-then
-  INP+=("${INPUT_FILES}")
-elif [ -n "${INPUT_DIR}" ]
-then
-  INP+=("-r" "${INPUT_DIR}")
-fi
-
+[ -n "${INPUT_FILES}" ] && unset INPUT_DIR
 
 echo
-(set -x; /liche ${INP[@]}) && echo "No broken links!"
+(set -x; \
+  /liche ${INPUT_DOC_ROOT:+-d "${INPUT_DOC_ROOT}"} \
+         ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \
+         ${INPUT_NUM_REQUESTS:+-c "${INPUT_NUM_REQUESTS}"} \
+         ${INPUT_EXCLUDE:+-x "${INPUT_EXCLUDE}"} \
+         ${INPUT_VERBOSE:+-v} \
+         ${INPUT_DIR:+-r "${INPUT_DIR}"} \
+         ${INPUT_FILES:+"${INPUT_FILES}"}
+) && echo "No broken links!"

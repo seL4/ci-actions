@@ -1,0 +1,20 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Proofs'
+description: |
+  Runs the l4v proofs. Currently only the session CRefine.
+author: Gerwin Klein <gerwin.klein@csiro.au>
+
+inputs:
+  L4V_ARCH:
+    description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
+    required: true
+  session:
+    description: 'Which proof session to run'
+    default: CRefine
+
+runs:
+  using: 'docker'
+  image: 'docker://lsf37/run-proofs:latest'

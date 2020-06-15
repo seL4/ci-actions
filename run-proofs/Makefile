@@ -2,5 +2,16 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-all:
-	docker build -f Dockerfile ..
+default: build
+
+IMG=lsf37/run-proofs:latest
+
+build:
+	docker build -t $(IMG) -f Dockerfile ..
+
+push: build
+	docker push $(IMG)
+
+test: build
+	docker run -ti --entrypoint bash -e GITHUB_REPOSITORY -e GITHUB_REF \
+	  -e GITHUB_SHA -e INPUT_SESSION $(IMG)

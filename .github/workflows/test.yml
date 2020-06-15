@@ -9,17 +9,17 @@ name: X
 on: [pull_request]
 
 jobs:
-  preprocess:
-    name: 'first'
-    runs-on: ubuntu-latest
-    steps:
-    - run: exit 0
-
   other:
     name: 'other'
     runs-on: ubuntu-latest
     steps:
     - run: exit 1
+
+  preprocess:
+    name: 'first'
+    runs-on: ubuntu-latest
+    steps:
+    - run: sleep 5; exit 0
 
   proofs:
     name: 'second'

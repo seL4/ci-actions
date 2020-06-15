@@ -19,7 +19,7 @@ set -e
 git config user.name > /dev/null || \
   git config --global user.name "repo"
 git config user.email > /dev/null || \
-  git config --global user.email "<repo@no.mail>"
+  git config --global user.email "repo@no.mail"
 git config color.ui > /dev/null || \
   git config --global color.ui false
 

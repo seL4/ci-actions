@@ -18,7 +18,7 @@ jobs:
   proofs:
     name: 'second'
     needs: preprocess
-    if: needs.preprocess.status == "failure"
+    if: needs.preprocess.status == 'failure'
     runs-on: ubuntu-latest
     steps:
     - run: echo second

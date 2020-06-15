@@ -29,3 +29,5 @@ The following GitHub actions are available:
 - [License Check](license-check/)
 - [Link Check](link-check/)
 - [Portable Shell Script](bashisms/) check
+- [Preprocess](preprocess/) the seL4 source to check for changes to verified configurations.
+- [Run Proofs](run-proofs/): check if the proofs still work after a code change.

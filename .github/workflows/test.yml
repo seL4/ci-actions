@@ -4,7 +4,7 @@
 
 # Actions to run on pull requests
 
-name: PR
+name: X
 
 on: [pull_request]
 
@@ -13,7 +13,8 @@ jobs:
     name: '1'
     runs-on: ubuntu-latest
     steps:
-    - run: exit 1
+    - run: |
+      echo "1!"
 
   job2:
     needs: job1

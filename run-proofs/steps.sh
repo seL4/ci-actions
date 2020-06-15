@@ -12,6 +12,15 @@ checkout-manifest.sh
 cd seL4/
 fetch-pr.sh
 cd ..
+
+# GitHub sets its own HOME, but we have .isabelle data pre-installed in the
+# Docker image
+
+if [ "$HOME" != "/root" ]
+then
+  ln -s /root/.isabelle $HOME/.isabelle
+fi
+
 echo "::endgroup::"
 
 export L4V_ARCH=${INPUT_L4V_ARCH}

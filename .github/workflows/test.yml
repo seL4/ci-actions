@@ -27,4 +27,5 @@ jobs:
     if: failure()
     runs-on: ubuntu-latest
     steps:
+    - if: needs.preprocess.status == 'failure'
     - run: echo second

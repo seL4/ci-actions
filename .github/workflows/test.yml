@@ -24,7 +24,7 @@ jobs:
   proofs:
     name: 'second'
     needs: preprocess
-    if: needs.preprocess.result == 'failure'
+    if: failure()
     runs-on: ubuntu-latest
     steps:
-    - run: echo 2
+    - run: echo ${{ needs.preprocess.result }}

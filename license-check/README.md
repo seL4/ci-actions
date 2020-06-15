@@ -46,5 +46,5 @@ jobs:
     name: License Check
     runs-on: ubuntu-latest
     steps:
-    - uses: lsf37/ci-actions/license-check@master
+    - uses: seL4/ci-actions/license-check@master
 ```

@@ -4,7 +4,7 @@
 
 default: build
 
-IMG=lsf37/run-proofs:latest
+IMG=seL4/run-proofs:latest
 
 build:
 	docker build -t $(IMG) -f Dockerfile ..

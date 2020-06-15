@@ -17,4 +17,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://lsf37/run-proofs:latest'
+  image: 'docker://seL4/run-proofs:latest'

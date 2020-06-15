@@ -25,4 +25,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://lsf37/link-check:latest'
+  image: 'docker://seL4/link-check:latest'

@@ -28,7 +28,7 @@ The `config` input can be used to provide the path to custom gitlint config
 file. Example:
 
 ```yaml
-    - uses: lsf37/ci-actions/gitlint@master
+    - uses: seL4/ci-actions/gitlint@master
       with:
         config: ./misc/my-gitlint-config
 ```
@@ -48,5 +48,5 @@ jobs:
     name: Gitlint
     runs-on: ubuntu-latest
     steps:
-    - uses: lsf37/ci-actions/gitlint@master
+    - uses: seL4/ci-actions/gitlint@master
 ```

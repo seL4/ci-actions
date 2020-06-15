@@ -36,5 +36,5 @@ jobs:
     name: Style Check
     runs-on: ubuntu-latest
     steps:
-    - uses: lsf37/ci-actions/style@master
+    - uses: seL4/ci-actions/style@master
 ```

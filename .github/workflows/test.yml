@@ -1,0 +1,25 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Actions to run on pull requests
+
+name: PR
+
+on: [pull_request]
+
+jobs:
+  job1:
+    name: '1'
+    runs-on: ubuntu-latest
+    steps:
+    - run: exit 1
+
+  job2:
+    needs: job1
+    if: failure()
+    name: '2'
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+      echo "Done!"

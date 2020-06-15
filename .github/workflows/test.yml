@@ -27,4 +27,5 @@ jobs:
     if: failure()
     runs-on: ubuntu-latest
     steps:
-    - run: echo ${{ needs.preprocess.result }}
+    - if: needs.preprocess.result == 'failure'
+      run: echo 1 failed

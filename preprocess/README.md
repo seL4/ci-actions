@@ -51,7 +51,7 @@ jobs:
       matrix:
         arch: [ARM, ARM_HYP, RISCV64, X64]
     steps:
-    - uses: lsf37/ci-actions/preprocess@master
+    - uses: seL4/ci-actions/preprocess@master
       with:
         L4V_ARCH: ${{ matrix.arch }}
 ```

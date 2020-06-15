@@ -50,7 +50,7 @@ jobs:
     name: Link Check
     runs-on: ubuntu-latest
     steps:
-    - uses: lsf37/ci-actions/link-check@master
+    - uses: seL4/ci-actions/link-check@master
 ```
 
 ## Build

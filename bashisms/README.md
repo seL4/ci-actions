@@ -33,5 +33,5 @@ jobs:
     name: Shell
     runs-on: ubuntu-latest
     steps:
-    - uses: lsf37/ci-actions/bashisms@master
+    - uses: seL4/ci-actions/bashisms@master
 ```

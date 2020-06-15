@@ -39,12 +39,8 @@ if [ "${INPUT_SESSION}" = "CRefine" ]
 then
   # special treatment for CRefine session to speed up seL4 code change checks
 
-  # for testing
-  cd spec
-  make ASpec || FAIL=1
-
-  # cd proof
-  # make CRefine || FAIL=1
+  cd proof
+  make CRefine || FAIL=1
   cd ..
 
   # remove large images that will need to be rebuilt anyway next time:

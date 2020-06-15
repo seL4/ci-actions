@@ -17,7 +17,7 @@ jobs:
 
   proofs:
     name: 'second'
-    if: jobs.preprocess.status == "failure"
+    if: job.preprocess.status == "failure"
     needs: preprocess
     runs-on: ubuntu-latest
     steps:

@@ -13,13 +13,13 @@ jobs:
     name: 'first'
     runs-on: ubuntu-latest
     steps:
-    - run: exit 1
+    - run: exit 0
 
   other:
     name: 'other'
     runs-on: ubuntu-latest
     steps:
-    - run: exit 0
+    - run: exit 1
 
   proofs:
     name: 'second'
@@ -29,3 +29,5 @@ jobs:
     steps:
     - if: needs.preprocess.result == 'failure'
       run: echo 1 failed
+    - if: needs.preprocess.result != 'failure'
+      run: echo skipped

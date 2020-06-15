@@ -4,7 +4,7 @@
 
 # The context for this Dockerfile is the repo root
 
-FROM seL4/liche:f57a5d1c5
+FROM sel4/liche:f57a5d1c5
 
 RUN apk add git
 COPY scripts/checkout.sh link-check/steps.sh /usr/bin/

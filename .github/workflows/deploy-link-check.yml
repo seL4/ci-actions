@@ -25,6 +25,6 @@ jobs:
         dockerfile: link-check/Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: seL4/link-check
+        repository: sel4/link-check
         tags: latest
         add_git_labels: true

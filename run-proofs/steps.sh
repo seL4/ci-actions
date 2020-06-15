@@ -35,7 +35,7 @@ export L4V_ARCH=${INPUT_L4V_ARCH}
 FAIL=0
 
 cd l4v
-if [ "${INPUT_SESSION}" == "CRefine" ]
+if [ "${INPUT_SESSION}" = "CRefine" ]
 then
   # special treatment for CRefine session to speed up seL4 code change checks
 

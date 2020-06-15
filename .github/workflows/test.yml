@@ -9,17 +9,15 @@ name: X
 on: [pull_request]
 
 jobs:
-  job1:
-    name: '1'
+  preprocess:
+    name: 'first'
     runs-on: ubuntu-latest
     steps:
-    - run: |
-      echo "1!"
+    - run: echo first
 
-  job2:
-    needs: job1
-    name: '2'
+  proofs:
+    name: 'second'
+    needs: preprocess
     runs-on: ubuntu-latest
     steps:
-    - run: |
-      echo "Done!"
+    - run: echo second

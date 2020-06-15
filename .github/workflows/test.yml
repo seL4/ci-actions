@@ -13,10 +13,11 @@ jobs:
     name: 'first'
     runs-on: ubuntu-latest
     steps:
-    - run: echo first
+    - run: exit 1
 
   proofs:
     name: 'second'
+    if: failure()
     needs: preprocess
     runs-on: ubuntu-latest
     steps:

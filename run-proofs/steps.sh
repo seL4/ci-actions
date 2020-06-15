@@ -26,7 +26,7 @@ fi
 if [ -e "${IMAGE_CACHE}" ]
 then
   echo "Using cached images"
-  tar -C ~/.isabelle -xvjf "{IMAGE_CACHE}"
+  tar -C ~/.isabelle -xvjf "${IMAGE_CACHE}"
 fi
 echo "::endgroup::"
 
@@ -59,6 +59,6 @@ cd ..
 
 echo "Tarring up images for caching"
 mkdir -p "${CACHE_DIR}"
-tar -C "${CACHE_DIR}" -cvjf ~/.isabelle/$L4V_ARCH/ images.tar.bz2
+tar -C ~/.isabelle -cvjf ${IMAGE_CACHE} $L4V_ARCH/
 
 exit $FAIL

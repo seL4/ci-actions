@@ -4,7 +4,7 @@
 
 default: build
 
-IMG=seL4/run-proofs:latest
+IMG=sel4/run-proofs:latest
 
 build:
 	docker build -t $(IMG) -f Dockerfile ..

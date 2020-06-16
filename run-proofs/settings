@@ -17,7 +17,9 @@ L4V_ARCH=${L4V_ARCH:-"ARM"}
 if [ ! -z ${bamboo_planKey+x} ]; then
   PATH_PREFIX="/isabelle/${bamboo_planKey}-"
 elif [ ! -z ${GITHUB_ACTIONS:+x} ]; then
-  PATH_REFIX="${GITHUB_WORKSPACE}/cache/"
+  PATH_PREFIX="${GITHUB_WORKSPACE}/cache/"
+else
+  PATH_PREFIX="/isabelle/"
 fi
 
 # Heap locations separated by L4V_ARCH, and potentially PATH_PREFIX.

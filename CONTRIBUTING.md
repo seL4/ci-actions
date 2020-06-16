@@ -8,7 +8,7 @@
 
 Contributions to this repository are welcome!
 
-There are plent of additional actions that could be added, and there is
+There are plenty of additional actions that could be added, and there is
 probably a lot that could be optimised and done more nicely.
 
 If you have any enhancements, fixes, or additions, do feel encouraged to
@@ -18,23 +18,24 @@ raise a pull request.
 ## Build/Test
 
 To try out any of the GitHub actions in this repo, you can usually follow the
-corresponding example in the `README.md` file, add the action to a workflow
+example in the corresponding `README.md` file, add the action to a workflow
 file in your own repository, and perform the action that triggers it, e.g. a
-pull request or push to a branch.
+pull request or push to a branch in your repository.
 
 New CI actions can be a bit hard to test. As much as possible and makes sense,
-any new actions should be added to CI suite of this repository and/or tested
+any new actions should be added to the CI suite of this repository and/or tested
 with a pull request to one of the repositories they are targeted for.
 
 For example, to test a new pull request action, e.g. `link-check`, on a
-feature branch `link`, you would add a separate commit with a change to `.github/workflows/pr.yml` that looks somewhat like this:
+feature branch `link`, you would add a separate commit with a change to 
+`.github/workflows/pr.yml` that looks somewhat like this:
 
 ```yaml
   shell:
     name: 'Link Check'
     runs-on: ubuntu-latest
     steps:
-    - uses: lsf37/ci-actions/link-check@link
+    - uses: seL4/ci-actions/link-check@link
 ```
 
 and raise a pull request. If the action performs as intended on that PR, the

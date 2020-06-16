@@ -14,4 +14,4 @@ push: build
 
 test: build
 	docker run -ti --entrypoint bash -e GITHUB_REPOSITORY -e GITHUB_REF \
-	  -e GITHUB_SHA -e INPUT_SESSION $(IMG)
+	  -e GITHUB_SHA -e INPUT_SESSION -e GITHUB_WORKSPACE -e INPUT_L4V_ARCH $(IMG)

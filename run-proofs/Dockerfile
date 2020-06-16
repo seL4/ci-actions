@@ -7,6 +7,7 @@
 FROM trustworthysystems/l4v-riscv
 
 COPY scripts/*.sh run-proofs/steps.sh /usr/bin/
+COPY run-proofs/settings /isabelle/etc/
 
 # For local testing, will be overriden by github runner
 RUN mkdir /workspace

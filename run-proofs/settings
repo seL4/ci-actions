@@ -1,0 +1,35 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Isabelle settings file used in Docker container
+
+init_components "$USER_HOME/.isabelle/contrib" "$ISABELLE_HOME/Admin/components/main"
+init_components "$USER_HOME/.isabelle/contrib" "$ISABELLE_HOME/Admin/components/bundled"
+
+# Default to ARM l4v builds
+L4V_ARCH=${L4V_ARCH:-"ARM"}
+
+
+# If we're running under Bamboo add the plan key, so the heaps
+# don't conflict. (the ${...+x} is just a way to check if it's set)
+# For GitHub, put the images in a location where the cache action can find them
+if [ ! -z ${bamboo_planKey+x} ]; then
+  PATH_PREFIX="/isabelle/${bamboo_planKey}-"
+elif [ ! -z ${GITHUB_ACTIONS:+x} ]; then
+  PATH_REFIX="${GITHUB_WORKSPACE}/cache/"
+fi
+
+# Heap locations separated by L4V_ARCH, and potentially PATH_PREFIX.
+USER_HEAPS=${OVERRIDE_USER_HEAPS:-"${PATH_PREFIX:-}${L4V_ARCH}"}
+ISABELLE_OUTPUT=${OVERRIDE_ISABELLE_OUTPUT:-"$USER_HEAPS"}
+ISABELLE_PATH=${OVERRIDE_ISABELLE_PATH:-"$USER_HEAPS"}
+ISABELLE_HEAPS=${ISABELLE_OUTPUT}
+ISABELLE_BROWSER_INFO=${OVERRIDE_ISABELLE_BROWSER_INFO:-"$ISABELLE_HOME_USER/browser_info"}
+
+ISABELLE_BUILD_JAVA_OPTIONS="-Xms2048m -Xmx6096m -Xss4m"
+
+ISABELLE_COMPONENT_REPOSITORY="http://downloads.ssrg.nicta.com.au/isabelle/components"
+
+# Skip proofs that are run in another session already (e.g. AInvs in CBaseRefine)
+SKIP_DUPLICATED_PROOFS="1"

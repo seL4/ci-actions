@@ -11,8 +11,15 @@ Contributions to this repository are welcome!
 There are plenty of additional actions that could be added, and there is
 probably a lot that could be optimised and done more nicely.
 
+See [open issues][issues] for things than need work. There is also a list of
+[good first issues][first-issues] if you are new to all this and want to get
+involved.
+
 If you have any enhancements, fixes, or additions, do feel encouraged to
-raise a pull request.
+raise a pull request or file a new issue.
+
+[issues]: https://github.com/seL4/ci-actions/issues?q=is%3Aopen+is%3Aissue+no%3Aassignee
+[first-issues]: https://github.com/seL4/ci-actions/issues?q=is%3Aopen+is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22
 
 
 ## Build/Test

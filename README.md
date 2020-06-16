@@ -41,7 +41,7 @@ See [open issues][issues] for things than need work, there is also a list of
 [good first issues][first-issues] if you are new to all this and want to get
 involved.
 
-See the file [CONTRIBUTING.md](Contributing.md) for more information.
+See the file [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 [issues]: https://github.com/seL4/ci-actions/issues?q=is%3Aopen+is%3Aissue+no%3Aassignee
 [first-issues]: https://github.com/seL4/ci-actions/issues?q=is%3Aopen+is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22

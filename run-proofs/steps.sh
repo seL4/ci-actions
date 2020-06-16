@@ -6,9 +6,6 @@
 
 set -e
 
-CACHE_DIR="cache"
-IMAGE_CACHE="${CACHE_DIR}/images.tar.bz2"
-
 echo "::group::Setting up"
 checkout-manifest.sh
 # FIXME: make this work for l4v as well:
@@ -20,17 +17,14 @@ cd ..
 # Docker image
 if [ "$HOME" != "/root" ]
 then
-  ln -s /root/.isabelle $HOME/.isabelle
-fi
-
-if [ -e "${IMAGE_CACHE}" ]
-then
-  echo "Using cached images"
-  tar -C ~/.isabelle -xvjf "${IMAGE_CACHE}"
+  ln -s /isabelle $HOME/.isabelle
 fi
 echo "::endgroup::"
 
 export L4V_ARCH=${INPUT_L4V_ARCH}
+
+CACHE_DIR="${GITHUB_WORKSPACE}/cache/${L4V_ARCH}"
+mkdir -p "${CACHE_DIR}"
 
 FAIL=0
 
@@ -44,17 +38,13 @@ then
   cd ..
 
   # remove large images that will need to be rebuilt anyway next time:
-  rm -f ~/.isabelle/$L4V_ARCH/*/CKernel
-  rm -f ~/.isabelle/$L4V_ARCH/*/CSpec
-  rm -f ~/.isabelle/$L4V_ARCH/*/CBaseRefine
-  rm -f ~/.isabelle/$L4V_ARCH/*/CRefine
+  rm -f ${CACHE_DIR}/*/CKernel
+  rm -f ${CACHE_DIR}/*/CSpec
+  rm -f ${CACHE_DIR}/*/CBaseRefine
+  rm -f ${CACHE_DIR}/*/CRefine
 else
   ./run_tests -v ${INPUT_SESSION} || FAIL=1
 fi
 cd ..
-
-echo "Tarring up images for caching"
-mkdir -p "${CACHE_DIR}"
-tar -C ~/.isabelle -cvjf ${IMAGE_CACHE} $L4V_ARCH/
 
 exit $FAIL

@@ -9,4 +9,9 @@
 
 echo "Fetching ${GITHUB_BASE_REF}"
 git fetch -q --no-tags origin +refs/heads/${GITHUB_BASE_REF}:refs/heads/${GITHUB_BASE_REF}
-git fetch -q --no-tags --shallow-exclude ${GITHUB_BASE_REF}
+
+# This only works when the PR comes from the same repo, not a fork
+# git fetch -q --no-tags --shallow-exclude ${GITHUB_BASE_REF}
+
+# Fetch everything for now
+git fetch -q --no-tags --unshallow

@@ -8,8 +8,13 @@ set -e
 
 echo "::group::Setting up"
 checkout-manifest.sh
-# FIXME: make this work for l4v as well:
-cd seL4/
+if [ ${GITHUB_REPOSITORY} != ${GITHUB_REPOSITORY%/seL4} ]
+then
+  cd seL4/
+else
+  cd l4v/
+fi
+
 fetch-pr.sh
 cd ..
 

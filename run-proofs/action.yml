@@ -14,6 +14,7 @@ inputs:
   session:
     description: 'Which proof session to run'
     default: CRefine
+    required: false
 
 runs:
   using: 'docker'

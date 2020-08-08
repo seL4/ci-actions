@@ -11,8 +11,10 @@ checkout-manifest.sh
 if [ ${GITHUB_REPOSITORY} != ${GITHUB_REPOSITORY%/seL4} ]
 then
   cd seL4/
+  echo "Testing seL4"
 else
   cd l4v/
+  echo "Testing l4v"
 fi
 
 fetch-pr.sh

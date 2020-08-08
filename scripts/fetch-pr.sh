@@ -10,6 +10,11 @@
 # to fetch the PR for.
 
 PR_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+
+echo "Fetching ${GITHUB_BASE_REF} from ${PR_URL}"
+git fetch -q --depth 1 ${PR_URL} ${GITHUB_BASE_REF}
+git checkout -q ${GITHUB_BASE_REF}
+
 echo "Fetching ${GITHUB_REF} from ${PR_URL}"
 
 # make a hopefully locally unique branch name

@@ -17,7 +17,12 @@ else
   echo "Testing l4v"
 fi
 
-fetch-pr.sh
+if [ ! -z ${GITHUB_BASE_REF+x} ]
+then
+  fetch-pr.sh
+else
+  fetch-branch.sh
+fi
 cd ..
 
 # GitHub sets its own HOME, but we have .isabelle data pre-installed in the

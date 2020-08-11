@@ -17,11 +17,11 @@ else
   echo "Testing l4v"
 fi
 
-if [ ! -z ${GITHUB_BASE_REF+x} ]
+if [ -z ${GITHUB_BASE_REF} ]
 then
-  fetch-pr.sh
-else
   fetch-branch.sh
+else
+  fetch-pr.sh
 fi
 cd ..
 

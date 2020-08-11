@@ -11,6 +11,6 @@
 
 URL="https://github.com/${GITHUB_REPOSITORY}.git"
 
-echo "Fetching ${GITHUB_REF} from ${PR_URL}"
-git fetch -q --depth 1 ${PR_URL} ${GITHUB_REF}:${GITHUB_REF}
+echo "Fetching ${GITHUB_REF} from ${URL}"
+git fetch -q --depth 1 ${URL} ${GITHUB_REF}:${GITHUB_REF}
 git checkout -q ${GITHUB_REF}

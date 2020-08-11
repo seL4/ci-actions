@@ -32,6 +32,7 @@ The following GitHub actions are available:
 - [Portable Shell Script](bashisms/) check
 - [Preprocess](preprocess/) the seL4 source to check for changes to verified configurations.
 - [Run Proofs](run-proofs/): check if the proofs still work after a code change.
+- [Kernel Compile](standalone-kernel/): standalone seL4 kernel compilation for different compiler/arch/python combinations. 
 
 ## Contributing
 

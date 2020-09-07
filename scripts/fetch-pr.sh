@@ -16,4 +16,7 @@ git fetch -q --depth 1 ${PR_URL} ${GITHUB_BASE_REF}:${GITHUB_BASE_REF}
 
 echo "Fetching ${GITHUB_REF} from ${PR_URL}"
 git fetch -q "${PR_URL}" ${GITHUB_REF}:${GITHUB_REF}
-git checkout -q ${GITHUB_REF}
+
+# we create a local branch name so that git clone and friends don't miss
+# PR refs
+git checkout -q -b github-ci-work/pr-branch ${GITHUB_REF}

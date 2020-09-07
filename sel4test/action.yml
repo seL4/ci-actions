@@ -1,0 +1,30 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Compile seL4test'
+description: |
+  Attempts to compile the supported configurations of seL4test
+author: Luke Mondy <luke.mondy@data61.csiro.au>
+
+inputs:
+  ARCH:
+    description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
+    required: true
+
+  COMPILER:
+    description: 'Which compiler suite to use. One of gcc, llvm'
+    required: true
+
+  PYTHON:
+    description: 'Which version of Python to use. One of py2, py3'
+    required: true
+
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4test'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

@@ -23,8 +23,8 @@ class Platform:
     can64SMP : bool = False
     can32Bit : bool = False
     can64Bit : bool = False
-    isAarch32Hyp : bool = False
-    isAarch64Hyp : bool = False
+    canAarch32Hyp : bool = False
+    canAarch64Hyp : bool = False
     disabled : bool = False
 
     def getTriple(self, mode : MODE):

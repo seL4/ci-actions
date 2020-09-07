@@ -81,7 +81,7 @@ echo -e "WORKING...${NC}"
 
 if [ -z ${VERBOSE} ]
 then
-    ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF1} >/dev/null 2>&1
+    ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF1} >/dev/null
 else
     ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF1}
 fi
@@ -93,7 +93,7 @@ mv kernel_all.txt kernel_all_1.txt
 
 if [ -z ${VERBOSE} ]
 then
-    ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF2} >/dev/null 2>&1
+    ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF2} >/dev/null
 else
     ${MAKE_MUNGE} ${DIR_OPTS} ${AST_OPTS} ${REF2}
 fi

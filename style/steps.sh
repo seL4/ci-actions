@@ -10,7 +10,7 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing seL4 python deps"
-pip install -q sel4-deps
+pip3 install -q sel4-deps
 
 echo "Installing astyle"
 sudo apt-get install -qq astyle > /dev/null

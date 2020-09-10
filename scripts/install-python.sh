@@ -8,3 +8,4 @@
 
 echo "Installing python 3.7"
 sudo apt-get install -qq python3.7 > /dev/null
+pip3 install -q --upgrade pip setuptools wheel

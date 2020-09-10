@@ -12,7 +12,7 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing gitlint tool"
-pip install -q gitlint
+pip3 install -q gitlint
 
 checkout.sh
 # fetch pull request base

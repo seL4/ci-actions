@@ -9,7 +9,7 @@
   "author": "Gerwin Klein <gerwin.klein@data61.csiro.au>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4"
   }
 }

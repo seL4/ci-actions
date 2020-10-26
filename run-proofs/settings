@@ -31,7 +31,9 @@ ISABELLE_BROWSER_INFO=${OVERRIDE_ISABELLE_BROWSER_INFO:-"$ISABELLE_HOME_USER/bro
 
 ISABELLE_BUILD_JAVA_OPTIONS="-Xms2048m -Xmx6096m -Xss4m"
 
-ISABELLE_COMPONENT_REPOSITORY="http://downloads.ssrg.nicta.com.au/isabelle/components"
+# Use default from Isabelle repository (defaults to TUM for vanilla releases,
+# and D61 for ts branch)
+# ISABELLE_COMPONENT_REPOSITORY="http://isabelle.ts.data61.csiro.au/isabelle/components"
 
 # Skip proofs that are run in another session already (e.g. AInvs in CBaseRefine)
 SKIP_DUPLICATED_PROOFS="1"

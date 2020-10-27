@@ -8,6 +8,16 @@ set -e
 
 echo "::group::Setting up"
 checkout-manifest.sh
+
+if [ -n "${INPUT_ISA_BRANCH}" ]
+then
+  cd isabelle
+  echo "Fetching ${INPUT_ISA_BRANCH} from remote \"verification\""
+  git fetch -q --depth 1 verification ${INPUT_ISA_BRANCH}
+  git checkout -q ${INPUT_ISA_BRANCH}
+  cd ..
+fi
+
 if [ ${GITHUB_REPOSITORY} != ${GITHUB_REPOSITORY%/seL4} ]
 then
   cd seL4/
@@ -31,6 +41,9 @@ if [ "$HOME" != "/root" ]
 then
   ln -s /isabelle $HOME/.isabelle
 fi
+
+echo "Setting up Isabelle components"
+isabelle/bin/isabelle components -a
 echo "::endgroup::"
 
 export L4V_ARCH=${INPUT_L4V_ARCH}

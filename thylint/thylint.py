@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
+#
+# Copyright 2021, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
 
 import re
 import json
 import argparse
 import sys
 
-DESCRIPTION = 'Check Isabelle theory files for unwanted comands'
+DESCRIPTION = 'Check Isabelle theory files for unwanted outer syntax commands'
 
 # ignore content of parenthesised comments and Isabelle cartouches
 start_exp = re.compile(r'\(\*|\{\*|\\<open>')
@@ -16,16 +21,21 @@ string_delimiter = '"'
 
 
 def regexp_of(words):
-    """Turn a list of word(ish) regexp strings into a compiled regexp that is the big union of whole-word matches, 
-    with Isabelle-ish conventions for word boundaries. In particular, count \' as a letter."""
-    return re.compile('|'.join(r'\b(?<!\')(?:{0})\b(?!\')'.format(x) for x in words))
+    """Turn word list into regexp.
+
+    Turn a list of word(ish) regexp strings into a compiled regexp that is the big union of
+    whole-word matches, with Isabelle-ish conventions for word boundaries. In particular,
+    count \' as a letter.
+    """
+    return re.compile('|'.join(r'\b(?<!\')(?: {0})\b(?!\')'.format(x) for x in words))
 
 
 diag_words = (
     # title
     "Interactive diagnostic command",
     # message
-    "This command is usually used interactively only and should only be checked in for demonstration purposes.",
+    "This command is usually used interactively only and should only be checked in for "
+    "demonstration purposes.",
     # word(ish) regexps that should be flagged as warnings
     regexp_of([
         'ML_val',
@@ -99,7 +109,8 @@ find_proof_words = (
     # title
     "Proof/counterexample finder",
     # message
-    "This command is usually used interactively only to find a proof or counter example, but only its result should be checked in.",
+    "This command is usually used interactively only to find a proof or counter example, "
+    "but only its result should be checked in.",
     # word(ish) regexps that should be flagged as warnings
     regexp_of([
         'nitpick',
@@ -129,7 +140,8 @@ axiom_words = (
     # title
     "Axioms",
     # message
-    "Locales or definitions should usually be preferred to axioms, because axioms may make the logic inconsistent. Merely introducing a new constant (without new laws) is fine, though.",
+    "Locales or definitions should usually be preferred to axioms, because axioms may make the "
+    "logic inconsistent. Merely introducing a new constant (without new laws) is fine, though.",
     # word(ish) regexps that should be flagged as warnings
     regexp_of([
         'axiomatization',
@@ -150,8 +162,9 @@ style_words = (
 
 all_words = [diag_words, find_proof_words, sorry_words, axiom_words, style_words]
 
+
 def print_matches(matches):
-    """Pretty print found matches"""
+    """Pretty print matches to std out"""
     for m in matches:
         line = m['line_content']
         start = m['start_column']
@@ -181,7 +194,10 @@ def matches_to_json(matches):
 
 
 def match_chunk(line, chunk, offset, line_num, matches):
-    """Run all regexp classes on a chunk of text and record all matches; updates 'matches' by side effect"""
+    """Run all regexp classes on a chunk of text and record all matches.
+
+    Updates argument 'matches' by side effect.
+    """
     for (title, msg, regex) in all_words:
         for match in regex.finditer(chunk):
             matches.append({'line': line_num,
@@ -194,10 +210,9 @@ def match_chunk(line, chunk, offset, line_num, matches):
 
 def lint_file(file_name):
     """Run the linter on one file; return a list of all matches for this file."""
-
     # how many nested levels of comments we're currently ignoring
     ignoring = 0
-    # ignoring content, because we're inside a sring
+    # ignoring content, because we're inside a string
     in_string = False
     # current line number
     line_num = 0
@@ -216,7 +231,8 @@ def lint_file(file_name):
                     # find end of comment, but also register any start of new nested comments
                     end_match = end_exp.search(chunk)
                     start_match = start_exp.search(chunk)
-                    if (start_match and end_match and start_match.start() < end_match.start()) or (start_match and not end_match):
+                    if (start_match and end_match and start_match.start() < end_match.start()) or \
+                       (start_match and not end_match):
                         # nested comment:
                         ignoring += 1
                         chunk = chunk[start_match.end()+1:]
@@ -265,6 +281,7 @@ def lint_file(file_name):
 
 
 def main():
+    """Command line parsing and linter invocation."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--json',
                         help="produce json output for github", action='store_true')

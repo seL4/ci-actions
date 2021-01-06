@@ -293,16 +293,21 @@ def main():
     args = parser.parse_args()
 
     matches = []
+    failures = False
     for file in args.files:
-        if args.allfiles or file.endswith('.thy'):
-            matches += lint_file(file)
+        if args.all_files or file.endswith('.thy'):
+            try:
+                matches += lint_file(file)
+            except IOError:
+                print('IO error for file "{0}"'.format(file), file=sys.stderr)
+                failures = True
 
     if args.json:
         print(matches_to_json(matches))
     else:
         print_matches(matches)
 
-    sys.exit(matches != [])
+    sys.exit(failures or matches != [])
 
 
 if __name__ == '__main__':

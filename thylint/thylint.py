@@ -187,7 +187,7 @@ def matches_to_json(matches):
     annotations = []
     for m in matches:
         del m['line_content']
-        a = {'annotation_level': 'warning'}
+        a = {'annotation_level': 'error'}
         a = {**a, **m}
         annotations.append(a)
     return json.dumps(annotations)

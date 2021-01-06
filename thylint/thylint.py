@@ -27,7 +27,7 @@ def regexp_of(words):
     whole-word matches, with Isabelle-ish conventions for word boundaries. In particular,
     count \' as a letter.
     """
-    return re.compile('|'.join(r'\b(?<!\')(?: {0})\b(?!\')'.format(x) for x in words))
+    return re.compile('|'.join(r'\b(?<!\')(?:{0})\b(?!\')'.format(x) for x in words))
 
 
 diag_words = (

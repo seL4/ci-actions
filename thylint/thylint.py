@@ -285,6 +285,8 @@ def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--json',
                         help="produce json output for github", action='store_true')
+    parser.add_argument('--all-files',
+                        help="also lint files that do not end in .thy", action='store_true')
     parser.add_argument('files',
                         help="select these tests to run (defaults to all tests)", nargs="+")
 
@@ -292,7 +294,8 @@ def main():
 
     matches = []
     for file in args.files:
-        matches += lint_file(file)
+        if args.allfiles or file.endswith('.thy'):
+            matches += lint_file(file)
 
     if args.json:
         print(matches_to_json(matches))

@@ -176,7 +176,7 @@ def print_matches(matches):
         for x in range(end-start):
             print('^', end='')
         print()
-        print("{2}, line {0}: {1}".format(m['line'], m['title'], m['file_name']))
+        print("{2}, line {0}: {1}".format(m['line'], m['title'], m['file']))
         print(m['message'])
         print()
 
@@ -275,7 +275,7 @@ def lint_file(file_name):
                         in_string = True
 
     for m in matches:
-        m['file_name'] = file_name
+        m['file'] = file_name
 
     return matches
 

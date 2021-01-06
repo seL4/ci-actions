@@ -24,4 +24,4 @@ echo "Checking the following files:"
 echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
 echo
 git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 \
-  "$DIR/thylint.py" --json > annotations.json
+  "$DIR/thylint.py" --json

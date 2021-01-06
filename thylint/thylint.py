@@ -285,10 +285,12 @@ def main():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--json',
                         help="produce json output for github", action='store_true')
+    parser.add_argument('--json-file', nargs=1,
+                        help="json file name", default='annotations.json')
     parser.add_argument('--all-files',
                         help="also lint files that do not end in .thy", action='store_true')
-    parser.add_argument('files',
-                        help="select these tests to run (defaults to all tests)", nargs="+")
+    parser.add_argument('files', nargs="+",
+                        help="select these tests to run (defaults to all tests)")
 
     args = parser.parse_args()
 
@@ -302,10 +304,11 @@ def main():
                 print('IO error for file "{0}"'.format(file), file=sys.stderr)
                 failures = True
 
+    print_matches(matches)
+
     if args.json:
-        print(matches_to_json(matches))
-    else:
-        print_matches(matches)
+        with open(args.json_file, 'w') as file:
+            file.write(matches_to_json(matches))
 
     sys.exit(failures or matches != [])
 

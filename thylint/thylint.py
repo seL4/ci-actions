@@ -205,7 +205,7 @@ def match_chunk(line, chunk, offset, line_num, matches):
                             'end_column': offset+match.end(),
                             'line_content': line,
                             'title': title,
-                            'message':  msg})
+                            'message': msg})
 
 
 def lint_file(file_name):

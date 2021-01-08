@@ -35,7 +35,7 @@ jobs:
     steps:
     - uses: seL4/ci-actions/run-proofs@master
       with:
-      - L4V_ARCH: ${{ matrix.arch }}
+        L4V_ARCH: ${{ matrix.arch }}
 ```
 
 ## Build

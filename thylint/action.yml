@@ -6,8 +6,15 @@ name: 'thylint'
 description: 'Runs the thylint tool on pull requests'
 author: Gerwin Klein <gerwin.klein@csiro.au>
 
+inputs:
+  disable:
+    description: 'Comma-separated list (no spaces) of warning classes to disable (default: none)'
+    required: false
+
 runs:
   using: "composite"
   steps:
     - run: ${{ github.action_path }}/steps.sh
       shell: bash
+      env:
+        INPUT_DISABLE: ${{ inputs.disable }}

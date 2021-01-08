@@ -160,7 +160,13 @@ style_words = (
     ])
 )
 
-all_words = [diag_words, find_proof_words, sorry_words, axiom_words, style_words]
+warnings = {
+    'diag': diag_words,
+    'find-proofs': find_proof_words,
+    'sorry': sorry_words,
+    'axiom': axiom_words,
+    'style': style_words,
+}
 
 
 def print_matches(matches):
@@ -193,12 +199,12 @@ def matches_to_json(matches):
     return json.dumps(annotations)
 
 
-def match_chunk(line, chunk, offset, line_num, matches):
+def match_chunk(matchers, line, chunk, offset, line_num, matches):
     """Run all regexp classes on a chunk of text and record all matches.
 
     Updates argument 'matches' by side effect.
     """
-    for (title, msg, regex) in all_words:
+    for (title, msg, regex) in matchers:
         for match in regex.finditer(chunk):
             matches.append({'line': line_num,
                             'start_column': offset+match.start(),
@@ -208,7 +214,7 @@ def match_chunk(line, chunk, offset, line_num, matches):
                             'message': msg})
 
 
-def lint_file(file_name):
+def lint_file(file_name, matchers):
     """Run the linter on one file; return a list of all matches for this file."""
     # how many nested levels of comments we're currently ignoring
     ignoring = 0
@@ -265,7 +271,8 @@ def lint_file(file_name):
                     ignore_match_end = min(string_match,
                                            ignore_match.end() if ignore_match else len(chunk)) + 1
 
-                    match_chunk(line, chunk[:ignore_match_start], offset, line_num, matches)
+                    match_chunk(matchers, line,
+                                chunk[:ignore_match_start], offset, line_num, matches)
                     chunk = chunk[ignore_match_end:]
                     offset += ignore_match_end
 
@@ -280,13 +287,28 @@ def lint_file(file_name):
     return matches
 
 
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+
 def main():
     """Command line parsing and linter invocation."""
+    available_warnings = ", ".join(warnings.keys())
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('--json',
                         help="produce json output for github", action='store_true')
     parser.add_argument('--json-file', nargs=1,
                         help="json file name", default='annotations.json')
+    parser.add_argument('--disable',
+                        help="disable warning classes (available: "+available_warnings+")",
+                        type=lambda s: s.split(','),
+                        default=[],
+                        action='append')
+    parser.add_argument('--enable',
+                        help="enable warning classes (available: "+available_warnings+")",
+                        default=[],
+                        type=lambda s: s.split(','),
+                        action='append')
     parser.add_argument('--all-files',
                         help="also lint files that do not end in .thy", action='store_true')
     parser.add_argument('files', nargs="+",
@@ -294,12 +316,19 @@ def main():
 
     args = parser.parse_args()
 
+    matcher_keys = set(warnings.keys())
+    for w in flatten(args.disable):
+        matcher_keys.discard(w)
+    for w in flatten(args.enable):
+        matcher_keys.add(w)
+    matchers = [warnings[name] for name in matcher_keys]
+
     matches = []
     failures = False
     for file in args.files:
         if args.all_files or file.endswith('.thy'):
             try:
-                matches += lint_file(file)
+                matches += lint_file(file, matchers)
             except IOError:
                 print('IO error for file "{0}"'.format(file), file=sys.stderr)
                 failures = True

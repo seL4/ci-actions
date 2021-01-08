@@ -19,9 +19,16 @@ checkout.sh
 fetch-base.sh
 echo "::endgroup::"
 
+if [ -z "$INPUT_DISABLE" ]
+then
+  DISABLE=""
+else
+  DISABLE="--disable $INPUT_DISABLE"
+fi
+
 echo
 echo "Checking the following files:"
 echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
 echo
 git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 \
-  "$DIR/thylint.py" --json
+  "$DIR/thylint.py" $DISABLE --json

@@ -31,4 +31,4 @@ echo "Checking the following files:"
 echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
 echo
 git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 \
-  "$DIR/thylint.py" $DISABLE --json
+  "$DIR/thylint.py" $DISABLE --json --diff-only ${GITHUB_BASE_REF}..test-revision

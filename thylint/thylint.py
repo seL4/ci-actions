@@ -9,6 +9,7 @@ import re
 import json
 import argparse
 import sys
+import subprocess
 
 DESCRIPTION = 'Check Isabelle theory files for unwanted outer syntax commands'
 
@@ -262,7 +263,7 @@ def lint_file(file_name, matchers):
                     # actual content to match, but only until the next comment start or string:
                     string_match = chunk.find(string_delimiter)
                     string_found = string_match >= 0
-                    # turn -1 into len(chunk) for use with "min" belown
+                    # turn -1 into len(chunk) for use with "min" below
                     string_match = len(chunk) if string_match < 0 else string_match
 
                     ignore_match = start_exp.search(chunk)
@@ -285,6 +286,36 @@ def lint_file(file_name, matchers):
         m['file'] = file_name
 
     return matches
+
+
+def diff_lines_in_file(diff_rev, file):
+    """list of line numbers in new file that appear in git diff (runs git)"""
+    git_cmd = [
+        'git', 'difftool', '--no-prompt',
+        "--extcmd=diff --old-line-format=\"\" --unchanged-line-format=\"\" --new-line-format='%dn '"
+    ]
+
+    return subprocess.run(git_cmd + [diff_rev, '--', file], capture_output=True).stdout.decode("utf-8")
+
+
+def get_diff_lines(diff_rev, files):
+    """Returns dict mapping file name to list of file numbers in diff"""
+    results = {}
+    for f in files:
+        results[f] = diff_lines_in_file(diff_rev, f).rstrip().split(" ")
+    return results
+
+
+def filter_matches(matches, diff_rev, files):
+    """Returns a new dict of matches, but only with lines that appear in git diff"""
+    diff_lines = get_diff_lines(diff_rev, files)
+    filtered_matches = []
+    for m in matches:
+        file = m['file']
+        line = str(m['line'])
+        if line in diff_lines.get(file, []):
+            filtered_matches.append(m)
+    return filtered_matches
 
 
 def flatten(xss):
@@ -311,6 +342,8 @@ def main():
                         action='append')
     parser.add_argument('--all-files',
                         help="also lint files that do not end in .thy", action='store_true')
+    parser.add_argument('--diff-only', nargs=1,
+                        help='only report lines changed or added in diff to given revision')
     parser.add_argument('files', nargs="+",
                         help="select these tests to run (defaults to all tests)")
 
@@ -332,6 +365,9 @@ def main():
             except IOError:
                 print('IO error for file "{0}"'.format(file), file=sys.stderr)
                 failures = True
+
+    if args.diff_only:
+        matches = filter_matches(matches, args.diff_only[0], args.files)
 
     print_matches(matches)
 

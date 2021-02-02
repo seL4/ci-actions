@@ -79,7 +79,7 @@ chat to get in touch with developers and users.
 The main author of the CI actions in this repository is [Gerwin Klein][GK], [@lsf37][lsf37] on GitHub.
 
 [TSC]: https://sel4.systems/Foundation/TSC/
-[seL4F]: https://sel4.systems/Foundation/About/
+[seL4F]: https://sel4.systems/Foundation/
 [roles]: https://docs.sel4.systems/processes/roles.html
 [seL4org]: https://github.com/orgs/seL4/teams
 [GK]: https://doclsf.de/

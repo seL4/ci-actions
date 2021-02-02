@@ -1,0 +1,16 @@
+# Copyright 2021, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'PR Queue'
+description: 'Manages queuing of PRs via BitBucket at D61'
+author: Curtis Millar <curtis.millar@data61.csiro.au>
+
+inputs:
+  github_token:
+    description: 'GitHub access token'
+    required: true
+
+runs:
+  using: 'node12'
+  main: 'index.js'

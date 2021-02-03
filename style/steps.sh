@@ -34,7 +34,7 @@ then
     ${SEL4_TOOLS}/misc/style.sh
 else
   # not running in pull request
-  ${SEL4_TOOLS}/misc/style-all.sh
+  ${SEL4_TOOLS}/misc/style-all.sh .
 fi
 
 [ -z "$(git status -uno --porcelain)" ] \

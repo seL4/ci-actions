@@ -144,6 +144,7 @@ async function find_candidate(octokit) {
         branch: pr.head.label,
         kind: "merge",
         pr,
+      }
     }
   }
 
@@ -163,6 +164,7 @@ async function find_candidate(octokit) {
         branch: pr.head.label,
         kind: "rebase",
         pr,
+      }
     }
   }
 
@@ -172,11 +174,12 @@ async function find_candidate(octokit) {
      * expensive */
     if (!await is_passing(octokit, pr)) {
       continue;
-    }  else {
+    } else {
       return {
         branch: pr.head.label,
         kind: "review",
         pr,
+      }
     }
   }
 
@@ -186,11 +189,12 @@ async function find_candidate(octokit) {
      * expensive */
     if (!await is_passing(octokit, pr)) {
       continue;
-    }  else {
+    } else {
       return {
         branch: pr.head.label,
         kind: "fix",
         pr,
+      }
     }
   }
 

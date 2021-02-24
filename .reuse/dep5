@@ -12,3 +12,7 @@ License: MIT
 Files: js/package*.json
 Copyright: GitHub
 License: BSD-2-Clause
+
+Files: pr-queue/package*.json
+Copyright: GitHub
+License: BSD-2-Clause

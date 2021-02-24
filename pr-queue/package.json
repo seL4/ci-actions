@@ -1,0 +1,23 @@
+{
+  "name": "pr-queue",
+  "version": "1.0.0",
+  "description": "GitHub Action to use comments to order PRs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seL4/ci-actions.git"
+  },
+  "author": "Curtis Millar <curtis.millar@data61.csiro.au>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/seL4/ci-actions/issues"
+  },
+  "homepage": "https://github.com/seL4/ci-actions#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
+  }
+}

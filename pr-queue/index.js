@@ -109,7 +109,7 @@ async function connect() {
   core.setSecret(github_token);
 
   // Connect to github
-  const octokit = github.getOctokit(myToken);
+  return await github.getOctokit(github_token);
 }
 
 /* Find all the PRs to a particular branch */

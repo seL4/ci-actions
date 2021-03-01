@@ -16,3 +16,7 @@ License: BSD-2-Clause
 Files: pr-queue/package*.json
 Copyright: GitHub
 License: BSD-2-Clause
+
+Files: pr-queue/node_modules/*
+Copyright: GitHub
+License: MIT

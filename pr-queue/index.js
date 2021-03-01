@@ -59,27 +59,39 @@ async function is_ahead(octokit, pr) {
 
 /* Determine if a PR has been approved */
 async function is_approved(octokit, pr) {
-  const reviews = await octokit.pulls.listReviews({
-    owner: repo_owner(),
-    repo: repo_name(),
-    pull_number: pr.number,
-  });
+  if ("pr_queue_approved" in pr) {
+    return pr["pr_queue_approved"];
+  } else {
+    const reviews = await octokit.pulls.listReviews({
+      owner: repo_owner(),
+      repo: repo_name(),
+      pull_number: pr.number,
+    });
 
-  const is_approved = review => review.state == "APPROVED";
-  return reviews.filter(is_approved).length >= 2;
+    const has_approved = review => review.state == "APPROVED";
+    const approved = reviews.filter(has_approved).length >= 2;
+    pr["pr_queue_approved"] = approved;
+    return approved;
+  }
 }
 
 /* Determine if a PR is passing tests */
 async function is_passing(octokit, pr) {
-  const check_list = await octokit.checks.listForRef({
-    owner: repo_owner(),
-    repo: repo_name(),
-    ref: pr.head.ref,
-  });
-  const checks = check_list.check_runs;
+  if ("pr_queue_passing" in pr) {
+    return pr["pr_queue_passing"];
+  } else {
+    const check_list = await octokit.checks.listForRef({
+      owner: repo_owner(),
+      repo: repo_name(),
+      ref: pr.head.ref,
+    });
+    const checks = check_list.check_runs;
 
-  const is_success = check => check.conclusion == "success";
-  return checks.filter(is_success).length == checks.length;
+    const is_success = check => check.conclusion == "success";
+    const passing = checks.filter(is_success).length == checks.length;
+    pr["pr_queue_passing"] = passing;
+    return passing;
+  }
 }
 
 /* Get the name of the PR creator */
@@ -149,7 +161,7 @@ async function find_candidate(octokit) {
   }
 
   /* Find the least-recently updated PRs */
-  prs = await find_prs(octokit, "updated", "desc");
+  prs.sort((l, r) => l.updated_at.localeCompare(r.updated_at));
 
   /* Find a rebase candidate */
   for (pr of prs) {

@@ -9,7 +9,8 @@ const github = require('@actions/github');
 
 /* Check if the trigger was a PR */
 function is_pull_request() {
-  return "GITHUB_BASE_REF" in process.env;
+  const base_key = "GITHUB_BASE_REF";
+  return base_key in process.env && process.env[base_key] != "";
 }
 
 /* Get the target branch to check for PRs against */

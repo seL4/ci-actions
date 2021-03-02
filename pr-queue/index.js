@@ -54,7 +54,7 @@ async function is_ahead(octokit, pr) {
     head: pr.head.label,
   });
 
-  return comparison.status == "ahead";
+  return comparison.data.status == "ahead";
 }
 
 /* Determine if a PR has been approved */
@@ -62,11 +62,12 @@ async function is_approved(octokit, pr) {
   if ("pr_queue_approved" in pr) {
     return pr["pr_queue_approved"];
   } else {
-    const reviews = await octokit.pulls.listReviews({
+    const response = await octokit.pulls.listReviews({
       owner: repo_owner(),
       repo: repo_name(),
       pull_number: pr.number,
     });
+    const reviews = response.data;
 
     const has_approved = review => review.state == "APPROVED";
     const approved = reviews.filter(has_approved).length >= 2;
@@ -85,7 +86,7 @@ async function is_passing(octokit, pr) {
       repo: repo_name(),
       ref: pr.head.ref,
     });
-    const checks = check_list.check_runs;
+    const checks = check_list.data.check_runs;
 
     const is_success = check => check.conclusion == "success";
     const passing = checks.filter(is_success).length == checks.length;
@@ -126,7 +127,7 @@ async function connect() {
 
 /* Find all the PRs to a particular branch */
 async function find_prs(octokit, sort, direction) {
-  return await octokit.pulls.list({
+  const response = await octokit.pulls.list({
     owner: repo_owner(),
     repo: repo_name(),
     state: "open",
@@ -134,6 +135,7 @@ async function find_prs(octokit, sort, direction) {
     sort,
     direction,
   });
+  return response.data;
 }
 
 /* Find the candidate and candidate type for the target branch */

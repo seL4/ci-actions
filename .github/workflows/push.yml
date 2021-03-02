@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: seL4/ci-actions/link-check@master
         with:
-          exclude: pr-queue
+          exclude: pr-queue/.*
 
   style:
     name: Style

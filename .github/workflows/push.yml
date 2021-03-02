@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: seL4/ci-actions/link-check@master
         with:
-          exclude: js/node_modules
+          exclude: .*/node_modules
 
   style:
     name: Style

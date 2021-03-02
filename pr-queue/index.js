@@ -303,4 +303,8 @@ async function run() {
   }
 }
 
+process.on("unhandledRejection", (reason, promise) => {
+  throw reason;
+});
+
 run()

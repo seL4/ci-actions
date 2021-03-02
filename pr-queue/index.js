@@ -127,11 +127,15 @@ async function connect() {
 
 /* Find all the PRs to a particular branch */
 async function find_prs(octokit, sort, direction) {
+  const owner = repo_owner();
+  const repo = repo_name();
+  const base = target_branch();
+  console.log(`Finding pulls for ${owner}/${repo}:${base}`);
   const response = await octokit.pulls.list({
-    owner: repo_owner(),
-    repo: repo_name(),
     state: "open",
-    base: target_branch(),
+    owner,
+    repo,
+    base,
     sort,
     direction,
   });
@@ -144,7 +148,9 @@ async function find_candidate(octokit) {
   prs = await find_prs(octokit, "created", "asc");
 
   /* Find a merge candidate */
+  console.log(`::group::Looking for merge candidate`);
   for (pr of prs) {
+    console.log(`Checking #${pr.number}: ${pr.title}`);
     /* Very explicit short-circuiting here, these operations are
      * expensive */
     if (!await is_ahead(octokit, pr)) {
@@ -154,6 +160,8 @@ async function find_candidate(octokit) {
     } else if (!await is_approved(octokit, pr)) {
       continue;
     } else {
+      console.log(`Using #${pr.number}: ${pr.title}`);
+      console.log(`::endgroup::`);
       return {
         branch: pr.head.label,
         kind: "merge",
@@ -161,19 +169,24 @@ async function find_candidate(octokit) {
       }
     }
   }
+  console.log(`::endgroup::`);
 
   /* Find the least-recently updated PRs */
   prs.sort((l, r) => l.updated_at.localeCompare(r.updated_at));
 
   /* Find a rebase candidate */
+  console.log(`::group::Looking for rebase candidate`);
   for (pr of prs) {
     /* Very explicit short-circuiting here, these operations are
      * expensive */
+    console.log(`Checking #${pr.number}: ${pr.title}`);
     if (!await is_passing(octokit, pr)) {
       continue;
     } else if (!await is_approved(octokit, pr)) {
       continue;
     } else {
+      console.log(`Using #${pr.number}: ${pr.title}`);
+      console.log(`::endgroup::`);
       return {
         branch: pr.head.label,
         kind: "rebase",
@@ -181,14 +194,19 @@ async function find_candidate(octokit) {
       }
     }
   }
+  console.log(`::endgroup::`);
 
   /* Find a review candidate */
+  console.log(`::group::Looking for review candidate`);
   for (pr of prs) {
     /* Very explicit short-circuiting here, these operations are
      * expensive */
+    console.log(`Checking #${pr.number}: ${pr.title}`);
     if (!await is_passing(octokit, pr)) {
       continue;
     } else {
+      console.log(`Using #${pr.number}: ${pr.title}`);
+      console.log(`::endgroup::`);
       return {
         branch: pr.head.label,
         kind: "review",
@@ -196,14 +214,19 @@ async function find_candidate(octokit) {
       }
     }
   }
+  console.log(`::endgroup::`);
 
   /* Find a fix candidate */
+  console.log(`::group::Looking for fix candidate`);
   for (pr of prs) {
     /* Very explicit short-circuiting here, these operations are
      * expensive */
+    console.log(`Checking #${pr.number}: ${pr.title}`);
     if (!await is_passing(octokit, pr)) {
       continue;
     } else {
+      console.log(`Using #${pr.number}: ${pr.title}`);
+      console.log(`::endgroup::`);
       return {
         branch: pr.head.label,
         kind: "fix",
@@ -211,11 +234,17 @@ async function find_candidate(octokit) {
       }
     }
   }
+  console.log(`::endgroup::`);
 
   /* No candidate found */
+  console.log(`No candidate found`);
 }
 
 async function comment(octokit, pr, body) {
+  console.log(`::group::Sending comment to #${pr.number}: ${pr.title}`);
+  console.log(`${body}`);
+  console.log(`::endgroup::`);
+
   await octokit.issues.createComment({
     owner: repo_owner(),
     repo: repo_name(),
@@ -288,6 +317,7 @@ async function run() {
     candidate !== undefined &&
     (!is_pull_request() || candidate.branch == pr_branch())
   ) {
+    console.log(`Selecting candidate: ${candidate.pr.url}`);
     switch (candidate.kind) {
       case "merge":
         await merge_candiate(octokit, candidate.pr);

@@ -37,12 +37,12 @@ function repo_split() {
 
 /* Get the owner of the repository */
 function repo_owner() {
-  return repo_split(0);
+  return repo_split()[0];
 }
 
 /* Get the name of the repository */
 function repo_name() {
-  return repo_split(1);
+  return repo_split()[1];
 }
 
 /* Determine if a PR is ahead of its target */

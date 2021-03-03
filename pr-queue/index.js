@@ -85,7 +85,7 @@ async function is_passing(octokit, pr) {
     const check_list = await octokit.checks.listForRef({
       owner: repo_owner(),
       repo: repo_name(),
-      ref: pr.head.ref,
+      ref: pr.head.sha,
       status: "completed",
     });
     const checks = check_list.data.check_runs;

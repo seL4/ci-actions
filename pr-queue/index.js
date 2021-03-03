@@ -285,7 +285,7 @@ async function review_candiate(octokit, pr) {
     body += "\n\n";
   }
 
-  body += "This PR can now be reviewed to be the next to get merged.";
+  body += "This PR can now be reviewed to be the next to get merged. ";
   body += "Make sure there are at least 2 approvals before merging.";
 
   // Notify the reviewers

@@ -269,7 +269,7 @@ async function merge_candiate(octokit, pr) {
 
 /* Notify a PR that it can be rebased to be merged next */
 async function rebase_candiate(octokit, pr) {
-  var body = `@${owner(pr)}\n\n`;
+  var body = `@${creator(pr)}\n\n`;
 
   body += "This PR must be rebased against the target branch.";
 
@@ -294,7 +294,7 @@ async function review_candiate(octokit, pr) {
 
 /* Notify a PR that it can be fixed to be reviewed next */
 async function fix_candiate(octokit, pr) {
-  var body = `@${owner(pr)}\n\n`;
+  var body = `@${creator(pr)}\n\n`;
 
   body += "Please ensure the tests on this PR are passing, ";
   body += "once they are, this can be the next PR to be merged.";

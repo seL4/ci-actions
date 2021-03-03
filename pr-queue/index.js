@@ -86,6 +86,7 @@ async function is_passing(octokit, pr) {
       owner: repo_owner(),
       repo: repo_name(),
       ref: pr.head.ref,
+      status: "completed",
     });
     const checks = check_list.data.check_runs;
 
@@ -310,10 +311,7 @@ async function run() {
 
   /* Only if triggered by push to target or if the PR would be the
    * target */
-  if (
-    candidate !== undefined &&
-    (!is_pull_request() || candidate.branch == pr_branch())
-  ) {
+  if (candidate !== undefined) {
     console.log(`Selecting candidate: ${candidate.pr.url}`);
     switch (candidate.kind) {
       case "merge":

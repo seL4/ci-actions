@@ -57,11 +57,15 @@ Put this into a `.github/workflows/` yaml file, e.g. `prqueue.yml`:
 ```yaml
 name: PR Queue
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
 
 jobs:
-  pr-queue:
-    name: PR Queue
+  notify:
+    name: Notify PR candidate
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/pr-queue@master

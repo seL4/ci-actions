@@ -223,16 +223,12 @@ async function find_candidate(octokit) {
     /* Very explicit short-circuiting here, these operations are
      * expensive */
     console.log(`Checking #${pr.number}: ${pr.title}`);
-    if (!await is_passing(octokit, pr)) {
-      continue;
-    } else {
-      console.log(`Using #${pr.number}: ${pr.title}`);
-      console.log(`::endgroup::`);
-      return {
-        branch: pr.head.label,
-        kind: "fix",
-        pr,
-      }
+    console.log(`Using #${pr.number}: ${pr.title}`);
+    console.log(`::endgroup::`);
+    return {
+      branch: pr.head.label,
+      kind: "fix",
+      pr,
     }
   }
   console.log(`::endgroup::`);

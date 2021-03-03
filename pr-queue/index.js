@@ -108,7 +108,7 @@ function assignees(pr) {
 
 /* Get the names of the PR reviewers */
 function reviewers(pr) {
-  return pr.reviewers.map(reviewer => reviewer.login);
+  return pr.requested_reviewers.map(reviewer => reviewer.login);
 }
 
 /*

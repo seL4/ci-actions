@@ -18,6 +18,9 @@ inputs:
   isa_branch:
     description: 'Which branch/tag of the isabelle repository to use'
     required: false
+  manifest:
+    description: "Which manifest file to use (default devel.xml)"
+    required: false
 
 runs:
   using: 'docker'

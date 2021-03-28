@@ -7,6 +7,11 @@
 set -e
 
 echo "::group::Setting up"
+if [ -n ${INPUT_MANIFEST} ]
+then
+  export REPO_MANIFEST="${INPUT_MANIFEST}"
+fi
+
 checkout-manifest.sh
 
 if [ -n "${INPUT_ISA_BRANCH}" ]

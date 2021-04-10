@@ -14,6 +14,9 @@ inputs:
   exclude:
     description: 'grep regex on path for which files to exclude'
     required: false
+  exclude_urls:
+    description: 'regex which URLs to exclude'
+    required: false
   timeout:
     description: 'Timeout for link response'
     required: false

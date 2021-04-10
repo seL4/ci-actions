@@ -25,12 +25,12 @@ No arguments are required. The following are available.
 
 * `files`: List of files to check
 * `dir`: Directory to check recursively, default `.`
-* `exclude`: Regex for which files to exclude (this doesn't seem to work properly)
+* `exclude`: Regex for which files to exclude
+* `exclude_urls`: Regex for which URLs to exclude from check
 * `timeout`: Timeout for link response
 * `doc_root`: Document root for absolute links
 * `num_requests`: Maximum number of concurrent requests
 * `verbose`: Print more information if set (default unset)
-
 
 ## Example
 

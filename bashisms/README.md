@@ -35,3 +35,10 @@ jobs:
     steps:
     - uses: seL4/ci-actions/bashisms@master
 ```
+
+### Maintenance
+
+The `checkbashism` script in `../scripts` is directly extracted from
+<https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_2.21.1.tar.xz>.
+Installing it via `apt-get` takes forever, because the rest of the devscripts
+has lots of dependencies.

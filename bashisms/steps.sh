@@ -10,13 +10,6 @@ set -e
   && (echo "Action only works on pull requests."; exit 1)
 
 echo "::group::Setting up"
-install-python.sh
-
-echo "Installing seL4 python deps"
-pip3 install -q sel4-deps
-
-echo "Installing devscripts"
-sudo apt-get install -qq devscripts > /dev/null
 
 . ${SCRIPTS}/fetch-sel4-tools.sh
 

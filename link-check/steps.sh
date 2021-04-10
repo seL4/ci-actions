@@ -20,5 +20,6 @@ echo "Checking links"
   xargs -0 /liche ${INPUT_DOC_ROOT:+-d "${INPUT_DOC_ROOT}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \
          ${INPUT_NUM_REQUESTS:+-c "${INPUT_NUM_REQUESTS}"} \
-         ${INPUT_VERBOSE:+-v}
+         ${INPUT_EXCLUDE_URLS:+-x "${INPUT_EXCLUDE_URLS}"}
+         ${INPUT_VERBOSE:+-v} \
 ) && echo "No broken links!"

@@ -10,16 +10,22 @@ inputs:
   dir:
     description: 'Directory to check (recursively)'
     default: .
+    required: false
   exclude:
     description: 'grep regex on path for which files to exclude'
+    required: false
   timeout:
     description: 'Timeout for link response'
+    required: false
   doc_root:
     description: 'Document root for absolute links'
+    required: false
   num_requests:
     description: 'Maximum number of concurrent requests'
+    required: false
   verbose:
     description: 'Print more information if set (default unset)'
+    required: false
 
 runs:
   using: 'docker'

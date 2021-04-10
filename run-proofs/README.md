@@ -9,7 +9,6 @@ This action checks out the verification manifest
 <https://github.com/seL4/verification-manifest>, updates the relevant
 repository to the pull request state, and runs the specified proof images.
 
-
 ## Arguments
 
 * `L4V_ARCH` (required): which architecture to run the proofs for. One of `ARM`, `ARM_HYP`, `RISCV64`, `X64`

@@ -7,13 +7,11 @@ description: 'Check links in .md and .html files'
 author: Gerwin Klein <gerwin.klein@csiro.au>
 
 inputs:
-  files:
-    description: 'List of files to check'
   dir:
     description: 'Directory to check (recursively)'
     default: .
   exclude:
-    description: 'Regex for which files to exclude'
+    description: 'grep regex on path for which files to exclude'
   timeout:
     description: 'Timeout for link response'
   doc_root:

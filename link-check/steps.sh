@@ -10,15 +10,15 @@ echo "::group::Setting up"
 checkout.sh
 echo "::endgroup::"
 
-[ -n "${INPUT_FILES}" ] && unset INPUT_DIR
+INPUT_EXCLUDE=${INPUT_EXCLUDE:-^$}
 
-echo
+echo "Checking links"
+
 (set -x; \
-  /liche ${INPUT_DOC_ROOT:+-d "${INPUT_DOC_ROOT}"} \
+  find "${INPUT_DIR}" -type f \( -name "*.md" -or -name "*.html" \) | \
+  grep -v "${INPUT_EXCLUDE}" | tr '\n' '\000' | \
+  xargs -0 /liche ${INPUT_DOC_ROOT:+-d "${INPUT_DOC_ROOT}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \
          ${INPUT_NUM_REQUESTS:+-c "${INPUT_NUM_REQUESTS}"} \
-         ${INPUT_EXCLUDE:+-x "${INPUT_EXCLUDE}"} \
-         ${INPUT_VERBOSE:+-v} \
-         ${INPUT_DIR:+-r "${INPUT_DIR}"} \
-         ${INPUT_FILES:+"${INPUT_FILES}"}
+         ${INPUT_VERBOSE:+-v}
 ) && echo "No broken links!"

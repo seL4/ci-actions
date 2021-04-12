@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# For reasons explained in comments in isabelle-mirror.sh, we need very
+# specific versions of hg-git and mercurial, so we maintain our own local
+# installations of these. This script sets up the environment to use these
+# local installations.
+#
+# Usage: im-env <base-dir> <my-command>
+#
+# where:
+# - base-dir: Absolute path to a checkout of this repository.
+# - my-command: The command to run in the modified environment.
+
+# Bash 'strict' mode.
+set -euo pipefail
+IFS=$'\n\t'
+
+IM_DIR="$1"
+
+if [ ! -d "$IM_DIR" ]; then
+  echo "with-im-dir: fatal: I wasn't given a base directory." >&2
+  exit 1
+fi
+
+shift
+
+if [ -z "$*" ]; then
+  echo "with-im-dir: fatal: I wasn't given a command." >&2
+  exit 1
+fi
+
+IM_PATH_ORIG="$PATH"
+
+# Add Mercurial wrapper scripts to the PATH.
+if [ -z "$PATH" ]; then
+  PATH="$IM_DIR/bin"
+else
+  PATH="$IM_DIR/bin:$PATH"
+fi
+
+# Required by Mercurial wrapper scripts.
+export IM_DIR PATH IM_PATH_ORIG
+
+im-setup
+
+exec "$@"

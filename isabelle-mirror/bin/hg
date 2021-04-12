@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Run mercurial installed at $IM_DIR/lib/mercurial/hg, with:
+# - built-in bookmarks extension.
+
+exec "$IM_DIR/lib/mercurial/hg" \
+  --config "extensions.hgext.bookmarks=" \
+  "$@"

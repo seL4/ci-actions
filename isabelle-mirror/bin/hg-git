@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Run mercurial installed at $IM_DIR/lib/mercurial/hg:
+# - with built-in bookmarks extension.
+# - with hg-git extension installed in $IM_DIR/lib/hg-git/hggit,
+# - using dulwich installed in $IM_DIR/lib/dulwich/dulwich.
+
+DULWICH_PATH="$IM_DIR/lib/dulwich"
+
+if [ -z "$PYTHONPATH" ]; then
+  PYTHONPATH="$DULWICH_PATH"
+else
+  PYTHONPATH="$DULWICH_PATH:$PYTHONPATH"
+fi
+
+export PYTHONPATH
+
+exec "$IM_DIR/lib/mercurial/hg" \
+  --config "extensions.hgext.bookmarks=" \
+  --config "extensions.hggit=$IM_DIR/lib/hg-git/hggit" \
+  "$@"

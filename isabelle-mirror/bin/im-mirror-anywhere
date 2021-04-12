@@ -1,0 +1,247 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Pull commits from an upstream Isabelle Mercurial repository to the seL4
+# git mirror.
+#
+# PREREQUISITES
+# -------------
+# - Python 2.7.12.
+# - Dulwich 0.8.7.
+# - Mercurial 3.0.2.
+# - hg-git 0.6.1.
+#
+# The format of hg-git commit messages changed between hg-git version 0.6.1 and
+# 0.7. Since this affects commit hashes, we need hg-git version 0.6.1 to
+# maintain the consistency of our git mirror history. This version of hg-git
+# requires older version of Mercurial and Dulwich. Finally, mercurial doesn't
+# support Python 3, so we need Python 2.7. There might be some wiggle room in
+# these version numbers, but I have not taken the time to figure out how much.
+#
+# ASSUMPTIONS
+# -----------
+# We assume that each upstream Isabelle Mercurial repository maintains
+# only a single named branch (default), and no bookmarks.
+#
+# Currently, there are two upstream repositories of interest:
+#
+# - http://isabelle.in.tum.de/repos/isabelle
+#   This is the primary repository, containing the development branch.
+#   We mirror this as the 'master' branch in the seL4 Isabelle git mirror.
+#
+# - ssh://hg@bitbucket.org/isabelle_project/isabelle-release
+#   This is used during each release cycle to stabilise release candidates
+#   while development continues on the primary repository. We mirror this
+#   as a branch named 'isabelle-release'.
+#
+# If the Isabelle development process changed, for example, by combining
+# development and release branches in a single Mercurial repository, then
+# this script would need to be updated to reflect this.
+#
+# HOW IT WORKS
+# ------------
+# For simplicity, the script always takes a fresh clone of the upstream
+# Isabelle Mercurial repository, and reconstructs the entire git history
+# from it. Part of the reconstruction involves using `git filter-branch`
+# to repair some corruption in the committer details. This means there is
+# limited value in mirroring incrementally, so we don't bother.
+#
+# Once the git history is reconstructed and repaired, we check that the
+# head commit of the branch in the existing git mirror is contained within
+# the reconstructed history, and that any common tags are consistent.
+# Finally, we push the branch and any new tags to the git mirror.
+#
+# USAGE
+# -----
+# im-mirror-anywhere <upstream-repo> <mirror-repo> <mirror-branch>
+#
+# We assume the existence of two executables in the PATH:
+# - hg-git: mercurial, configured with hg-git.
+# - hg: mercurial, without hg-git.
+#
+# EXAMPLES
+# --------
+# To mirror the Isabelle development branch to the 'master' branch of
+# the mirror located at git@github.com:seL4/isabelle.git:
+#
+#   im-mirror-anywhere \
+#     http://isabelle.in.tum.de/repos/isabelle \
+#     git@github.com:seL4/isabelle.git \
+#     master
+#
+# To mirror the Isabelle release branch to the 'release-2016' branch of
+# the mirror located at git@github.com:seL4/isabelle.git:
+#
+#   im-mirror-anywhere \
+#     ssh://hg@bitbucket.org/isabelle_project/isabelle-release \
+#     git@github.com:seL4/isabelle.git \
+#     release-2016
+#
+# The repository containing this script also contains a wrapper script
+# `isabelle-mirror`, which shows how to avoid unnecessary network traffic.
+
+# Bash 'strict' mode.
+# We use subshells to limit the scope of changes to the current working
+# directory, so `-e` is particularly important.
+set -euo pipefail
+IFS=$'\n\t'
+
+# Arguments
+IM_UPSTREAM_REMOTE="$1"
+IM_MIRROR_REMOTE="$2"
+IM_MIRROR_BRANCH="$3"
+
+printf "isabelle-mirror: mirroring upstream Isabelle\n"
+printf "  from repo : $IM_UPSTREAM_REMOTE\n"
+printf "  to repo   : $IM_MIRROR_REMOTE\n"
+printf "  to branch : $IM_MIRROR_BRANCH\n"
+
+# Temporary working directory
+IM_WORK_DIR=`mktemp -qd -p "$PWD"`
+
+IM_UPSTREAM_SUBDIR=upstream
+IM_MIRROR_SUBDIR=mirror
+IM_STAGING_SUBDIR=staging
+IM_STAGING_BRANCH=staging
+
+IM_ENV_FILTER='
+  GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME";
+  GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL";
+  GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE";
+  export GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL GIT_COMMITTER_DATE
+'
+
+function get_inconsistent_tags () {
+  local repo
+  for repo in "$@"; do
+    (
+      cd "$repo"
+      for tag in `git tag`; do
+        commit=`git show -s --format=%H "$tag"`
+        # Quote the tag name in case someone is sneaky
+        # enough to put a newline in there.
+        printf "$commit ${tag@Q}\n"
+      done
+    )
+  done | sort -u | cut -s -d' ' -f2- | sort | uniq -d
+}
+
+function check_tags_consistent () {
+  local inconsistent_tags
+  inconsistent_tags=`get_inconsistent_tags "$@"`
+  if [ -n "$inconsistent_tags" ]; then
+    printf "isabelle-mirror: found inconsistent tags:\n"
+    for quoted_tag in $inconsistent_tags; do
+      eval tag=$quoted_tag
+      # In case of whitespace in the tag name,
+      # the user will have to figure it out.
+      echo "  " $tag
+    done
+    printf "isabelle-mirror: aborting...\n"
+    exit 1
+  else
+    printf "isabelle-mirror: tags all good\n"
+  fi
+}
+
+function get_ancestor_commit () {
+  local old_repo="$1"
+  local old_branch="$2"
+  local new_repo="$3"
+  local new_branch="$4"
+  local old_commit
+  old_commit=`(cd "$old_repo"; git show -s --format=%H "$old_branch")`
+  (cd "$new_repo"; git rev-list "$new_branch" | (set +e; grep "$old_commit"))
+}
+
+function check_history_consistent () {
+  local ancestor_commit
+  ancestor_commit=`get_ancestor_commit "$@"`
+  if [ -z "$ancestor_commit" ]; then
+    printf "isabelle-mirror: inconsistent history, aborting...\n"
+    exit 1
+  else
+    printf "isabelle-mirror: history is consistent\n"
+  fi
+}
+
+# main
+(
+  printf "isabelle-mirror: working directory: $IM_WORK_DIR\n"
+  cd "$IM_WORK_DIR"
+
+  printf "isabelle-mirror: cloning git mirror locally: $IM_MIRROR_REMOTE\n"
+  git clone --bare "$IM_MIRROR_REMOTE" "$IM_MIRROR_SUBDIR"
+
+  printf "isabelle-mirror: cloning upstream: $IM_UPSTREAM_REMOTE\n"
+  hg clone "$IM_UPSTREAM_REMOTE" "$IM_UPSTREAM_SUBDIR"
+
+  # Create a staging repository to recreate the git history from the Mercurial
+  # history. This is initially an empty repository.
+
+  printf "isabelle-mirror: creating staging git repository...\n"
+  (
+    mkdir "$IM_STAGING_SUBDIR"
+    cd "$IM_STAGING_SUBDIR"
+    git init --bare
+  )
+
+  # Use hg-git to copy commits from Mercurial to the staging repository.
+
+  printf "isabelle-mirror: reconstructing git history from Mercurial...\n"
+  (
+    cd "$IM_UPSTREAM_SUBDIR"
+    hg-git bookmarks "$IM_STAGING_BRANCH"
+    hg-git push ../"$IM_STAGING_SUBDIR"
+  )
+
+  # The conversion we just performed may contain some corrupted committer
+  # information. These corruptions change the commit hashes, so to avoid
+  # rewriting history already present in the mirror, we repair the corruption
+  # by copying author information over committer information, for every commit
+  # and tag in the staging repository.
+
+  printf "isabelle-mirror: repairing git history...\n"
+  (
+    cd "$IM_STAGING_SUBDIR"
+    git filter-branch --env-filter "$IM_ENV_FILTER" --tag-name-filter cat -- --all \
+      > /dev/null
+  )
+
+  # Check that each tag present in both the existing mirror and the staging
+  # repository has the same commit hash in both repositories. There may be tags
+  # in the mirror that are not present in staging; this just means that
+  # upstream is more enthusiastic than we are about removing old tags. Tags
+  # that are in staging, but not already in the mirror, will be pushed to the
+  # mirror.
+
+  printf "isabelle-mirror: checking tag consistency...\n"
+  check_tags_consistent "$IM_MIRROR_SUBDIR" "$IM_STAGING_SUBDIR"
+
+  # Check that the staging branch builds on the commits already in the mirror
+  # branch, i.e. that the head commit in the mirror branch is an ancestor of
+  # the head commit of the staging branch.
+
+  printf "isabelle-mirror: checking history consistency...\n"
+  check_history_consistent "$IM_MIRROR_SUBDIR" "$IM_MIRROR_BRANCH" \
+    "$IM_STAGING_SUBDIR" "$IM_STAGING_BRANCH"
+
+  # Finally, we're ready to push.
+
+  printf "isabelle-mirror: pushing to mirror...\n"
+  (
+    cd "$IM_STAGING_SUBDIR"
+    git remote add origin "$IM_MIRROR_REMOTE"
+    git push origin "$IM_STAGING_BRANCH":"$IM_MIRROR_BRANCH"
+    printf "isabelle-mirror: pushing tags...\n"
+    git push --tags origin
+  )
+
+)
+
+printf "isabelle-mirror: cleaning up...\n"
+rm -rf "$IM_WORK_DIR"
+

@@ -244,4 +244,3 @@ function check_history_consistent () {
 
 printf "isabelle-mirror: cleaning up...\n"
 rm -rf "$IM_WORK_DIR"
-

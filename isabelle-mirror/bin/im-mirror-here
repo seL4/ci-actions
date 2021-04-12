@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Wrapper script to call isabelle-mirror.sh in a sensible way,
+# with locally cached copies of upstream and mirror repos.
+#
+# Usage: im-env <base-dir> im-mirror-here <upstream-name> <mirror-name> <mirror-branch>
+#
+# where:
+# - base-dir: Absolute path to a checkout of this repository.
+# - upstream-name: Name of local copy of upstream Mercurial repo.
+# - mirror-name: Name of local copy of target git mirror repo.
+# - mirror-branch: Target branch for git mirror.
+
+# Bash 'strict' mode.
+set -euo pipefail
+IFS=$'\n\t'
+
+IM_UPSTREAM_REPO_NAME="$1"
+IM_DOWNSTREAM_REPO_NAME="$2"
+IM_DOWNSTREAM_BRANCH="$3"
+
+if [ -z "$IM_DIR" ]; then
+  echo "im-mirror-here: IM_DIR environment was not set" >&2
+  exit 1
+fi
+
+if [ -z "$IM_UPSTREAM_REPO_NAME" ]; then
+  echo "im-mirror-here: I wasn't given an upstream repo name" >&2
+  exit 1
+fi
+
+if [ -z "$IM_DOWNSTREAM_REPO_NAME" ]; then
+  echo "im-mirror-here: I wasn't given a downstream repo name" >&2
+  exit 1
+fi
+
+if [ -z "$IM_DOWNSTREAM_BRANCH" ]; then
+  echo "im-mirror-here: I wasn't given a downstream branch name" >&2
+  exit 1
+fi
+
+IM_REPOS_DIR="$IM_DIR/repos"
+
+im-mirror-anywhere \
+  "$IM_REPOS_DIR/$IM_UPSTREAM_REPO_NAME" \
+  "$IM_REPOS_DIR/$IM_DOWNSTREAM_REPO_NAME" \
+  "$IM_DOWNSTREAM_BRANCH"

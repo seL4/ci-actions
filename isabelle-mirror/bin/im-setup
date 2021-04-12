@@ -1,0 +1,87 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Locally install dependencies required for producing git mirrors of Isabelle
+# Mercurial repositories.
+#
+# Usage: im-env <base-dir> im-setup
+#
+# where:
+# - base-dir: Absolute path to a checkout of this repository.
+#
+# Prerequisites:
+# - Python 2.7.12.
+# - Python development libraries and tools.
+# - Git.
+#
+# For reasons explained in comments in isabelle-mirror.sh, we need very
+# specific versions of hg-git and mercurial, so this script maintains its own
+# local installations of these.
+
+# Bash 'strict' mode.
+# We use subshells to limit the scope of changes to the current working
+# directory, so `-e` is particularly important.
+set -euo pipefail
+IFS=$'\n\t'
+
+IM_MERCURIAL_VERSION="3.0.2"
+IM_DULWICH_VERSION="0.8.7"
+IM_HG_GIT_VERSION="0.6.1"
+
+if [ -z "$IM_DIR" ]; then
+  echo "im-setup: fatal: IM_DIR environment not set" >&2
+  exit 1
+fi
+
+IM_MERCURIAL_BASENAME="mercurial-${IM_MERCURIAL_VERSION}"
+IM_MERCURIAL_TAR_GZ="${IM_MERCURIAL_BASENAME}.tar.gz"
+IM_MERCURIAL_EXE="$IM_DIR/mercurial/$IM_MERCURIAL_BASENAME/hg"
+
+function install_mercurial () {
+  if [ ! -d "$IM_DIR/lib/mercurial" ]; then
+    printf "isabelle-mirror: installing mercurial...\n"
+    mkdir -p "$IM_DIR/lib/mercurial"
+    (
+      cd "$IM_DIR/lib/mercurial"
+      wget "https://www.mercurial-scm.org/release/$IM_MERCURIAL_TAR_GZ"
+      tar xzf "$IM_MERCURIAL_TAR_GZ"
+      rm "$IM_MERCURIAL_TAR_GZ"
+      ln -s "$IM_MERCURIAL_BASENAME/hg" hg
+      cd "$IM_MERCURIAL_BASENAME"
+      make local
+    )
+  fi
+}
+
+function install_dulwich () {
+  if [ ! -d "$IM_DIR/lib/dulwich" ]; then
+    printf "isabelle-mirror: installing dulwich...\n"
+    mkdir -p "$IM_DIR/lib"
+    (
+      cd "$IM_DIR/lib"
+      git clone --branch "dulwich-$IM_DULWICH_VERSION" \
+        "https://github.com/jelmer/dulwich.git"
+      cd dulwich
+      make
+    )
+  fi
+}
+
+function install_hg_git () {
+  if [ ! -d "$IM_DIR/lib/hg-git" ]; then
+    printf "isabelle-mirror: installing hg-git...\n"
+    mkdir -p "$IM_DIR/lib"
+    (
+      cd "$IM_DIR/lib"
+      hg-system clone -u "$IM_HG_GIT_VERSION" "https://foss.heptapod.net/mercurial/hg-git"
+    )
+  fi
+}
+
+install_mercurial
+install_dulwich
+install_hg_git
+

@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Push new changes from local copy to target git mirror repository.
+#
+# Usage: im-env <base-dir> im-push-downstream-git <local-name> <branch-name...>
+#
+# where:
+# - base-dir: Absolute path to a checkout of this repository.
+# - local-name: Name to use for a local copy of the git mirror.
+# - branch-name: Name of branch to push.
+
+# Bash 'strict' mode.
+set -euo pipefail
+IFS=$'\n\t'
+
+IM_LOCAL_NAME="$1"
+
+shift
+
+if [ -z "$IM_DIR" ]; then
+  echo "im-fetch-downstream-git: fatal: IM_DIR environment was not set" >&2
+  exit 1
+fi
+
+if [ -z "$IM_LOCAL_NAME" ]; then
+  echo "im-fetch-downstream-git: fatal: I wasn't given a local repository name" >&2
+  exit 1
+fi
+
+IM_REPOS_DIR="$IM_DIR/repos"
+
+printf "isabelle-mirror: pushing changes to mirror from: $IM_LOCAL_NAME\n"
+git -C "$IM_REPOS_DIR/$IM_LOCAL_NAME" push --tags origin "$@"

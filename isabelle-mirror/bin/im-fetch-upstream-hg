@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# Copyright 2016, Data61, CSIRO
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Fetch (or update) a local copy of the upstream Mercurial repository.
+#
+# Usage: im-env <base-dir> im-fetch-upstream-hg <local-name> <remote-url>
+#
+# where:
+# - base-dir: Absolute path to a checkout of this repository.
+# - remote-url: Remote URL the upstream Mercurial repository.
+# - local-name: Name to use for a local clone of the upstream repo.
+
+# Bash 'strict' mode.
+set -euo pipefail
+IFS=$'\n\t'
+
+IM_LOCAL_NAME="$1"
+IM_REMOTE_URL="$2"
+
+if [ -z "$IM_DIR" ]; then
+  echo "im-fetch-upstream-hg: fatal: IM_DIR environment was not set" >&2
+  exit 1
+fi
+
+if [ -z "$IM_LOCAL_NAME" ]; then
+  echo "im-fetch-upstream-hg: fatal: I wasn't given a local repository name" >&2
+  exit 1
+fi
+
+if [ -z "$IM_REMOTE_URL" ]; then
+  echo "im-fetch-upstream-hg: fatal: I wasn't given a remote repository" >&2
+  exit 1
+fi
+
+IM_REPOS_DIR="$IM_DIR/repos"
+IM_LOCAL_DIR="$IM_REPOS_DIR/$IM_LOCAL_NAME"
+
+printf "isabelle-mirror: fetching upstream: $IM_REMOTE_URL\n"
+
+function hg_loc () {
+  hg -R "$IM_LOCAL_DIR" "$@"
+}
+
+function clone_exists () {
+  (
+    set +e
+    IM_EXISTING_REMOTE=`hg_loc paths default 2>/dev/null`
+    if [ "$?" -ne 0 -o "$IM_EXISTING_REMOTE" != "$IM_REMOTE_URL" ]; then
+      exit 1
+    fi
+  )
+}
+
+if clone_exists; then
+  PATH="$IM_PATH_ORIG" hg_loc pull
+
+elif [ ! -d "$IM_LOCAL_DIR" ]; then
+  mkdir -p "$IM_REPOS_DIR"
+  (
+    cd "$IM_REPOS_DIR"
+    hg-system clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
+  )
+
+else
+  echo "im-fetch-upstream-hg: fatal: unexpected contents in $IM_LOCAL_DIR" >&2
+  exit 1
+fi

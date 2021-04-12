@@ -1,0 +1,20 @@
+# Copyright 2021, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Scheduled Isabelle Mirror action
+
+name: Isabelle Mirror
+
+on:
+  schedule:
+    - '3 2 * * *'
+
+jobs:
+  isabelle-mirror:
+    name: 'Isabelle Mirror'
+    runs-on: ubuntu-latest
+    env:
+      ISA_MIRROR_TOKEN: ${{ secrets.ISA_MIRROR_TOKEN }}
+    steps:
+    - uses: seL4/ci-actions/isabelle-mirror@master

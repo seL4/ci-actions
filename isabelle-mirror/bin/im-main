@@ -32,20 +32,11 @@ fi
 ISA_AFP_BASE="https://foss.heptapod.net/isa-afp"
 
 im-fetch-upstream-hg    isabelle         "http://isabelle.in.tum.de/repos/isabelle"
-im-fetch-upstream-hg    afp-devel        "$ISA_AFP_BASE/afp-devel"
-im-fetch-upstream-hg    afp-2019         "$ISA_AFP_BASE/afp-2019"
-im-fetch-upstream-hg    afp-2020         "$ISA_AFP_BASE/afp-2020"
 
 im-fetch-downstream-git isabelle-mirror  "$IM_MIRROR_URL_BASE/sel4/isabelle.git"
-im-fetch-downstream-git afp-mirror       "$IM_MIRROR_URL_BASE/sel4proj/afp.git"
 
-im-mirror-here isabelle         isabelle-mirror master
-im-mirror-here afp-devel        afp-mirror      master
-im-mirror-here afp-2019         afp-mirror      upstream-afp-2019
-im-mirror-here afp-2020         afp-mirror      upstream-afp-2020
+im-mirror-here          isabelle         isabelle-mirror master
 
-im-push-downstream-git isabelle-mirror master
-im-push-downstream-git afp-mirror      master upstream-afp-2019 upstream-afp-2020
+im-push-downstream-git  isabelle-mirror  master
 
 printf "isabelle-mirror: done!\n"
-

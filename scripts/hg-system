@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 #
+# For the isabelle-mirror action:
+#
 # Run system mercurial with:
 # - built-in bookmarks extension.
 # - clone bundling disabled.
@@ -14,7 +16,7 @@
 # We disable sparse rev-logs for compatibility with our local installation
 # of an old version of hg.
 
-PATH="$IM_PATH_ORIG" exec hg \
+PATH="$IM_PATH_ORIG" exec /usr/bin/hg \
   --config "ui.clonebundles=false" \
   --config "extensions.hgext.bookmarks=" \
   --config "format.sparse-revlog=false" \

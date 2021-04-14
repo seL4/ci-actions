@@ -4,7 +4,7 @@
 
 name: 'thylint'
 description: 'Runs the thylint tool on pull requests'
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   disable:

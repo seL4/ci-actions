@@ -7,7 +7,7 @@ description: |
   Runs the preprocess check on pull requests for the seL4 repository.
   The prepocess check succeeds if the preprocessed C source did not
   change for any of the verified seL4 configurations.
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   L4V_ARCH:

@@ -4,7 +4,7 @@
 
 name: 'Style'
 description: 'Runs coding style checks of the seL4 Foundation'
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   action_name:

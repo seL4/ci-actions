@@ -4,7 +4,7 @@
 
 name: 'License Check'
 description: 'Runs the FSFE reuse license tool'
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   action_name:

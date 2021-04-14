@@ -4,7 +4,7 @@
 
 name: 'Style'
 description: 'Runs check for bashisms on shell scripts'
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   action_name:

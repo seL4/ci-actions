@@ -5,7 +5,7 @@
 name: 'Proofs'
 description: |
   Runs the l4v proofs. Currently only the session CRefine.
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   L4V_ARCH:

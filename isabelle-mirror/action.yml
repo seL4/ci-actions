@@ -4,7 +4,7 @@
 
 name: 'Isabelle Mirror'
 description: 'Mirrors the upstream Isabelle repository to git'
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   action_name:

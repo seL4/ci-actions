@@ -6,7 +6,7 @@ name: 'Git Diff Check'
 description: |
   Runs git diff --check to check for trailing whitespace and
   merge conflict markers.
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   action_name:

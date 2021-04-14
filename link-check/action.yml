@@ -4,7 +4,7 @@
 
 name: 'Link Check'
 description: 'Check links in .md and .html files'
-author: Gerwin Klein <gerwin.klein@csiro.au>
+author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
   dir:

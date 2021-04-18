@@ -4,11 +4,11 @@
 
 # Scheduled Isabelle Mirror action
 
-name: Isabelle Mirror
+name: 'Isabelle Mirror'
 
 on:
   schedule:
-    - '3 2 * * *'
+    - cron: '3 2 * * *'
 
 jobs:
   isabelle-mirror:

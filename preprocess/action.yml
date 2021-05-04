@@ -14,10 +14,14 @@ inputs:
     description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
     required: true
 
+  L4V_FEATURES:
+    description: 'Additional features to include. Empty ("") or "MCS".'
+    required: false
+
   action_name:
     description: 'internal -- do not use'
     required: false
-    default: 'gitlint'
+    default: 'preprocess'
 
 runs:
   using: 'docker'

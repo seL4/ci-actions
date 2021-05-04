@@ -12,6 +12,7 @@ set -e
 # required parameters:
 TEST_REF="${GITHUB_REF}"
 export L4V_ARCH="${INPUT_L4V_ARCH}"
+export L4V_FEATURES="${INPUT_L4V_FEATURES}"
 
 # actions:
 echo "::group::Setting up"

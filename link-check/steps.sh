@@ -7,6 +7,8 @@
 set -e
 
 echo "::group::Setting up"
+mkdir -p /repo
+cd /repo
 checkout.sh
 echo "::endgroup::"
 

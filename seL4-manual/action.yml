@@ -1,0 +1,18 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4 Manual'
+description: |
+  Builds the seL4 Manual.
+author: Gerwin Klein <kleing@proofcraft.systems>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'seL4-manual'
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/sel4-manual:latest'

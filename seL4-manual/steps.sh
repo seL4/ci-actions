@@ -17,6 +17,7 @@ echo "::endgroup::"
 # start test
 
 cd manual
+make markdown
 # set draft mode:
 sed -i '~'"s/%\\\\Drafttrue/\\\\Drafttrue/" manual.tex
 make

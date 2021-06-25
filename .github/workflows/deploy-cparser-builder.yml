@@ -1,0 +1,30 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Build and push link-check docker image on changes to relevant files
+
+name: Deploy
+
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - 'scripts/**'
+    - 'docker/**'
+
+jobs:
+  docker:
+    name: Docker (C Parser Builder)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/build-push-action@v1
+      with:
+        dockerfile: docker/cparser-builder.dockerfile
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: sel4/cparser-builder
+        tags: latest
+        add_git_labels: true

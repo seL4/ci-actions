@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# Build and push link-check docker image on changes to relevant files
+# Build and push docker image on changes to relevant files
 
 name: Deploy
 

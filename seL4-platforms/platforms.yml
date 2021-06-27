@@ -1,0 +1,278 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# Hardware and simulation platform definitions for seL4 builds.
+
+modes: [32, 64]
+architectures: [x86, arm, riscv]
+
+# platform-key:
+#     arch: one of architectures; required
+#     modes: list of modes; non-empty; required
+#     smp: list of modes; optional (null = empty)
+#     aarch_hyp: list of modes; optional (null = empty)
+#     platform: name; required
+#     image_platform: name; optional
+#     simulation_binary: string; optional
+#     march: string; optional
+#     req: string; optional
+#     disabled: optional; (null = false)
+
+platforms:
+  SPIKE32:
+    arch: riscv
+    modes: [32]
+    platform: spike
+    simlation_binary: riscv32
+    march: rv32imac
+
+  SPIKE64:
+    arch: riscv
+    modes: [64]
+    platform: spike
+    simulation_binary: riscv64
+    march: rv64imac
+
+  HIFIVE:
+    arch: riscv
+    modes: [64]
+    platform: hifive
+    req: hifive1
+    march: rv64imac
+
+  SABRE:
+    arch: arm
+    modes: [32]
+    smp: [32]
+    platform: sabre
+    image_platform: imx6
+    req: sabre-family
+    simulation_binary: sabre
+    march: armv7a
+
+  ROCKPRO64:
+    arch: arm
+    modes: [64]
+    platform: rockpro64
+    req: rockpro64-family
+    march: armv7a
+    disabled: true
+
+  ARMVIRT:
+    arch: arm
+    modes: [64]
+    platform: qemu-arm-virt
+    simulation_binary: qemu-arm-virt
+    march: armv8a
+
+  IMX8MQ_EVK:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: imx8mq-evk
+    req: imx8mq-family
+    march: armv8a
+
+  IMX8MM_EVK:
+    arch: arm
+    modes: [32, 64]
+    smp: [64]
+    platform: imx8mm-evk
+    req: imx8mm-family
+    march: armv8a
+
+  KZM:
+    arch: arm
+    modes: [32]
+    platform: kzm
+    image_platform: imx31
+    req: kzm
+    simulation_binary: kzm11
+    march: armv6a
+    disabled: true
+
+  OMAP3:
+    arch: arm
+    modes: [32]
+    platform: omap3
+    req: beagle
+    march: armv7a
+
+  AM335X_BONEBLACK:
+    arch: arm
+    modes: [32]
+    platform: am335x-boneblack
+    image_platform: am335x
+    req: bboneblack
+    march: armv8a
+
+  ODROID_C2:
+    arch: arm
+    modes: [64]
+    platform: odroidc2
+    req: odroidc2
+    march: armv8a
+
+  ODROID_X:
+    arch: arm
+    modes: [32]
+    platform: exynos4
+    req: odroid
+    march: armv7a
+    disabled: true
+
+  ODROID_XU:
+    arch: arm
+    modes: [32]
+    aarch_hyp: [32]
+    platform: exynos5410
+    req: odroid-xu
+    image_platform: exynos5
+    march: armv7a
+
+  ARNDALE:
+    arch: arm
+    modes: [32]
+    platform: exynos5250
+    req: arndale
+    image_platform: exynos5
+    march: armv7a
+
+  ODROID_XU4:
+    arch: arm
+    modes: [32]
+    aarch_hyp: [32]
+    platform: exynos5422
+    req: odroid-xu4-1
+    image_platform: exynos5
+    march: armv7a
+
+  ZYNQ7000:
+    arch: arm
+    modes: [32]
+    platform: zynq7000
+    req: zc706
+    simulation_binary: zc706
+    march: armv7a
+
+  ZYNQMP:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: zynqmp
+    req: zcu102
+    march: armv8a
+
+  HIKEY:
+    arch: arm
+    modes: [32, 64]
+    aarch_hyp: [64]
+    platform: hikey
+    req: hikey
+    march: armv8a
+
+  TK1:
+    arch: arm
+    modes: [32]
+    aarch_hyp: [32]
+    platform: tk1
+    req: jetson
+    march: armv7a
+
+  RPI3:
+    arch: arm
+    modes: [32]
+    platform: rpi3
+    req: rpi3
+    image_platform: bcm2837
+    march: armv8a
+
+  RPI4:
+    arch: arm
+    modes: [64]
+    platform: rpi4
+    req: rpi4
+    image_platform: bcm2711
+    march: armv8a
+
+  TX1:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: tx1
+    req: jetson tx1 family
+    march: armv8a
+
+  TX2:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: tx2
+    req: tx2_family
+    march: armv8a
+
+  APQ8064:
+    arch: arm
+    modes: [32]
+    platform: apq8064
+    req: inforce
+    image_platform: inforce
+    march: armv7a
+
+  WANDQ:
+    arch: arm
+    modes: [32]
+    platform: wandq
+    image_platform: imx6
+
+  ALLWINNER20:
+    arch: arm
+    modes: [32]
+    platform: allwinner20
+
+  IMX7SABRE:
+    arch: arm
+    modes: [32]
+    platform: imx7sabre
+    req: imx7
+    image_platform: imx7
+
+  PC99:
+    arch: x86
+    modes: [32, 64]
+    smp: [32, 64]
+    platform: x86_64
+    req: x64
+    simulation_binary: x86
+    march: nehalem
+
+unsupported_platforms:
+# tx1 - scheduler accuracy fails, problem with clk rate in kernel or timestamp
+# at user level?
+- TX1
+# zynq - scheduler accuracy fails, problem with clk rate in kernel or timestamp
+# at user level?
+- ZYNQ7000
+# not ported yet
+- AM335X_BONEBLACK
+- ODROID_X
+- ZYNQMP
+- IMX8MM_EVK
+- IMX8MQ_EVK
+- ROCKPRO64
+- ODROID_XU4
+
+# named machines
+# list of { req: platform } (re-using req as name)
+machines:
+- haswell1: PC99
+- haswell2: PC99
+- haswell3: PC99
+- haswell4: PC99
+- skylake: PC99
+- sandy: PC99

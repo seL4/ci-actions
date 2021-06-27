@@ -1,0 +1,19 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'CParser Run'
+description: |
+  Runs the C Parser on pull requests for the seL4 repository for a number
+  of architectures and configurations.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'cparser-run'
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/cparser-run:latest'

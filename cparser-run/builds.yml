@@ -1,0 +1,64 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# C parser runs need:
+#   - platform
+#   - mode if platform supports more than one
+#   - l4v_arch for running the parser; only the word size is relevant for this test
+#   - any other flags such as ARM_HYP, KernelVTX, MCS
+
+builds:
+- RISCV32:
+    platform: SPIKE32
+    l4v_arch: ARM # only word size relevant for this test
+
+- RISCV64:
+    platform: SPIKE64
+    l4v_arch: RISCV64
+
+- AARCH32:
+    platform: SABRE
+    l4v_arch: ARM
+
+- AARCH64:
+    platform: TX2
+    l4v_arch: X64 # only word size relevant
+
+- AARCH32HYP:
+    platform: TK1
+    l4v_arch: ARM_HYP
+    settings:
+      ARM_HYP: "TRUE"
+
+- AARCH64HYP:
+    platform: TX2
+    l4v_arch: X64 # only word size relevant
+    settings:
+      ARM_HYP: "TRUE"
+
+- IA32:
+    platform: PC99
+    mode: 32
+    l4v_arch: ARM # only word size relevant
+
+- IA32VTX:
+    platform: PC99
+    mode: 32
+    settings:
+      KernelVTX: "TRUE"
+    l4v_arch: ARM # only word size relevant
+
+- X64:
+    platform: PC99
+    mode: 64
+    l4v_arch: X64
+
+- X64VTX:
+    platform: PC99
+    mode: 64
+    settings:
+      KernelVTX: "TRUE"
+    l4v_arch: X64

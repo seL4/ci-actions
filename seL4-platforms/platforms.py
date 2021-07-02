@@ -260,10 +260,10 @@ all_modes = _yaml_platforms["modes"]
 platforms = {name: Platform(name, **plat)
              for (name, plat) in _yaml_platforms["platforms"].items()}
 
-unsupported = _yaml_platforms["unsupported_platforms"]
-for p in unsupported:
+mcs_unsupported = _yaml_platforms["mcs_unsupported_platforms"]
+for p in mcs_unsupported:
     if not platforms.get(p):
-        print(f"Warning: unknown platform '{p}' in unsupported list")
+        print(f"Warning: unknown platform '{p}' in mcs_unsupported list")
 
 machines = _yaml_platforms["machines"]
 
@@ -279,13 +279,13 @@ if __name__ == '__main__':
     pprint(platforms)
 
     print("\n# Unsupported:")
-    pprint(unsupported)
+    pprint(mcs_unsupported)
 
     print("\n# Machines:")
     pprint(machines)
 
     def sup(p: Platform) -> str:
-        return p.name + (" (unsupported)" if p.name in unsupported else "")
+        return p.name + (" (unsupported)" if p.name in mcs_unsupported else "")
 
     for arch in all_architectures:
         print(f"\n# all {arch}:")

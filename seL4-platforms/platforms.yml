@@ -26,7 +26,7 @@ platforms:
     arch: riscv
     modes: [32]
     platform: spike
-    simlation_binary: riscv32
+    simulation_binary: riscv32
     march: rv32imac
 
   SPIKE64:
@@ -229,11 +229,15 @@ platforms:
     modes: [32]
     platform: wandq
     image_platform: imx6
+    # march: ?
+    disabled: true
 
   ALLWINNER20:
     arch: arm
     modes: [32]
     platform: allwinner20
+    # march: ?
+    disabled: true
 
   IMX7SABRE:
     arch: arm
@@ -241,6 +245,8 @@ platforms:
     platform: imx7sabre
     req: imx7
     image_platform: imx7
+    # march: ?
+    disabled: true
 
   PC99:
     arch: x86
@@ -251,7 +257,7 @@ platforms:
     simulation_binary: x86
     march: nehalem
 
-unsupported_platforms:
+mcs_unsupported_platforms:
 # tx1 - scheduler accuracy fails, problem with clk rate in kernel or timestamp
 # at user level?
 - TX1

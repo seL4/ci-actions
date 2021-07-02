@@ -1,0 +1,32 @@
+# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Build and push cparser-run docker image on changes to relevant files
+
+name: Deploy
+
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - 'scripts/**'
+    - 'seL4-platforms/**'
+    - 'sel4test-sim/**'
+
+jobs:
+  docker:
+    name: Docker (seL4Test/Sim)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: docker/setup-buildx-action@v1
+    - uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - uses: docker/build-push-action@v2
+      with:
+        push: true
+        file: sel4test-sim/Dockerfile
+        tags: sel4/sel4test-sim:latest

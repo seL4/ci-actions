@@ -1,0 +1,36 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4Test/Simulation'
+description: |
+  Runs sel4test build and simulation for platforms that have a
+  simulation binary configured.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  arch:
+    description: Comma separated list of architectures to filter test configs on.
+    required: false
+  march:
+    description: Comma separated list of march flags to filter test configs on.
+    required: false
+  mode:
+    description: Comma separated list of modes (32/64) to filter test configs on.
+    required: false
+  compiler:
+    description: One of `{gcc, clang} to filter test configs on`
+    required: false
+  debug:
+    description: |
+      Comma separated list of debug levels from `{debug, release, verification}`
+      to filter test configs on. required: false
+    required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4test-sim'
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/sel4test-sim:latest'

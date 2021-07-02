@@ -1,0 +1,70 @@
+<!--
+     Copyright 2021, Proofcraft Pty Ltd
+
+     SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
+# seL4Test Simulation Runs
+
+This action builds and runs [sel4test] for the platforms that have a simulation
+binary configured. The test runs can be restricted to specific `arch`, `mode`,
+and `march` settings.
+
+It does so by doing a build from the default [sel4test-manifest] for multiple
+configurations, advancing the seL4 repository to the branch of the pull request
+the test is called on, and running `./simulate` on the output of the build.
+
+[sel4test]: https://github.com/seL4/sel4test
+[sel4test-manifest]: https://github.com/seL4/sel4test-manifest
+
+## Content
+
+The entry point is the script [steps.sh].
+
+[Build] and [platform] configurations are in the respective yaml and python
+files in this repository. See these files for config documentation.
+
+The main test driver is [build.py] in this directory.
+
+[steps.sh]: ./steps.sh
+[build.py]: ./build.py
+[platform]: ../seL4-platforms/platforms.yml
+[Build]: builds.yml
+
+## Arguments
+
+To add or modify build configurations, edit [builds.yml][Build] in this
+directory. To filter the build variants defined there for a specific run,
+use one or more of the following:
+
+- `arch`: comma separated list of architecture to filter on, e.g `arm, riscv`.
+- `march`: comma separated list of `march` flags, e.g. `armv6a, nehalem`
+- `mode`: one of `{32, 64}`
+- `compiler`: one of `{gcc, clang}`
+- `debug`: comma separated list of debug levels from `{debug, release,
+  verification}`  to filter on.
+
+## Example
+
+Put this into a `.github/workflows/` yaml file, e.g. `sel4test-sim.yml`:
+
+```yaml
+name: seL4Test/Sim
+
+on: [pull_request]
+
+jobs:
+  cparser:
+    name: Simulate
+    runs-on: ubuntu-latest
+    steps:
+    strategy:
+          matrix:
+            march: ["armv6a, armv8a", armv7a, nehalem, rv32imac, rv64imac]
+            compiler: [gcc, clang]
+    steps:
+    - uses: seL4/ci-actions/sel4test-sim@master
+      with:
+        march: ${{ matrix.march }}
+        compiler: ${{ matrix.compiler }}
+```

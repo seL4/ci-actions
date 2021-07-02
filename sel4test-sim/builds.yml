@@ -1,0 +1,58 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# default settings for simulation runs;
+# all settings available for builds are available here
+default:
+    # end marker for sel4test
+    success: "</testsuite>"
+    # default build system settings to pass in
+    settings:
+        SIMULATION: "TRUE"
+
+# generate build variants
+
+# this file does not specify a specific build list, so will default to
+# generating build variants from all platforms, filtered by the build filter
+variants:
+    debug: [debug, release]
+    compiler: [gcc, clang]
+    mode: [32, 64]
+
+# full variant scheme:
+# variants:
+#     debug: [debug, release, verification]
+#     smp: ['', SMP]
+#     hyp: ['', hyp]
+#     mcs: ['', MCS]
+#     compiler: [gcc, clang]
+#     mode: [32, 64]
+
+
+# only generate builds for platofrms that have `simulation_binary` set
+build-filter:
+    - simulation_binary: true
+
+
+# A build-filter is a list of dicts. A build passes the filter if it passes any
+# of the dicts. A build passes a dict, if it passes all of the criteria in the
+# dict. Available criteria are all values you can set in variants and all keys
+# used in builds. A build passes a key if the key is set in the build. A build
+# passes a variant list, if the build value is set and present in the list.
+
+# Example:
+
+# build-filter:
+#      - march: [armv7a]
+#        compiler: [clang, gcc]
+#        mode: [64]
+#      - arch: [x86, riscv]
+#        compiler: [gcc]
+#        mode: [32]
+#        simulation_binary:
+
+# This will select all 64-bit armv7a builds with gcc or clang and all 32-bit x86
+# and riscv builds on gcc with simulation_binary set.

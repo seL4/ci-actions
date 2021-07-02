@@ -376,6 +376,23 @@ def get_build_for_variant(platform, variant, default={}, filter_fun=lambda x: Tr
         return None
 
 
+def get_env_filters() -> list:
+    """Process input env variables and return a build filter (list of dict)"""
+
+    def get(var: str) -> Optional[str]:
+        return os.environ.get('INPUT_' + var.upper())
+
+    def to_list(string: str) -> list:
+        return [s.strip() for s in string.split(',')]
+
+    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform']
+    filter = {k: to_list(get(k)) for k in keys if get(k)}
+    # 'mode' expects integers:
+    if 'mode' in filter:
+        filter['mode'] = list(map(int, filter['mode']))
+    return [filter]
+
+
 def filtered(build: Build, build_filters: dict) -> Optional[Build]:
     """Return build if build matches filter criteria, otherwise None."""
 
@@ -392,7 +409,11 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                 if not build.get_platform().platform in v:
                     return False
             elif k == 'debug':
-                if not build.is_debug():
+                if build.is_debug() and not 'debug' in v:
+                    return False
+                if build.is_release() and not 'release' in v:
+                    return False
+                if build.is_verification() and not 'verification' in v:
                     return False
             elif k == 'compiler':
                 if build.is_clang():
@@ -440,6 +461,7 @@ def load_builds(file_name: str, filter_fun=lambda x: True) -> list:
 
     default_build = yml.get("default", {})
     build_filters = yml.get("build-filter", [])
+    env_filters = get_env_filters()
     all_variants = variants(yml.get("variants", {}))
     yml_builds = yml.get("builds", [])
 
@@ -447,8 +469,9 @@ def load_builds(file_name: str, filter_fun=lambda x: True) -> list:
         builds = []
         for p in platforms.keys():
             for v in all_variants:
-                build = filtered(get_build_for_variant(
-                    platforms[p], v, default_build, filter_fun), build_filters)
+                build = get_build_for_variant(platforms[p], v, default_build, filter_fun)
+                build = filtered(build, build_filters)
+                build = filtered(build, env_filters)
                 if build:
                     builds.append(build)
     else:

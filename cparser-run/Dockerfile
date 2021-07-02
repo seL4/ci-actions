@@ -10,6 +10,8 @@ FROM trustworthysystems/sel4-riscv
 
 COPY --from=sel4/cparser-builder /c-parser /c-parser
 
+RUN pip3 install junitparser strip-ansi
+
 COPY cparser-run/steps.sh \
      scripts/checkout-manifest.sh \
      scripts/fetch-branch.sh \
@@ -24,6 +26,7 @@ COPY cparser-run/builds.yml \
      cparser-run/build.py \
      seL4-platforms/platforms.yml \
      seL4-platforms/platforms.py \
+     seL4-platforms/builds.py \
      /builds/
 
 ARG WORKSPACE

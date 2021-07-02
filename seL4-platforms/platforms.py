@@ -5,12 +5,10 @@
 """
 Parse and represent platform and build definitions.
 
-This module contains two main classes, Platform and Build, which represent
-test platforms and build definitions respectively. Use VerBuild for build
-definitions with setting VERIFICATION=TRUE.
+The main class of this module is Platform, used to represent test platforms.
 
-The main data for both is represented in yaml files, see platforms.yml and
-(for instance) cparser-run/builds.yml for examples.
+The main data is represented in the yaml file platforms.yml, see there for the
+expect data format.
 
 The module loads platforms.yml on init, which includes available architectures,
 modes, platforms, a list of unsupported platforms, and a list of named machines.
@@ -24,15 +22,19 @@ import os
 
 # exported names:
 __all__ = [
-    "Platform", "PlatformValidationException", "Build", "VerBuild"
-    "load_builds", "load_ver_builds",
+    "Platform", "ValidationException", "load_yaml",
     "all_architectures", "all_modes", "platforms", "unsupported", "machines"
 ]
 
 
-class PlatformValidationException(Exception):
-    """Raised when a platform definition contains inconsistent or incomplete yaml data"""
-    pass
+class ValidationException(Exception):
+    """Raised when a platform or build definition contains inconsistent or incomplete data"""
+
+    def __init__(self, reason: str):
+        self.reason = reason
+
+    def __repr__(self) -> str:
+        return f"ValidationException({self.reason})"
 
 
 class Platform:
@@ -41,7 +43,7 @@ class Platform:
     See platforms.yml for a list of required and optional fields.
     """
 
-    def __init__(self, name: str, **entries: dict):
+    def __init__(self, name: str, entries: dict):
         """Construct a Platform object from a yaml dictionary.
 
         See platforms.yml for examples, and validate() for constraints.
@@ -54,9 +56,9 @@ class Platform:
         self.march = None
         self.req = None
         self.disabled = False
-        self.__dict__.update(entries)
+        self.__dict__.update(**entries)
         if not self.validate():
-            raise PlatformValidationException
+            raise ValidationException(f"Platform {name} validation")
 
     def validate(self) -> bool:
         """Validate the fields of this object for type and invariants"""
@@ -176,79 +178,10 @@ class Platform:
         }[self.arch]
 
 
-class Build:
-    """Represents a build definition.
-
-    Currently, this is mainly a name and a platform, with mode if not determined
-    by platform, and optional build settings.
-
-    See cparser-run/builds.yml for examples.
-    """
-
-    def __init__(self, **entries):
-        """Construct a Build from yaml dictionary, with default build settings."""
-        self.mode = None
-        self.settings = {}
-        [self.name] = entries.keys()
-        attribs = entries[self.name]
-        self.__dict__.update(**attribs)
-
-        p = self.get_platform()
-        m = self.get_mode()
-        if p.arch != "x86":
-            self.settings[p.cmake_toolchain_setting(m)] = "TRUE"
-        self.settings["PLATFORM"] = p.get_platform(m)
-        # somewhat misnamed now; sets test output to parsable xml:
-        self.settings["BAMBOO"] = "TRUE"
-        self.files = p.image_names(m, "sel4test-driver")
-
-    def set_verification(self):
-        """Make this a verification build"""
-        self.settings["VERIFICATION"] = "TRUE"
-
-    def get_platform(self) -> Platform:
-        """Return the Platform object for this build definition."""
-        return platforms[self.platform]
-
-    def get_mode(self) -> Optional[int]:
-        """Return the mode (32/64) for this build; taken from platform if not defined"""
-        if not self.mode and self.get_platform().get_mode():
-            return self.get_platform().get_mode()
-        else:
-            return self.mode
-
-    def settings_args(self):
-        """Return the build settings as an argument list [-Dkey=val]"""
-        return [f"-D{key}={val}" for (key, val) in self.settings.items()]
-
-
-class VerBuild(Build):
-    """A verification build definition."""
-
-    def __init__(self, **entries):
-        """Construct a Build object and set verification to true."""
-        super().__init__(**entries)
-        self.set_verification()
-
-
 def load_yaml(file_name):
     """Load a yaml file"""
-    return yaml.safe_load(open(file_name, 'r'))
-
-
-def yaml_builds(file_name):
-    """Return the 'builds' entry of a yaml file"""
-    return load_yaml(file_name)["builds"]
-
-
-def load_builds(file_name):
-    """Load a yaml file as a list of Build objects"""
-    return [Build(**b) for b in yaml_builds(file_name)]
-
-
-def load_ver_builds(file_name):
-    """Load a yaml file as a list of VerBuild objects"""
-    return [VerBuild(**b) for b in yaml_builds(file_name)]
+    with open(file_name, 'r') as file:
+        return yaml.safe_load(file)
 
 
 # module init:
@@ -257,7 +190,7 @@ _yaml_platforms = load_yaml(os.path.dirname(__file__) + "/platforms.yml")
 all_architectures = _yaml_platforms["architectures"]
 all_modes = _yaml_platforms["modes"]
 
-platforms = {name: Platform(name, **plat)
+platforms = {name: Platform(name, plat)
              for (name, plat) in _yaml_platforms["platforms"].items()}
 
 mcs_unsupported = _yaml_platforms["mcs_unsupported_platforms"]

@@ -4,6 +4,11 @@
 
 ---
 
+# all of the builds are verification builds
+default:
+    settings:
+        VERIFICATION: "TRUE"
+
 # C parser runs need:
 #   - platform
 #   - mode if platform supports more than one

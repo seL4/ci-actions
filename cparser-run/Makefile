@@ -12,6 +12,9 @@ build:
 push: build
 	docker push $(IMG)
 
+run: build
+	docker run -e GITHUB_REPOSITORY -e GITHUB_REF -e GITHUB_WORKSPACE $(IMG)
+
 test: build
 	docker run -ti --entrypoint bash -e GITHUB_REPOSITORY -e GITHUB_REF \
 	  -e GITHUB_WORKSPACE $(IMG)

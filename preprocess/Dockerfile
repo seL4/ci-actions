@@ -15,10 +15,11 @@ COPY preprocess/make_munge.sh \
      preprocess/steps.sh \
      scripts/checkout-manifest.sh \
      scripts/fetch-pr.sh \
+     scripts/repo-util \
      /usr/bin/
 
 WORKDIR /usr/bin
-RUN chmod a+rx make_munge.sh test_munge.sh checkout-manifest.sh steps.sh
+RUN chmod a+rx make_munge.sh test_munge.sh checkout-manifest.sh repo-util steps.sh
 
 ARG WORKSPACE
 RUN mkdir -p ${WORKSPACE}

@@ -17,10 +17,11 @@ checkout-manifest.sh
 REPOS="$(pwd)"
 SEL4_REPO="${REPOS}/seL4"
 
-# currently this action only works for kernel PRs
-cd kernel
+cd $(repo-util path ${GITHUB_REPOSITORY})
 fetch-branch.sh
-cd ..
+cd - >/dev/null
+
+repo-util hashes
 echo "::endgroup::"
 
 # start test

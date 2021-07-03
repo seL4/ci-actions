@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+#
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+"""
+Utilities for `repo`.
+
+Prints path for GITHUB_REPOSITORY and shows hashes for all manifest repos +
+manifest itself.
+
+Uses git and repo as shell processes. Hopefully a more stable interface
+than trying to mess with repo python library directly.
+"""
+
+import subprocess
+import sys
+
+usage = "repo-util [path <path> | hashes]"
+
+
+def removesuffix(string: str, suffix: str) -> str:
+    """Like .removesuffix in python 3.9"""
+    if string.endswith(suffix):
+        return string[0:-len(suffix)]
+    else:
+        return string
+
+def add_manifest(projects: dict):
+    """Add the manifest repo itself as a project to the projects dict."""
+    try:
+        path = '.repo/manifests'
+        git_cmd = f"git -C {path} config --get remote.origin.url"
+        url = subprocess.check_output(git_cmd.split(' '), text=True).rstrip()
+        repo = removesuffix(url.split('/')[-1], '.git')
+        projects[repo] = path
+    except:
+        print('Error getting manifest repo. Not a `repo` checkout?', file=sys.stderr)
+        sys.exit(1)
+
+
+def get_projects() -> dict:
+    """Create dict from repo manifest; maps repo name to path."""
+    project_dict = {}
+    add_manifest(project_dict)
+    try:
+        projects = subprocess.check_output(['repo', 'list'], text=True)
+        for line in projects.splitlines():
+            path, repo = line.split(':')
+            project_dict[removesuffix(repo.strip(),'.git')] = path.strip()
+    except:
+        print("Failed to get project list from `repo`")
+        project_dict = {}
+
+    return project_dict
+
+
+def get_hash(path: str) -> str:
+    """Get git HEAD hash of repo at path."""
+    try:
+        return subprocess.check_output(['git', '-C', path, 'rev-parse', 'HEAD'], text=True).rstrip()
+    except:
+        print('Error getting hash', file=sys.stderr)
+        return ""
+
+
+def get_name(path: str, hash: str):
+    """Get a symbolic name (if available) of hash in repo at path.
+    Return empty string if no such name."""
+    try:
+        git_cmd = f"git -C {path} name-rev --name-only --no-undefined {hash}"
+        name = subprocess.check_output(git_cmd.split(' '), text=True).rstrip()
+        return f"({name})"
+    except:
+        return ""
+
+
+def show_project_hashes(projects: dict):
+    """Print all project repos with hash and symbolic (branch/tag) names."""
+    print('Manifest summary:')
+    print('-----------------')
+    indent = max([len(repo) for repo in projects])+2 if len(projects) > 0 else 0
+    for repo, path in projects.items():
+        hash = get_hash(path)[0:8]
+        print((repo+": ").rjust(indent) + hash + " " + get_name(path, hash))
+
+
+def show_all_hashes():
+    """Print repos, hashes and symbolic (branch/tag) names of current repo manifest."""
+    show_project_hashes(get_projects())
+
+
+def path_of(gh_repo: str, projects: dict) -> str:
+    """Get the path of a given repo in projects dict.
+    Accepts GITHUB_REPOSITORY-style references like seL4/seL4 (for repo "seL4")"""
+    repo = gh_repo.split('/')[-1]
+    return projects.get(repo)
+
+
+# main program:
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print(usage)
+        sys.exit(1)
+
+    if sys.argv[1] == 'hashes' and len(sys.argv) == 2:
+        show_all_hashes()
+        sys.exit(0)
+    elif sys.argv[1] == 'path' and len(sys.argv) == 3:
+        path = path_of(sys.argv[2], get_projects())
+        if path:
+            print(path)
+            sys.exit(0)
+        else:
+            print('unknown', file=sys.stderr)
+            sys.exit(1)
+    else:
+        print(usage)
+        sys.exit(1)

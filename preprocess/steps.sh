@@ -36,6 +36,8 @@ then
   cd ..
 fi
 
+repo-util hashes
+
 # provide precompiled c-parser
 cp -r /c-parser "${REPOS}/l4v/tools/"
 echo "::endgroup::"

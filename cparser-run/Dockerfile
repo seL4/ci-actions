@@ -13,10 +13,11 @@ COPY --from=sel4/cparser-builder /c-parser /c-parser
 COPY cparser-run/steps.sh \
      scripts/checkout-manifest.sh \
      scripts/fetch-branch.sh \
+     scripts/repo-util \
      /usr/bin/
 
 WORKDIR /usr/bin
-RUN chmod a+rx checkout-manifest.sh fetch-branch.sh steps.sh
+RUN chmod a+rx checkout-manifest.sh fetch-branch.sh steps.sh repo-util
 
 RUN mkdir /builds
 COPY cparser-run/builds.yml \

@@ -23,14 +23,8 @@ then
   cd ..
 fi
 
-if [ ${GITHUB_REPOSITORY} != ${GITHUB_REPOSITORY%/seL4} ]
-then
-  cd seL4/
-  echo "Testing seL4"
-else
-  cd l4v/
-  echo "Testing l4v"
-fi
+cd $(repo-util path ${GITHUB_REPOSITORY})
+echo "Testing ${GITHUB_REPOSITORY}"
 
 if [ -z ${GITHUB_BASE_REF} ]
 then
@@ -38,7 +32,9 @@ then
 else
   fetch-pr.sh
 fi
-cd ..
+cd - >/dev/null
+
+repo-util hashes
 
 # GitHub sets its own HOME, but we have .isabelle data pre-installed in the
 # Docker image

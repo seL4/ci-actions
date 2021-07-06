@@ -24,7 +24,7 @@ git config user.email > /dev/null || \
 git config color.ui > /dev/null || \
   git config --global color.ui false
 
-echo "Starting repo checkout.."
+echo "Starting repo checkout on branch ${REPO_BRANCH} with manifest ${REPO_MANIFEST}:"
 
 $REPO init --depth ${REPO_DEPTH} -m ${REPO_MANIFEST} -b ${REPO_BRANCH} -u "${MANIFEST_URL}"
 $REPO sync

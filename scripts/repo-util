@@ -12,6 +12,10 @@ manifest itself.
 
 Uses git and repo as shell processes. Hopefully a more stable interface
 than trying to mess with repo python library directly.
+
+Repo URLs are treated as case insensitive to line up with GitHub and Bitbucket
+behaviour. This means, keys in the `projects` dict are lower-case, but we keep
+the spelling for the name as value to reflect what is in the manifest.
 """
 
 import subprocess
@@ -34,7 +38,8 @@ def add_manifest(projects: dict):
         git_cmd = f"git -C {path} config --get remote.origin.url"
         url = subprocess.check_output(git_cmd.split(' '), text=True).rstrip()
         repo = removesuffix(url.split('/')[-1], '.git')
-        projects[repo] = path
+        # lower-case name as key to remain case insensitive; store manifest name as value
+        projects[repo.lower()] = (path, repo)
     except:
         print('Error getting manifest repo. Not a `repo` checkout?', file=sys.stderr)
         sys.exit(1)
@@ -48,7 +53,9 @@ def get_projects() -> dict:
         projects = subprocess.check_output(['repo', 'list'], text=True)
         for line in projects.splitlines():
             path, repo = line.split(':')
-            project_dict[removesuffix(repo.strip(),'.git')] = path.strip()
+            repo = removesuffix(repo.strip(),'.git')
+            # lower-case name as key to remain case insensitive; store manifest name as value
+            project_dict[repo.lower()] = (path.strip(), repo)
     except:
         print("Failed to get project list from `repo`")
         project_dict = {}
@@ -81,7 +88,7 @@ def show_project_hashes(projects: dict):
     print('Manifest summary:')
     print('-----------------')
     indent = max([len(repo) for repo in projects])+2 if len(projects) > 0 else 0
-    for repo, path in projects.items():
+    for (path, repo) in projects.values():
         hash = get_hash(path)[0:8]
         print((repo+": ").rjust(indent) + hash + " " + get_name(path, hash))
 
@@ -95,7 +102,7 @@ def path_of(gh_repo: str, projects: dict) -> str:
     """Get the path of a given repo in projects dict.
     Accepts GITHUB_REPOSITORY-style references like seL4/seL4 (for repo "seL4")"""
     repo = gh_repo.split('/')[-1]
-    return projects.get(repo)
+    return projects.get(repo.lower(), (None, None))[0]
 
 
 # main program:

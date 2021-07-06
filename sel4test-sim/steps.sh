@@ -20,6 +20,8 @@ SEL4_REPO="${REPOS}/seL4"
 cd $(repo-util path ${GITHUB_REPOSITORY})
 fetch-branch.sh
 cd - >/dev/null
+
+repo-util hashes
 echo "::endgroup::"
 
 # start test

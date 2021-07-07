@@ -1,0 +1,14 @@
+# Copyright 2021, Proofcraft Pty Lts
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'CAmkES Unit Tests'
+description: |
+  Runs unit tests for the `camkes-tool` repository.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+# no inputs
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/camkes-unit:latest'

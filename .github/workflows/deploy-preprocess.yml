@@ -12,7 +12,10 @@ on:
     - master
     paths:
     - 'scripts/**'
+    - 'docker/**'
     - 'preprocess/**'
+  repository_dispatch:
+    types: [cparser-deploy]
 
 jobs:
   docker:

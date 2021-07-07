@@ -10,8 +10,9 @@
 # The context of this Dockerfiles is the repo root (../)
 
 ARG WORKSPACE=/workspace
+ARG CP_DEST=/c-parser/standalone-parser
 
-FROM trustworthysystems/sel4
+FROM trustworthysystems/sel4 AS builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -33,9 +34,13 @@ ARG CPARSER_DIR=${WORKSPACE}/l4v/tools/c-parser
 WORKDIR ${CPARSER_DIR}
 RUN make standalone-cparser
 
-ARG CP_DEST=/c-parser/standalone-parser
+ARG CP_DEST
 RUN mkdir -p ${CP_DEST}
 WORKDIR ${CP_DEST}
 ARG CP_SRC=${CPARSER_DIR}/standalone-parser
 RUN cp ${CP_SRC}/c-parser .
 RUN cp -r ${CP_SRC}/ARM ${CP_SRC}/ARM_HYP ${CP_SRC}/RISCV64 ${CP_SRC}/X64 .
+
+FROM scratch
+ARG CP_DEST
+COPY --from=builder ${CP_DEST} ${CP_DEST}

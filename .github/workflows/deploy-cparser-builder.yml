@@ -13,6 +13,8 @@ on:
     paths:
     - 'scripts/**'
     - 'docker/**'
+  repository_dispatch:
+    types: [cparser-deploy]
 
 jobs:
   docker:
@@ -29,3 +31,7 @@ jobs:
         push: true
         file: docker/cparser-builder.dockerfile
         tags: sel4/cparser-builder:latest
+    - uses: peter-evans/repository-dispatch@v1
+      with:
+          token: ${{ secrets.ISA_MIRROR_TOKEN }}
+          event-type: cparser-build

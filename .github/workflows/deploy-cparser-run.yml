@@ -7,6 +7,9 @@
 name: Deploy
 
 on:
+  # testing
+  pull_request:
+
   push:
     branches:
     - master
@@ -30,6 +33,15 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - uses: docker/build-push-action@v2
       with:
-        push: true
+        push: false
+        file: docker/cparser-builder.dockerfile
+        tags: sel4/cparser-builder:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
+    - uses: docker/build-push-action@v2
+      with:
+        push: false # testing
         file: cparser-run/Dockerfile
         tags: sel4/cparser-run:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache

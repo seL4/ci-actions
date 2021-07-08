@@ -7,15 +7,10 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-    - master
-    paths:
-    - 'scripts/**'
-    - 'docker/**'
-    - 'preprocess/**'
+  # the real build trigger is in deploy-cparser-builder
   repository_dispatch:
-    types: [cparser-deploy]
+    types: [cparser-build]
+  workflow_dispatch:
 
 jobs:
   docker:

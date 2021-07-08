@@ -15,6 +15,8 @@ on:
     - 'docker/**'
     - 'seL4-platforms/**'
     - 'cparser-run/**'
+  repository_dispatch:
+    types: [cparser-deploy]
 
 jobs:
   docker:

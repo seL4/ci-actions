@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+
+# The GitHub action mostly starts up an AWS and hands over to there. For now we
+# keep an active ssh session during the test so that we get live logs.
+
+echo "::group::AWS"
+
+echo "Starting AWS instance..."
+aws ec2 run-instances --image-id ami-0cd8b8f8a84d89a14 --count 1 \
+                      --instance-type c5.4xlarge \
+                      --security-group-ids sg-0491b450a86520294 \
+                      --instance-market-options "MarketType=spot" \
+                      --instance-initiated-shutdown-behavior terminate > instance.txt
+
+ID=$(cat instance.txt | jq -r '.Instances[0].InstanceId')
+
+echo "Instance ID: ${ID}"
+echo "Pending, waiting for instance to be up..."
+
+aws ec2 wait instance-running --instance-ids ${ID}
+
+echo "Instance is running."
+
+IP=$(aws ec2 describe-instances --instance-ids ${ID} | \
+     jq -r '.Reservations[0].Instances[0].PublicIpAddress')
+
+echo "IP address ${IP}"
+
+echo "Waiting for sshd to come up"
+until nc -w5 -z ${IP} 22; do echo "."; sleep 3; done
+
+echo "::endgroup::"
+
+CI_BRANCH=master
+
+ssh -o StrictHostKeyChecking=no test-runner@${IP} \
+    "bash -c \"export INPUT_L4V_ARCH=${INPUT_L4V_ARCH}; \
+               export INPUT_MANIFEST=${INPUT_MANIFEST}; \
+               export INPUT_ISA_BRANCH=${INPUT_ISA_BRANCH}; \
+               export INPUT_SESSION=${INPUT_SESSION}; \
+               export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}; \
+               export GITHUB_REF=${GITHUH_REF}; \
+               export GITHUB_BASE_REF=${GITHUH_BASE_REF}; \
+               export GITHUB_WORKSPACE=/home/test-runner; \
+               ./run ${CI_BRANCH}\""
+
+# TODO: put this into a post-action step
+echo "Terminating AWS instance ${ID}"
+aws ec2 terminate-instances --instance-ids ${ID}

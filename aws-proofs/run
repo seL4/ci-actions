@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+
+# ./run [ci-actions-branch]
+#
+# This script is the entry point on the AWS instance.
+#
+# Currently, the VM image must be updated manually if this script changes.
+#
+# It clones the ci-actions repo and runs the test driver from there. Expects to
+# be running in /home/test-runner/ as the test-runner user. Input to the test
+# driver is via environment variables as in the docker steup.
+
+# Ultimate timeout in case anything goes wrong. GH runners will time out at 6h,
+# so we give it all of that plus a few minutes:
+sudo shutdown -h +365
+
+# Set up GH action repo:
+
+ACTION_DIR=ci-actions
+
+# get specified branch of CI actions repo
+mkdir ${ACTION_DIR}
+cd ${ACTION_DIR}
+
+REPO_URL="https://github.com/seL4/ci-actions.git"
+BRANCH=${1:-master}
+
+echo "Cloning ${REPO_URL}@${BRANCH}"
+git init -q .
+git remote add origin ${REPO_URL}
+git fetch -q --no-tags --depth 1 origin refs/heads/${BRANCH}
+git checkout -q ${BRANCH}
+
+cd ..
+
+# actual test run:
+${ACTION_DIR}/aws-proofs/vm-steps.sh

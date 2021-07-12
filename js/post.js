@@ -1,9 +1,9 @@
 /*
- * Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+ * Copyright 2021, Proofcraft Pty Ltd
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
 var run = require('./run')
 
-run.run('steps.sh');
+run.run('post-steps.sh');

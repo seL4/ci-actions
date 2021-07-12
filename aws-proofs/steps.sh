@@ -49,6 +49,4 @@ ssh -o StrictHostKeyChecking=no test-runner@${IP} \
                export GITHUB_WORKSPACE=/home/test-runner; \
                ./run ${CI_BRANCH}\""
 
-# TODO: put this into a post-action step
-echo "Terminating AWS instance ${ID}"
-aws ec2 terminate-instances --instance-ids ${ID}
+# instance termination is in post-steps.sh

@@ -9,6 +9,9 @@
 # keep an active ssh session during the test so that we get live logs.
 
 echo "::group::AWS"
+# fail on any error
+set -e
+
 aws configure set default.region us-east-2
 aws configure set default.output json
 
@@ -32,6 +35,7 @@ IP=$(aws ec2 describe-instances --instance-ids ${ID} | \
      jq -r '.Reservations[0].Instances[0].PublicIpAddress')
 
 echo "IP address ${IP}"
+if [ -z ${IP} ]; then exit 1; fi
 
 echo "Waiting for sshd to come up"
 until nc -w5 -z ${IP} 22; do echo "."; sleep 3; done

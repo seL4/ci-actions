@@ -18,6 +18,7 @@ aws configure set default.output json
 echo "Starting AWS instance..."
 aws ec2 run-instances --image-id ami-02c8221b1c83159b4 --count 1 \
                       --instance-type c5.4xlarge \
+                      --iam-instance-profile "Name=test-runner-role" \
                       --security-group-ids sg-0491b450a86520294 \
                       --instance-market-options "MarketType=spot" \
                       --instance-initiated-shutdown-behavior terminate > instance.txt

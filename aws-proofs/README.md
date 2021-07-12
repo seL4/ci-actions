@@ -26,6 +26,7 @@ The action expects the following two environment variables to be set.
 
 - `AWS_ACCESS_KEY_ID`: AWS user with sufficient rights to start and stop instances
 - `AWS_SECRET_ACCESS_KEY`: secret access key for that user
+- `AWS_SSH`: secret ssh key for `test-runner` user on AWS instance
 
 ## Example
 

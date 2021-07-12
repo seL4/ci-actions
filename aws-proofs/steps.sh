@@ -13,7 +13,7 @@ aws configure set default.region us-east-2
 aws configure set default.output json
 
 echo "Starting AWS instance..."
-aws ec2 run-instances --image-id ami-0cd8b8f8a84d89a14 --count 1 \
+aws ec2 run-instances --image-id ami-02c8221b1c83159b4 --count 1 \
                       --instance-type c5.4xlarge \
                       --security-group-ids sg-0491b450a86520294 \
                       --instance-market-options "MarketType=spot" \
@@ -35,6 +35,9 @@ echo "IP address ${IP}"
 
 echo "Waiting for sshd to come up"
 until nc -w5 -z ${IP} 22; do echo "."; sleep 3; done
+
+eval $(ssh-agent)
+ssh-add -q - <<< "${AWS_SSH}"
 
 echo "::endgroup::"
 

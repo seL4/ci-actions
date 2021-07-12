@@ -1,0 +1,31 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'AWS Proofs'
+description: |
+  Runs the l4v proofs on AWS.
+author: Gerwin Klein <gerwin.klein@proofcfraft.systems>
+
+inputs:
+  L4V_ARCH:
+    description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
+    required: true
+  session:
+    description: 'Which proof session to run (space-separated string)'
+    required: false
+  isa_branch:
+    description: 'Which branch/tag of the isabelle repository to use'
+    required: false
+  manifest:
+    description: "Which manifest file to use (default devel.xml)"
+    required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'aws-proofs'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'
+  post: '../js/post.js'

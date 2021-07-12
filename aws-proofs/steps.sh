@@ -9,6 +9,8 @@
 # keep an active ssh session during the test so that we get live logs.
 
 echo "::group::AWS"
+aws configure set default.region us-east-2
+aws configure set default.output json
 
 echo "Starting AWS instance..."
 aws ec2 run-instances --image-id ami-0cd8b8f8a84d89a14 --count 1 \

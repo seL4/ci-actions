@@ -45,6 +45,26 @@ repo-util hashes
 
 echo "Setting up Isabelle components"
 isabelle/bin/isabelle components -a
+
+CACHE_NAME=${INPUT_CACHE_NAME}
+if [ -n "${INPUT_CACHE_READ}" ] && [ -z "${CACHE_NAME}" ]
+then
+  # construct default cache name
+  BRANCH=${INPUT_ISA_BRANCH:-default}
+  MANIFEST=${INPUT_MANIFEST:-devel}
+  CACHE_NAME="${GITHUB_REPOSITORY}-${BRANCH}-${MANIFEST}-${INPUT_L4V_ARCH}"
+fi
+
+if [ -n ${CACHE_NAME} ]
+then
+  echo "Getting image cache ${CACHE_NAME}"
+  # it's Ok for this command to fail, cache might not yet exist
+  aws s3 cp "s3://isabelle-images/${CACHE_NAME}.tar.xz" - | tar -C ~/.isabelle -vJx || true
+else
+  echo "Skipping image cache read"
+fi
+
+
 echo "::endgroup::"
 
 export L4V_ARCH=${INPUT_L4V_ARCH}
@@ -67,6 +87,16 @@ else
   ./run_tests -v -x AutoCorresSEL4 || FAIL=1
 fi
 cd ..
+
+if [ -n "${CACHE_NAME}" ] && [ -n "${INPUT_CACHE_WRITE}" ]
+then
+  echo "Writing image cache ${CACHE_NAME}"
+  # compress not too much; s3 upload is fast and compression winnings are meager
+  tar -C ~/.isabelle -vc heaps/ | xz -T0 -3 - | \
+    aws s3 cp - "s3://isabelle-images/${CACHE_NAME}.tar.xz"
+else
+  echo "Skipping image cache write"
+fi
 
 # shut down test VM 1min after exiting this script
 sudo shutdown -h +1

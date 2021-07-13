@@ -16,7 +16,7 @@ aws configure set default.region us-east-2
 aws configure set default.output json
 
 echo "Starting AWS instance..."
-aws ec2 run-instances --image-id ami-02c8221b1c83159b4 --count 1 \
+aws ec2 run-instances --image-id ami-02109a93a0bf86295 --count 1 \
                       --instance-type c5.4xlarge \
                       --iam-instance-profile "Name=test-runner-role" \
                       --security-group-ids sg-0491b450a86520294 \
@@ -53,6 +53,9 @@ ssh -o StrictHostKeyChecking=no test-runner@${IP} \
                export INPUT_MANIFEST=${INPUT_MANIFEST}; \
                export INPUT_ISA_BRANCH=${INPUT_ISA_BRANCH}; \
                export INPUT_SESSION=${INPUT_SESSION}; \
+               export INPUT_CACHE_NAME=${INPUT_CACHE_NAME}; \
+               export INPUT_CACHE_READ=${INPUT_CACHE_READ}; \
+               export INPUT_CACHE_WRITE=${INPUT_CACHE_WRITE}; \
                export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}; \
                export GITHUB_REF=${GITHUH_REF}; \
                export GITHUB_BASE_REF=${GITHUH_BASE_REF}; \

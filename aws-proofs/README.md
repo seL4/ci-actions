@@ -14,11 +14,20 @@ automatically spins up and terminates the corresponding AWS instance.
 ## Arguments
 
 - `L4V_ARCH` (required): which architecture to run the proofs for. One of `ARM`,
-  `ARM_HYP`, `RISCV64`, `X64`
-- `session`: which session to run (e.g. `CRefine` or `ASpec`). Runs all sessions
-  if unset.
-- `isa-branch`: which branch of the Isabelle repo (e.g. `ts-2020`, default as in manifest)
-- `manifest`: which manifest file (e.g. `devel.xml`, `mcs.xml`, `default.xml`)
+                 `ARM_HYP`, `RISCV64`, `X64`
+- `session`:     which session to run (e.g. `CRefine` or `ASpec`, or `ASpec
+                 CRefine`, i.e. a space-separated string). Runs all sessions if
+                 unset.
+- `isa-branch`:  which branch of the Isabelle repo (e.g. `ts-2020`, default as in
+                 manifest)
+- `manifest`:    which manifest file (e.g. `devel.xml`, `mcs.xml`, `default.xml`)
+- `cache_read`:  whether to read Isabelle images from cache. Default true. Set to
+                 empty string to skip.
+- `cache_write`: whether to write Isabelle images to cache. Default true. Set to
+                 empty string to skip.
+- `cache_name`:  optional custom name for image cache. Should at least contain
+                 `L4V_ARCH`. Default is distinguishes separate caches for separate
+                 values of `isa-branch`, `manifest`, and `L4V_ARCH`.
 
 ## Environment
 
@@ -42,9 +51,9 @@ jobs:
     name: Proofs
     runs-on: ubuntu-latest
     strategy:
-          fail-fast: false
-          matrix:
-            arch: [ARM, ARM_HYP, RISCV64, X64]
+      fail-fast: false
+      matrix:
+        arch: [ARM, ARM_HYP, RISCV64, X64]
     steps:
     - uses: seL4/ci-actions/aws-proofs@master
       with:

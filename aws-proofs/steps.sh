@@ -62,4 +62,7 @@ ssh -o StrictHostKeyChecking=no test-runner@${IP} \
                export GITHUB_WORKSPACE=/home/test-runner; \
                ./run ${CI_BRANCH}\""
 
+# leave logs on GitHub runner for later artifact upload
+scp test-runner@${IP}:logs.tar.xz .
+
 # instance termination is in post-steps.sh

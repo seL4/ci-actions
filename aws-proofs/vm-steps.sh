@@ -98,7 +98,12 @@ else
   echo "Skipping image cache write"
 fi
 
-# shut down test VM 1min after exiting this script
-sudo shutdown -h +1
+# bundle up logs for artifact upload outside the VM
+# xz compression does help even if there are many .gz files in this set
+cd ~/.isabelle/heaps
+tar -Jcf ~/logs.tar.xz */log/*
+
+# shut down VM 5 min after exiting (leave some time for log upload)
+sudo shutdown -h +5
 
 exit $FAIL

@@ -36,6 +36,7 @@ The action expects the following two environment variables to be set.
 - `AWS_ACCESS_KEY_ID`: AWS user with sufficient rights to start and stop instances
 - `AWS_SECRET_ACCESS_KEY`: secret access key for that user
 - `AWS_SSH`: secret ssh key for `test-runner` user on AWS instance
+- `GH_HEAD_REF`: the head of the pull request, if a pull request target
 
 ## Example
 
@@ -62,6 +63,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SSH: ${{ secrets.AWS_SSH }}
+        GH_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
 ```
 
 ## Build

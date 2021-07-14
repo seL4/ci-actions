@@ -46,7 +46,9 @@ ssh-add -q - <<< "${AWS_SSH}"
 
 if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ]
 then
-  GITHUB_REF=${GITHUB_HEAD_REF}
+  GH_REF=${GH_HEAD_REF}
+else
+  GH_REF=${GITHUB_REF}
 fi
 
 echo "::endgroup::"
@@ -62,7 +64,7 @@ ssh -o StrictHostKeyChecking=no test-runner@${IP} \
                export INPUT_CACHE_READ=${INPUT_CACHE_READ}; \
                export INPUT_CACHE_WRITE=${INPUT_CACHE_WRITE}; \
                export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}; \
-               export GITHUB_REF=${GITHUB_REF}; \
+               export GITHUB_REF=${GH_REF}; \
                export GITHUB_BASE_REF=${GITHUH_BASE_REF}; \
                export GITHUB_WORKSPACE=/home/test-runner; \
                ./run ${CI_BRANCH}\""

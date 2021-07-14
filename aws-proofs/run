@@ -30,7 +30,7 @@ mkdir ${ACTION_DIR}
 cd ${ACTION_DIR}
 
 REPO_URL="https://github.com/seL4/ci-actions.git"
-BRANCH=${1:-master}
+BRANCH=${INPUT_CI_BRANCH:-master}
 
 echo "Cloning ${REPO_URL}@${BRANCH}"
 git init -q .

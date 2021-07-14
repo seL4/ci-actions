@@ -62,7 +62,7 @@ ssh -o StrictHostKeyChecking=no test-runner@${IP} \
                export INPUT_CACHE_READ=${INPUT_CACHE_READ}; \
                export INPUT_CACHE_WRITE=${INPUT_CACHE_WRITE}; \
                export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}; \
-               export GITHUB_REF=${GITHUH_REF}; \
+               export GITHUB_REF=${GITHUB_REF}; \
                export GITHUB_BASE_REF=${GITHUH_BASE_REF}; \
                export GITHUB_WORKSPACE=/home/test-runner; \
                ./run ${CI_BRANCH}\""

@@ -15,6 +15,8 @@
 # be running in /home/test-runner/ as the test-runner user. Input to the test
 # driver is via environment variables as in the docker steup.
 
+echo "::group::Action setup"
+
 # Ultimate timeout in case anything goes wrong. GH runners will time out at 6h,
 # so we give it all of that plus a few minutes:
 sudo shutdown -h +365
@@ -37,6 +39,8 @@ git fetch -q --no-tags --depth 1 origin refs/heads/${BRANCH}
 git checkout -q ${BRANCH}
 
 cd ..
+
+echo "::endgroup::"
 
 # actual test run:
 ${ACTION_DIR}/aws-proofs/vm-steps.sh

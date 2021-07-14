@@ -55,6 +55,7 @@ then
   CACHE_NAME="${GITHUB_REPOSITORY}-${BRANCH}-${MANIFEST}-${INPUT_L4V_ARCH}"
 fi
 
+echo "::group::Cache"
 if [ -n ${CACHE_NAME} ]
 then
   echo "Getting image cache ${CACHE_NAME}"
@@ -63,9 +64,11 @@ then
 else
   echo "Skipping image cache read"
 fi
-
+echo "::endgroup::"
 
 echo "::endgroup::"
+
+echo "::group::Proof run"
 
 export L4V_ARCH=${INPUT_L4V_ARCH}
 
@@ -88,6 +91,9 @@ else
 fi
 cd ..
 
+echo "::endgroup::"
+
+echo "::group::Cache and logs"
 if [ -n "${CACHE_NAME}" ] && [ -n "${INPUT_CACHE_WRITE}" ]
 then
   echo "Writing image cache ${CACHE_NAME}"
@@ -105,5 +111,6 @@ tar -Jcf ~/logs.tar.xz */log/*
 
 # shut down VM 5 min after exiting (leave some time for log upload)
 sudo shutdown -h +5
+echo "::endgroup::"
 
 exit $FAIL

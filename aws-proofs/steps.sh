@@ -44,6 +44,11 @@ until nc -w5 -z ${IP} 22; do echo "."; sleep 3; done
 eval $(ssh-agent)
 ssh-add -q - <<< "${AWS_SSH}"
 
+if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ]
+then
+  GITHUB_REF=${GITHUB_HEAD_REF}
+fi
+
 echo "::endgroup::"
 
 CI_BRANCH=master

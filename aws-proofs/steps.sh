@@ -46,7 +46,7 @@ ssh-add -q - <<< "${AWS_SSH}"
 
 if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ]
 then
-  GH_REF=${GH_HEAD_REF}
+  GH_REF=${GH_HEAD_SHA}
 else
   GH_REF=${GITHUB_REF}
 fi

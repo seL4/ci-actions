@@ -44,31 +44,34 @@ until nc -w5 -z ${IP} 22; do echo "."; sleep 3; done
 eval $(ssh-agent)
 ssh-add -q - <<< "${AWS_SSH}"
 
+# Prime GH runner with VM ssh host key. This does not gain any actual security,
+# because we have nothing to verify the key against. It only makes ssh/scp less chatty.
+mkdir -p ~/.ssh
+ssh-keyscan -t ecdsa ${IP} 2> /dev/null >> ~/.ssh/known_hosts
+
 if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ]
 then
-  GH_REF=${GH_HEAD_SHA}
-else
-  GH_REF=${GITHUB_REF}
+  GITHUB_REF=${GH_HEAD_SHA}
 fi
 
 echo "::endgroup::"
 
-CI_BRANCH=master
+INPUT_CI_BRANCH=master
 
-ssh -o StrictHostKeyChecking=no test-runner@${IP} \
-    "bash -c \"export INPUT_L4V_ARCH=${INPUT_L4V_ARCH}; \
-               export INPUT_MANIFEST=${INPUT_MANIFEST}; \
-               export INPUT_ISA_BRANCH=${INPUT_ISA_BRANCH}; \
-               export INPUT_SESSION=${INPUT_SESSION}; \
-               export INPUT_CACHE_NAME=${INPUT_CACHE_NAME}; \
-               export INPUT_CACHE_READ=${INPUT_CACHE_READ}; \
-               export INPUT_CACHE_WRITE=${INPUT_CACHE_WRITE}; \
-               export INPUT_SKIP_DUPS=${INPUT_SKIP_DUPS}; \
-               export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}; \
-               export GITHUB_REF=${GH_REF}; \
-               export GITHUB_BASE_REF=${GITHUH_BASE_REF}; \
-               export GITHUB_WORKSPACE=/home/test-runner; \
-               ./run ${CI_BRANCH}\""
+ssh -o SendEnv=INPUT_CI_BRANCH \
+    -o SendEnv=INPUT_L4V_ARCH \
+    -o SendEnv=INPUT_MANIFEST \
+    -o SendEnv=INPUT_ISA_BRANCH \
+    -o SendEnv=INPUT_SESSION \
+    -o SendEnv=INPUT_CACHE_NAME \
+    -o SendEnv=INPUT_CACHE_READ \
+    -o SendEnv=INPUT_CACHE_WRITE \
+    -o SendEnv=INPUT_SKIP_DUPS \
+    -o SendEnv=GITHUB_REPOSITORY \
+    -o SendEnv=GITHUB_REF \
+    -o SendEnv=GITHUB_BASE_REF \
+    -o SetEnv=GITHUB_WORKSPACE=/home/test-runner \
+    test-runner@${IP} ./run
 
 # leave logs on GitHub runner for later artifact upload
 scp test-runner@${IP}:logs.tar.xz .

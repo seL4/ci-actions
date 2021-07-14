@@ -16,7 +16,7 @@ aws configure set default.region us-east-2
 aws configure set default.output json
 
 echo "Starting AWS instance..."
-aws ec2 run-instances --image-id ami-02109a93a0bf86295 --count 1 \
+aws ec2 run-instances --image-id ami-0a1614a3e5ad44d6b --count 1 \
                       --instance-type c5.4xlarge \
                       --iam-instance-profile "Name=test-runner-role" \
                       --security-group-ids sg-0491b450a86520294 \

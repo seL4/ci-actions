@@ -71,6 +71,7 @@ echo "::endgroup::"
 echo "::group::Proof run"
 
 export L4V_ARCH=${INPUT_L4V_ARCH}
+export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 
 FAIL=0
 

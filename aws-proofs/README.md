@@ -28,6 +28,9 @@ automatically spins up and terminates the corresponding AWS instance.
 - `cache_name`:  optional custom name for image cache. Should at least contain
                  `L4V_ARCH`. Default is distinguishes separate caches for separate
                  values of `isa-branch`, `manifest`, and `L4V_ARCH`.
+- `skip_dups`:   skip duplicated proofs (default true).
+                 Set to empty string to also run proofs that are already checked
+                 in other proof sessions.
 
 ## Environment
 

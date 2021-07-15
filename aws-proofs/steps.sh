@@ -63,6 +63,7 @@ ssh -o StrictHostKeyChecking=no test-runner@${IP} \
                export INPUT_CACHE_NAME=${INPUT_CACHE_NAME}; \
                export INPUT_CACHE_READ=${INPUT_CACHE_READ}; \
                export INPUT_CACHE_WRITE=${INPUT_CACHE_WRITE}; \
+               export INPUT_SKIP_DUPS=${INPUT_SKIP_DUPS}; \
                export GITHUB_REPOSITORY=${GITHUB_REPOSITORY}; \
                export GITHUB_REF=${GH_REF}; \
                export GITHUB_BASE_REF=${GITHUH_BASE_REF}; \

@@ -107,7 +107,10 @@ fi
 # bundle up logs for artifact upload outside the VM
 # xz compression does help even if there are many .gz files in this set
 cd ~/.isabelle/heaps
-tar -Jcf ~/logs.tar.xz */log/*
+# usually one of the two globs below will not exist
+shopt -s nullglob
+# do not fail the test if log collection fails
+tar -Jcf ~/logs.tar.xz */log/* */*/log/* || touch ~/logs.tar.xz
 
 # shut down VM 5 min after exiting (leave some time for log upload)
 sudo shutdown -h +5

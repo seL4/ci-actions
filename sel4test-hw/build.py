@@ -33,6 +33,20 @@ def build_filter(build: Build) -> bool:
     if plat.no_hw_build:
         return False
 
+    if plat.arch == 'arm':
+        # Bamboo config says no MCS for arm_hyp 64:
+        if build.is_mcs() and build.is_hyp() and build.get_mode() == 64:
+            return False
+
+    if plat.arch == 'x86':
+        # Bamboo config says no VTX for SMP or verification
+        if build.is_hyp() and (build.is_smp() or build.is_verification()):
+            return False
+        # Bamboo config says no MCS for debug+SMP on x86_64
+        if build.is_mcs() and build.get_mode() == 64 and build.is_smp() and \
+           not build.is_release():
+            return False
+
     return True
 
 

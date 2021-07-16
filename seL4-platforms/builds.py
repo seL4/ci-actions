@@ -105,12 +105,7 @@ class Build:
         return not self.is_release() and not self.is_verification()
 
     def can_hyp(self) -> bool:
-        # Bamboo config says no MCS for arm_hyp 64 yet, and
-        # no VTX for SMP or verification
-        return not (
-            self.get_mode() == 64 and self.get_platform().arch == 'arm' and self.is_mcs() or
-            self.get_platform().name == 'PC99' and (self.is_smp() or self.is_verification())
-        ) and (
+        return (
             self.get_platform().name == 'PC99' or
             self.get_mode() in self.get_platform().aarch_hyp
         )
@@ -149,13 +144,7 @@ class Build:
         return not self.is_clang()
 
     def can_mcs(self) -> bool:
-        # Bamboo config says no MCS from arm_hyp 64 yet, and
-        # no MCS for debug+SMP on x86_64
-        return not (
-            self.get_platform().name in mcs_unsupported or
-            self.get_mode() == 64 and self.is_hyp() and self.get_platform().arch == 'arm' or
-            self.get_platform().name == 'PC99' and self.get_mode() == 64 and not self.is_release() and self.is_smp()
-        )
+        return not self.get_platform().name in mcs_unsupported
 
     def set_mcs(self):
         if not self.can_mcs():

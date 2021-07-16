@@ -123,6 +123,15 @@ platforms:
     req: odroidc2
     march: armv8a
 
+  ODROID_C4:
+    arch: arm
+    modes: [64]
+    platform: odroidc4
+    req: odroidc4
+    march: armv8a
+    disabled: true
+    no_hw_build: true
+
   ODROID_X:
     arch: arm
     modes: [32]

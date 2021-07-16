@@ -1,0 +1,15 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# see seltest-sim/builds.yml for full schema example
+
+variants:
+    debug: [debug, release, verification]
+    smp: ['', SMP]
+    hyp: ['', hyp]
+    mcs: ['', MCS]
+    compiler: [gcc, clang]
+    mode: [32, 64]

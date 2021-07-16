@@ -37,6 +37,10 @@ def build_filter(build: Build) -> bool:
         # Bamboo config says no MCS for arm_hyp 64:
         if build.is_mcs() and build.is_hyp() and build.get_mode() == 64:
             return False
+        # Bamboo says: don't build release for hikey when in aarch64 arm_hyp mode
+        if build.is_hyp() and build.get_mode() == 64 and build.is_release() and \
+           plat.name == 'HIKEY':
+            return False
 
     if plat.arch == 'x86':
         # Bamboo config says no VTX for SMP or verification

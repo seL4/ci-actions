@@ -283,7 +283,7 @@ platforms:
 mcs_unsupported_platforms:
 # tx1 - scheduler accuracy fails, problem with clk rate in kernel or timestamp
 # at user level?
-- TX1
+# - TX1
 # zynq - scheduler accuracy fails, problem with clk rate in kernel or timestamp
 # at user level?
 - ZYNQ7000

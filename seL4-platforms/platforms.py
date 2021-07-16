@@ -56,6 +56,7 @@ class Platform:
         self.march = None
         self.req = None
         self.disabled = False
+        self.no_hw_build = False
         self.__dict__.update(**entries)
         if not self.validate():
             raise ValidationException(f"Platform {name} validation")
@@ -87,7 +88,8 @@ class Platform:
             opt_str(self.simulation_binary) and \
             opt_str(self.march) and \
             opt_str(self.req) and \
-            isinstance(self.disabled, bool)
+            isinstance(self.disabled, bool) and \
+            isinstance(self.no_hw_build, bool)
 
     def __repr__(self):
         """Return a string representation of this object."""
@@ -106,6 +108,7 @@ class Platform:
             f"    march: {self.march}",
             f"    req: {self.req}",
             f"    disabled: {self.disabled}",
+            f"    no_hw_build: {self.no_hw_build}",
             "  }"
         ]])
         return result.getvalue()

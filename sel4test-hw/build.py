@@ -28,7 +28,12 @@ def run_build(manifest_dir: str, build: Build):
 
 
 def build_filter(build: Build) -> bool:
-    return not build.get_platform().disabled
+    plat = build.get_platform()
+
+    if plat.no_hw_build:
+        return False
+
+    return True
 
 
 # If called as main, run all builds from builds.yml

@@ -19,7 +19,8 @@ architectures: [x86, arm, riscv]
 #     simulation_binary: string; optional
 #     march: string; optional
 #     req: string; optional
-#     disabled: optional; (null = false)
+#     disabled: optional; (null = false); no hw test on this platform
+#     no_hw_build: optional; (null = false); no hw build for this platform
 
 platforms:
   SPIKE32:
@@ -28,6 +29,8 @@ platforms:
     platform: spike
     simulation_binary: riscv32
     march: rv32imac
+    disabled: true
+    no_hw_build: true
 
   SPIKE64:
     arch: riscv
@@ -35,6 +38,8 @@ platforms:
     platform: spike
     simulation_binary: riscv64
     march: rv64imac
+    disabled: true
+    no_hw_build: true
 
   HIFIVE:
     arch: riscv
@@ -67,6 +72,8 @@ platforms:
     platform: qemu-arm-virt
     simulation_binary: qemu-arm-virt
     march: armv8a
+    disabled: true
+    no_hw_build: true
 
   IMX8MQ_EVK:
     arch: arm
@@ -140,6 +147,7 @@ platforms:
     req: arndale
     image_platform: exynos5
     march: armv7a
+    no_hw_build: true
 
   ODROID_XU4:
     arch: arm
@@ -197,6 +205,7 @@ platforms:
     req: rpi4
     image_platform: bcm2711
     march: armv8a
+    no_hw_build: true
 
   TX1:
     arch: arm
@@ -223,6 +232,7 @@ platforms:
     req: inforce
     image_platform: inforce
     march: armv7a
+    no_hw_build: true
 
   WANDQ:
     arch: arm
@@ -231,6 +241,7 @@ platforms:
     image_platform: imx6
     # march: ?
     disabled: true
+    no_hw_build: true
 
   ALLWINNER20:
     arch: arm
@@ -238,6 +249,7 @@ platforms:
     platform: allwinner20
     # march: ?
     disabled: true
+    no_hw_build: true
 
   IMX7SABRE:
     arch: arm
@@ -247,6 +259,7 @@ platforms:
     image_platform: imx7
     # march: ?
     disabled: true
+    no_hw_build: true
 
   PC99:
     arch: x86

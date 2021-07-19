@@ -1,0 +1,37 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+variants:
+    app:
+    - capabilities
+    - dynamic-1
+    - dynamic-2
+    - dynamic-3
+    - dynamic-4
+    - hello-camkes-0
+    - hello-camkes-1
+    - hello-camkes-2
+    - hello-camkes-timer
+    - hello-world
+    - interrupts
+    - ipc
+    - mapping
+    - notifications
+    - untyped
+    - threads
+    - fault-handlers
+    - mcs
+    # disabled until they can be simulated
+    # - camkes-vm-linux
+    # - camkes-vm-crossvm
+
+builds:
+  - pc99:
+      platform: PC99
+      mode: 64
+
+  - zynq7000:
+      platform: ZYNQ7000

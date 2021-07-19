@@ -1,0 +1,26 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4 Tutorials'
+description: |
+  Runs the seL4 Tutorial test suite.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  arch:
+    description: Comma separated list of archiectures to filter test configs on.
+    required: false
+  name:
+    description: Comma separated list of build names to filter build list on.
+    required: false
+  app:
+    description: Comma separated list of app names to filter build list on.
+    required: false
+  matrix:
+    description: Set to true to dump build matrix only
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/tutorials:latest'

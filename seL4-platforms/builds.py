@@ -46,6 +46,7 @@ class Build:
     def __init__(self, entries: dict, default={}):
         """Construct a Build from yaml dictionary. Accept optional default build attributes."""
         self.mode = None
+        self.app = None
         self.settings = {}
         [self.name] = entries.keys()
         attribs = copy.deepcopy(default)
@@ -58,6 +59,10 @@ class Build:
                 if not k in self.settings:
                     self.settings[k] = v
 
+        if self.get_mode():
+            self.update_settings()
+
+    def update_settings(self):
         p = self.get_platform()
         m = self.get_mode()
         if p.arch != "x86":
@@ -316,25 +321,36 @@ def variant_name(variant):
     return "_".join([str(v) for _, v in variant if v != ''])
 
 
-def get_build_for_variant(platform, variant, default={}, filter_fun=lambda x: True):
-    """Make a build definition from a supplied platform and a build variant.
-
-    Optionally takes a dict of defaults and a filter/validation function to
-    set default attributes and and build settings, and to reject specific
-    build settings combinations respectively."""
-
-    var_dict = dict(variant)
-    mode = default.get("mode") or var_dict.get("mode")
-    if mode and not mode in platform.modes:
-        return None
-    mode = mode or platform.get_mode()
-    if not mode:
-        return None
+def build_for_platform(platform, default={}):
+    """Return a standard build for a given platform, apply optional defaults."""
 
     the_build = copy.deepcopy(default)
-    the_build["mode"] = mode
-    the_build["platform"] = platform.name
-    build = Build({platform.name+"_"+variant_name(variant): the_build})
+    the_build["platform"] = platform
+
+    return Build({platform: the_build})
+
+
+def build_for_variant(base_build: Build, variant, filter_fun=lambda x: True) -> Optional[Build]:
+    """Make a build definition from a supplied base build and a build variant.
+
+    Optionally takes a filter/validation function to reject specific build
+    settings combinations."""
+
+    if not base_build:
+        return None
+
+    var_dict = dict(variant)
+
+    build = copy.deepcopy(base_build)
+    build.name = build.name + "_" + variant_name(variant)
+
+    mode = var_dict.get("mode") or build.get_mode()
+    if mode in build.get_platform().modes:
+        build.mode = mode
+    else:
+        return None
+
+    build.update_settings()
 
     try:
         for feature, val in variant:
@@ -353,16 +369,15 @@ def get_build_for_variant(platform, variant, default={}, filter_fun=lambda x: Tr
                 raise ValidationException
             elif feature == 'compiler' and val == 'clang':
                 build.set_clang()
+            elif feature == 'app':
+                build.app = val
             else:
                 pass
         build.validate()
     except ValidationException:
         return None
 
-    if filter_fun(build):
-        return build
-    else:
-        return None
+    return build if filter_fun(build) else None
 
 
 def get_env_filters() -> list:
@@ -455,20 +470,21 @@ def load_builds(file_name: str, filter_fun=lambda x: True) -> list:
     yml_builds = yml.get("builds", [])
 
     if yml_builds == []:
+        base_builds = [build_for_platform(p, default_build) for p in platforms.keys()]
+    else:
+        base_builds = [Build(b, default_build) for b in yml_builds]
+
+    if all_variants == []:
+        builds = [b for b in base_builds if b]
+    else:
         builds = []
-        for p in platforms.keys():
+        for b in base_builds:
             for v in all_variants:
-                build = get_build_for_variant(platforms[p], v, default_build, filter_fun)
+                build = build_for_variant(b, v, filter_fun)
                 build = filtered(build, build_filters)
                 build = filtered(build, env_filters)
                 if build:
                     builds.append(build)
-    else:
-        # TODO: would be nice to apply variants to base builds, not only platforms
-        if all_variants != []:
-            print("Warning: ignoring variants for explicit build list.")
-
-        builds = [Build(b, default_build) for b in yml_builds]
 
     return builds
 

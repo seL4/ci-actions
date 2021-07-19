@@ -414,7 +414,7 @@ def get_env_filters() -> list:
     def to_list(string: str) -> list:
         return [s.strip() for s in string.split(',')]
 
-    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform']
+    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform', 'name', 'app']
     filter = {k: to_list(get(k)) for k in keys if get(k)}
     # 'mode' expects integers:
     if 'mode' in filter:
@@ -425,7 +425,7 @@ def get_env_filters() -> list:
 def filtered(build: Build, build_filters: dict) -> Optional[Build]:
     """Return build if build matches filter criteria, otherwise None."""
 
-    def match_dict(build, f):
+    def match_dict(build: Build, f):
         """Return true if all criteria in the filter are true for this build."""
         for k, v in f.items():
             if k == 'arch':
@@ -462,6 +462,12 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                     return False
             elif k == 'hyp':
                 if v != '' and not build.is_hyp():
+                    return False
+            elif k == 'name':
+                if not build.name in v:
+                    return False
+            elif k == 'app':
+                if not build.app in v:
                     return False
             elif not vars(build.get_platform()).get(k):
                 return False

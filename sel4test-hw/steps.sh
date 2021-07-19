@@ -14,9 +14,6 @@ export REPO_MANIFEST="default.xml"
 export MANIFEST_URL="https://github.com/seL4/sel4test-manifest.git"
 checkout-manifest.sh
 
-REPOS="$(pwd)"
-SEL4_REPO="${REPOS}/seL4"
-
 cd $(repo-util path ${GITHUB_REPOSITORY})
 fetch-branch.sh
 cd - >/dev/null

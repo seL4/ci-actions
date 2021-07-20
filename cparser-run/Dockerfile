@@ -10,7 +10,7 @@ FROM trustworthysystems/sel4-riscv
 
 COPY --from=sel4/cparser-builder /c-parser /c-parser
 
-RUN pip3 install junitparser strip-ansi
+RUN pip3 install junitparser
 
 COPY cparser-run/steps.sh \
      scripts/checkout-manifest.sh \

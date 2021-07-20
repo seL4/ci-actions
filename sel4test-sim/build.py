@@ -8,7 +8,7 @@ Parse builds.yml and run sel4test build + simulation on each of the build defini
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds, default_junit_results
+from builds import Build, run_build_script, run_builds, load_builds, junit_results, sanitise_junit
 from pprint import pprint
 
 import os
@@ -18,14 +18,13 @@ import sys
 def run_simulation(manifest_dir: str, build: Build):
     """Run one simulation build and test."""
 
-    results = default_junit_results
     expect = f"\"{build.success}\""
 
     script = [
         ["../init-build.sh"] + build.settings_args(),
         ["ninja"],
         ["bash", "-c",
-         f"expect -c 'spawn ./simulate; set timeout 3000; expect {expect}' | tee {results}"]
+         f"expect -c 'spawn ./simulate; set timeout 3000; expect {expect}' | tee {junit_results}"]
     ]
 
     return run_build_script(manifest_dir, build.name, script, junit=True)

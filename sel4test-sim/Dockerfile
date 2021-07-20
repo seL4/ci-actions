@@ -8,7 +8,7 @@ ARG WORKSPACE=/workspace
 
 FROM trustworthysystems/sel4-riscv
 
-RUN pip3 install junitparser strip-ansi
+RUN pip3 install junitparser
 
 COPY sel4test-sim/steps.sh \
      scripts/checkout-manifest.sh \

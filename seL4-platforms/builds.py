@@ -15,9 +15,7 @@ them, `run_build_script` for a standard test driver frame, and
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
 from typing import Optional
-from io import StringIO
 from junitparser import JUnitXml
-from strip_ansi import strip_ansi
 
 import copy
 import os
@@ -27,12 +25,11 @@ import sys
 
 # exported names:
 __all__ = [
-    "Build", "load_builds", "run_builds", "run_build_script", "default_junit_results"
+    "Build", "load_builds", "run_builds", "run_build_script", "junit_results", "sanitise_junit"
 ]
 
 # where to expect jUnit results by default
-default_junit_results = 'results.xml'
-
+junit_results = 'results.xml'
 
 class Build:
     """Represents a build definition.
@@ -212,36 +209,33 @@ def run(args: list):
 def summarise_junit(file_path: str) -> bool:
     """Parse jUnit output and show a summary.
 
-    Preprocesses input to increase the chances of getting valid XML.
     Returns True if there were no failures or errors, raises exception
     on IOError or XML parse errors."""
 
-    with open(file_path, 'r') as file:
-        # Skip log text before and after the XML, escape some of the test output to get valid XML
-        lines = StringIO()
-        take = False
-        for line in file:
-            if line.strip() == '<testsuite>':
-                take = True
-            if take:
-                lines.write(line.replace('<<', '&lt;&lt;'))
-            if line.strip() == "</testsuite>":
-                break
+    xml = JUnitXml.fromfile(file_path)
 
-        xml = JUnitXml.fromstring(strip_ansi(lines.getvalue()))
+    print("")
+    print("Test summary")
+    print("------------")
+    print(f"tests:    {xml.tests}")
+    print(f"skipped:  {xml.skipped}")
+    print(f"failures: {xml.failures}")
+    print(f"errors:   {xml.errors}\n")
 
-        print("")
-        print("Test summary")
-        print("------------")
-        print(f"tests:    {xml.tests}")
-        print(f"skipped:  {xml.skipped}")
-        print(f"failures: {xml.failures}")
-        print(f"errors:   {xml.errors}\n")
-
-        return xml.failures == 0 and xml.errors == 0
+    return xml.failures == 0 and xml.errors == 0
 
 
-def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = False, junit_file: str = default_junit_results) -> bool:
+# where junit results are left after sanitising:
+parsed_junit_results = 'parsed_results.xml'
+
+# default script segment to sanitise junit results for sel4test et al
+# expects to run in build dir of a standard seL4 project setup
+sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_results.py",
+                  "-q", junit_results, parsed_junit_results]
+
+
+def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = False,
+                     junit_file: str = parsed_junit_results) -> bool:
     """Run a build script in a separate `build/` directory
 
     A build script is a list of commands, which itself is a list of command and
@@ -253,6 +247,7 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
 
     print(f"::group::{name}")
     print(f"-----------[ start test {name} ]-----------")
+    sys.stdout.flush()
 
     os.chdir(manifest_dir)
 
@@ -264,6 +259,9 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
 
     os.mkdir(build_dir)
     os.chdir(build_dir)
+
+    if junit:
+        script = script + [sanitise_junit]
 
     success = True
     try:
@@ -285,6 +283,7 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
     print("SUCCESS" if success else "FAILED")
     print(f"-----------[ end test {name} ]-----------\n")
     print("::endgroup::")
+    sys.stdout.flush()
 
     return success
 

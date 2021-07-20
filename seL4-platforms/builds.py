@@ -31,6 +31,15 @@ __all__ = [
 # where to expect jUnit results by default
 junit_results = 'results.xml'
 
+# colour codes
+ANSI_RESET = "\033[0m"
+ANSI_RED = "\033[31;1m"
+ANSI_GREEN = "\033[32m"
+ANSI_YELLOW = "\033[33m"
+ANSI_WHITE = "\033[37m"
+ANSI_BOLD = "\033[1m"
+
+
 class Build:
     """Represents a build definition.
 
@@ -192,7 +201,8 @@ class Build:
 def run(args: list):
     """Echo + run command with arguments; raise exception on exit != 0"""
 
-    print("+++ " + " ".join(args))
+    printc(ANSI_YELLOW, "+++ " + " ".join(args))
+    sys.stdout.flush()
     # Print output as it arrives. Some of the build commands take too long to
     # wait until all output is there. Keep stderr separate, but flush it.
     process = subprocess.Popen(args, text=True, stdout=subprocess.PIPE,
@@ -206,6 +216,10 @@ def run(args: list):
         raise subprocess.CalledProcessError(ret, args)
 
 
+def printc(color: str, content: str):
+    print(color + content + ANSI_RESET)
+
+
 def summarise_junit(file_path: str) -> bool:
     """Parse jUnit output and show a summary.
 
@@ -213,16 +227,23 @@ def summarise_junit(file_path: str) -> bool:
     on IOError or XML parse errors."""
 
     xml = JUnitXml.fromfile(file_path)
+    succeeded = xml.tests - (xml.failures + xml.errors + xml.skipped)
+    success = xml.failures == 0 and xml.errors == 0
 
-    print("")
-    print("Test summary")
-    print("------------")
-    print(f"tests:    {xml.tests}")
-    print(f"skipped:  {xml.skipped}")
-    print(f"failures: {xml.failures}")
-    print(f"errors:   {xml.errors}\n")
+    col = ANSI_GREEN if success else ANSI_RED
 
-    return xml.failures == 0 and xml.errors == 0
+    printc(col, "Test summary")
+    printc(col, "------------")
+    printc(ANSI_GREEN if success else "", f"succeeded: {succeeded}/{xml.tests}")
+    if xml.skipped > 0:
+        printc(ANSI_YELLOW, f"skipped:   {xml.skipped}")
+    if xml.failures > 0:
+        printc(ANSI_RED, f"failures:  {xml.failures}")
+    if xml.errors > 0:
+        printc(ANSI_RED, f"errors:    {xml.errors}")
+    print()
+
+    return success
 
 
 # where junit results are left after sanitising:
@@ -246,7 +267,7 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
     """
 
     print(f"::group::{name}")
-    print(f"-----------[ start test {name} ]-----------")
+    printc(ANSI_BOLD, f"-----------[ start test {name} ]-----------")
     sys.stdout.flush()
 
     os.chdir(manifest_dir)
@@ -274,15 +295,20 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
         try:
             success = summarise_junit(junit_file)
         except IOError:
-            print(f"Error reading {junit_file}")
+            printc(ANSI_RED, f"Error reading {junit_file}")
             success = False
         except:
-            print(f"Error parsing {junit_file}")
+            printc(ANSI_RED, f"Error parsing {junit_file}")
             success = False
 
-    print("SUCCESS" if success else "FAILED")
-    print(f"-----------[ end test {name} ]-----------\n")
+    printc(ANSI_BOLD, f"-----------[ end test {name} ]-----------")
     print("::endgroup::")
+    # after group, so that it's easier to scan for failed jobs
+    if success:
+        printc(ANSI_GREEN, f"{name} succeeded")
+    else:
+        printc(ANSI_RED, f"{name} FAILED")
+    print("")
     sys.stdout.flush()
 
     return success
@@ -498,14 +524,18 @@ def run_builds(builds: list, run_fun) -> int:
     and a Build, and run this build, returning true iff the build was successful.
     """
 
+    print()
+    sys.stdout.flush()
+
     manifest_dir = os.getcwd()
     successes = []
     fails = []
     for build in builds:
         (successes if run_fun(manifest_dir, build) else fails).append(build.name)
 
-    print("Successful tests: " + ", ".join(successes))
+    printc(ANSI_GREEN if fails == [] else "", "Successful tests: " + ", ".join(successes))
     if fails != []:
-        print("FAILED tests: " + ", ".join(fails))
+        print()
+        printc(ANSI_RED, "FAILED tests: " + ", ".join(fails))
 
     return 0 if fails == [] else 1

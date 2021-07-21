@@ -14,7 +14,7 @@ them, `run_build_script` for a standard test driver frame, and
 
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
-from typing import Optional
+from typing import Optional, List
 from junitparser import JUnitXml
 
 import copy
@@ -492,13 +492,17 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
     return None
 
 
-def load_builds(file_name: str, filter_fun=lambda x: True) -> list:
+def load_builds(file_name: Optional[str], filter_fun=lambda x: True,
+                yml: Optional[dict] = None) -> List[Build]:
     """Load a list of build definitions from yaml.
+
+    Use provided yaml dict, or if None, load from file. One of file_name, yml
+    must be not None.
 
     Applies defaults, variants, and build-filter from the yaml file.
     Takes an optional filtering function for removing unwanted builds."""
 
-    yml = load_yaml(file_name)
+    yml = yml or load_yaml(file_name)
 
     default_build = yml.get("default", {})
     build_filters = yml.get("build-filter", [])

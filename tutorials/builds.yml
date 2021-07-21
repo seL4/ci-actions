@@ -35,3 +35,14 @@ builds:
 
   - zynq7000:
       platform: ZYNQ7000
+
+disable_app_for:
+    PC99:
+        - hello-camkes-timer
+        - interrupts
+    ZYNQ7000:
+        - camkes-vm-linux
+        - camkes-vm-crossvm
+        - mapping
+        - notifications
+        - mcs

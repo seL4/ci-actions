@@ -1,0 +1,17 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+default:
+    success: '10sec'
+    settings:
+        LibSel4SerialServerColoredOutput: 'OFF'
+
+variants:
+    mode: [32, 64]
+    req: [sim, haswell3]
+
+build-filter:
+    - arch: [x86]

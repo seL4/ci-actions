@@ -53,6 +53,7 @@ class Build:
         """Construct a Build from yaml dictionary. Accept optional default build attributes."""
         self.mode = None
         self.app = None
+        self.req = None
         self.settings = {}
         [self.name] = entries.keys()
         attribs = copy.deepcopy(default)
@@ -77,6 +78,8 @@ class Build:
         # somewhat misnamed now; sets test output to parsable xml:
         self.settings["BAMBOO"] = "TRUE"
         self.files = p.image_names(m, "sel4test-driver")
+        if self.req == 'sim':
+            self.settings["SIMULATION"] = "TRUE"
 
     def get_platform(self) -> Platform:
         """Return the Platform object for this build definition."""
@@ -195,7 +198,8 @@ class Build:
     def __repr__(self) -> str:
         return \
             f"Build('{self.name}': " '{' \
-            f"'platform': {self.platform}, 'mode': {self.get_mode()}, 'settings': {self.settings}" '})'
+            f"'platform': {self.platform}, 'mode': {self.get_mode()}, " \
+            f"'req': {self.req}, 'app': {self.app}, 'settings': {self.settings}" '})'
 
 
 def run(args: list):
@@ -375,6 +379,7 @@ def build_for_variant(base_build: Build, variant, filter_fun=lambda x: True) -> 
     else:
         return None
 
+    # build.mode is now unique, more settings could apply
     build.update_settings()
 
     try:
@@ -396,6 +401,10 @@ def build_for_variant(base_build: Build, variant, filter_fun=lambda x: True) -> 
                 build.set_clang()
             elif feature == 'app':
                 build.app = val
+            elif feature == 'req':
+                build.req = val
+                # might change simulation or other settings
+                build.update_settings()
             else:
                 pass
         build.validate()
@@ -414,7 +423,7 @@ def get_env_filters() -> list:
     def to_list(string: str) -> list:
         return [s.strip() for s in string.split(',')]
 
-    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform', 'name', 'app']
+    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform', 'name', 'app', 'req']
     filter = {k: to_list(get(k)) for k in keys if get(k)}
     # 'mode' expects integers:
     if 'mode' in filter:
@@ -463,11 +472,8 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
             elif k == 'hyp':
                 if v != '' and not build.is_hyp():
                     return False
-            elif k == 'name':
-                if not build.name in v:
-                    return False
-            elif k == 'app':
-                if not build.app in v:
+            elif k in ['name', 'app', 'req']:
+                if not vars(build).get(k) in v:
                     return False
             elif not vars(build.get_platform()).get(k):
                 return False

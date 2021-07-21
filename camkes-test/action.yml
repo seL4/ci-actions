@@ -1,0 +1,23 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'CAmkES Tests'
+description: |
+  The CAmkES test suite.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  name:
+    description: Comma separated list of build names to filter build list on.
+    required: false
+  platform:
+    description: Comma separated list of platforms to build for.
+    required: false
+  mode:
+    description: Comma separated list of modes to build for. One of `{32, 64}.`
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/camkes-test:latest'

@@ -1,0 +1,82 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# The CAmkES build matrix is a bit differnt to the, since it is mostly organised
+# by app and not by build platform.
+#
+# For hardware builds, we use app variants on all platforms here to generate all
+# theoretrically possible builds and then filter by custom app keys.
+#
+# For simulation builds, we just enumerate what is also enumerated in Bamboo and
+# treat it separately from the normal process.
+#
+# See build.py for details for both parts.
+
+# start with all apps for all modes
+variants:
+    app: [timeserver, serialserver_interrupt, serialserver_polling, cakeml_tipc, adder]
+    mode: [32, 64]
+
+## Custom keys for CAmkES builds:
+
+# Hardware builds; these filter the build matrix (see build.py)
+apps:
+    timeserver: &std   # use timeserver as a standard template for the others
+        success: 'BOOM!'
+        x86_modes: [32,64]
+        arm_modes: [32,64]
+        platforms:
+            - ODROID_XU
+            - ODROID_XU4
+            - PC99
+            - TX1
+            - TX2
+            - IMX8MM_EVK
+            - IMX8MQ_EVK
+    serialserver_interrupt:
+        <<: *std
+        success: 'Hello Serial Server!'
+    serialserver_polling:
+        <<: *std
+        success: 'Hello Serial Server!'
+    cakeml_tipc:
+        success: 'Client 0 recieved payload value: 20'
+        x86_modes: [64]
+        arm_modes: [32]
+        platforms: [ODROID_XU, ODROID_XU4, PC99]
+        has_cakeml: true
+    adder:
+        <<: *std
+        success: 'client: result was 1270'
+        platforms: [TX1]
+
+
+# Simulation builds
+# These are in addition to the build matrix and don't use any of the other build setup
+
+sim:
+    # these are used in CAmkES run_tests as REGEX, EXCLUDE_REGEX, and RANGE (start, end, skip)
+    - match: sabre_sim
+      exclude: ''
+      iterator: ''
+    - match: ia32_sim
+      exclude: ''
+      iterator: ''
+    - match: x86_64_sim
+      exclude: 'cakeml'
+      iterator: ''
+    - match: cakeml
+      exclude: ''
+      iterator: '1,,2'
+    - match: cakeml
+      exclude: ''
+      iterator: '2,,2'
+    - match: spike64_sim
+      exclude: ''
+      iterator: '1,,2'
+    - match: spike64_sim
+      exclude: ''
+      iterator: '2,,2'

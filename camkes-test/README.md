@@ -34,6 +34,7 @@ use one or more of the following:
 - `platform`: comma separated list of platform names, e.g `PC99, ODROID_XU`.
 - `mode`: comma separated list of modes, e.g. `64`.
 - `name`: comma separated list of full test names, e.g. `PC99_cakeml_tipc_64`.
+- `matrex`: if set, output build matrix in json and exit.
 
 ## Example
 

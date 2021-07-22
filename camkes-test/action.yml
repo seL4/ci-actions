@@ -17,6 +17,9 @@ inputs:
   mode:
     description: Comma separated list of modes to build for. One of `{32, 64}.`
     required: false
+  matrix:
+    description: If set, output build matrix and exit
+    required: false
 
 runs:
   using: 'docker'

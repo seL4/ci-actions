@@ -12,6 +12,7 @@ from builds import Build, run_build_script, run_builds, load_builds
 from pprint import pprint
 from typing import Union
 
+import json
 import os
 import sys
 
@@ -101,6 +102,16 @@ def sim_build_filter(build: SimBuild):
     return not name or build.name == name
 
 
+def to_json(builds: list) -> dict:
+    """Return a GitHub build matrix as GitHub set-output.
+
+    Basically just returns a list of build names that we can then
+    filter on."""
+
+    matrix = {"include": [{"name": b.name} for b in builds]}
+    return "::set-output name=matrix::" + json.dumps(matrix)
+
+
 # If called as main, run all builds from builds.yml
 if __name__ == '__main__':
     yml = load_yaml(os.path.dirname(__file__) + "/builds.yml")
@@ -111,6 +122,9 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] == '--dump':
         pprint(builds)
+        sys.exit(0)
+    elif len(sys.argv) > 1 and sys.argv[1] == '--matrix':
+        print(to_json(builds))
         sys.exit(0)
 
     sys.exit(run_builds(builds, run_build))

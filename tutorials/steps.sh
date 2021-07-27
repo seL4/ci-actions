@@ -18,7 +18,7 @@ then
 fi
 
 echo "::group::Setting up"
-export REPO_MANIFEST="default.xml"
+export REPO_MANIFEST="master.xml"
 export MANIFEST_URL="https://github.com/seL4/sel4-tutorials-manifest.git"
 checkout-manifest.sh
 

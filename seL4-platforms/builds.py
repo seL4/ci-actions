@@ -444,7 +444,7 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                 if not build.get_platform().march in v:
                     return False
             elif k == 'platform':
-                if not build.get_platform().platform in v:
+                if not build.get_platform().name in v:
                     return False
             elif k == 'debug':
                 if build.is_debug() and not 'debug' in v:

@@ -29,5 +29,9 @@ cd - >/dev/null
 repo-util hashes
 echo "::endgroup::"
 
+# GitHub sets its own home dir, but we want the caches set up in /root
+export HOME=/root
+. /root/.bashrc
+
 # start test
 python3 /builds/build.py

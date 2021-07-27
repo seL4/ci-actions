@@ -44,8 +44,6 @@ class SimBuild():
 def run_build(manifest_dir: str, build: Union[Build, SimBuild]):
     """Run one CAmkES test. Can be either Build or SimBuild."""
 
-    script = [["chown", "root", "/github/home"]]  # otherwise Haskell `stack` crashes]
-
     if isinstance(build, Build):
         app = apps[build.app]
         expect = f"\"{app['success']}\""
@@ -57,14 +55,14 @@ def run_build(manifest_dir: str, build: Union[Build, SimBuild]):
             build.settings['CAKEMLDIR'] = '/cakeml'
             build.settings['CAKEML_BIN'] = f"/cake-x64-{build.get_mode()}/cake"
 
-        script.extend([
+        script = [
             ["../init-build.sh"] + build.settings_args(),
             ["ninja"],
             ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"],
             ["echo", f"hardware run for {build.req}, skipping"]
-        ])
+        ]
     elif isinstance(build, SimBuild):
-        script.extend([
+        script = [
             ['bash', '-c',
              'cd ../projects/camkes/tests && '
              f"SEL4_CACHE_DIR=~/.sel4_cache/ "
@@ -73,7 +71,7 @@ def run_build(manifest_dir: str, build: Union[Build, SimBuild]):
              f"VERBOSE=-VV "
              f"RANGE={build.iterator} "
              'make run_tests'],
-        ])
+        ]
     else:
         print(f"Warning: unknown build type for {build.name}")
 

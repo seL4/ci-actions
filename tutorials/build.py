@@ -21,7 +21,6 @@ def run_simulation(manifest_dir: str, build: Build):
     """Run one tutorial test."""
 
     script = [
-        ["chown", "root", "/github/home"],  # otherwise Haskell `stack` crashes
         ["bash", "-c",
          f"../projects/sel4-tutorials/test.py --app={build.app} "
          f"--config={build.get_platform().name.lower()} | tee {junit_results}"]

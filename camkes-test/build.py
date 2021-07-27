@@ -97,7 +97,8 @@ def build_filter(build: Build):
 
 def sim_build_filter(build: SimBuild):
     name = os.environ.get('INPUT_NAME')
-    return not name or build.name == name
+    plat = os.environ.get('INPUT_PLATFORM')
+    return (not name or build.name == name) and (not plat or plat == 'sim')
 
 
 def to_json(builds: list) -> dict:

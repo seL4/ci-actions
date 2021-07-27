@@ -59,13 +59,13 @@ apps:
 
 sim:
     # these are used in CAmkES run_tests as REGEX, EXCLUDE_REGEX, and RANGE (start, end, skip)
-    - match: sabre_sim
+    - match: sabre
       exclude: ''
       iterator: ''
-    - match: ia32_sim
+    - match: ia32
       exclude: ''
       iterator: ''
-    - match: x86_64_sim
+    - match: x86_64
       exclude: 'cakeml'
       iterator: ''
     - match: cakeml
@@ -74,9 +74,9 @@ sim:
     - match: cakeml
       exclude: ''
       iterator: '2,,2'
-    - match: spike64_sim
+    - match: spike64
       exclude: ''
       iterator: '1,,2'
-    - match: spike64_sim
+    - match: spike64
       exclude: ''
       iterator: '2,,2'

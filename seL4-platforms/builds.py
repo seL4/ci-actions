@@ -516,7 +516,8 @@ def load_builds(file_name: Optional[str], filter_fun=lambda x: True,
         base_builds = [Build(b, default_build) for b in yml_builds]
 
     if all_variants == []:
-        builds = [b for b in base_builds if b]
+        builds = [b for b in base_builds
+                  if b and filtered(b, build_filters) and filtered(b, env_filters)]
     else:
         builds = []
         for b in base_builds:

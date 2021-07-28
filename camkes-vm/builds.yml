@@ -1,0 +1,22 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+default:
+  success: 'buildroot login:'
+  error: 'Halting...'
+  debug: release
+  platform: PC99
+  req: haswell3
+
+builds:
+- optiplex9020:
+    mode: 64
+- minimal:
+    mode: 32
+- zmq_samples:
+    mode: 64
+    success: 'Finished running all scenarios'
+    error: 'Exited with error'

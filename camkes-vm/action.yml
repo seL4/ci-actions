@@ -1,0 +1,17 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'CAmkES VM Tests'
+description: |
+  The CAmkES VM test suite.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  name:
+    description: 'Name of the build to run (for matrix builds)'
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/camkes-vm:latest'

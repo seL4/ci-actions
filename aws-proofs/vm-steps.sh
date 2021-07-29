@@ -92,6 +92,10 @@ else
 fi
 cd ..
 
+echo
+echo "Stats:"
+~/ci-actions/aws-proofs/kernel-sloc.sh
+
 echo "::endgroup::"
 
 echo "::group::Cache and logs"

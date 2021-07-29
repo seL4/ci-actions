@@ -11,6 +11,9 @@ inputs:
   name:
     description: 'Name of the build to run (for matrix builds)'
     required: false
+  march:
+    description: 'Comma-separated list of march to filter on (for matrix builds)'
+    required: false
 
 runs:
   using: 'docker'

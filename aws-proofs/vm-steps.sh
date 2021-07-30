@@ -76,15 +76,7 @@ export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 FAIL=0
 
 cd l4v
-if [ "${INPUT_SESSION}" = "CRefine" ]
-then
-  # special treatment for CRefine session to speed up seL4 code change checks
-
-  cd proof
-  make CRefine || FAIL=1
-  cd ..
-
-elif [ -n ${INPUTSESSION} ]
+if [ -n ${INPUT_SESSION} ]
 then
   ./run_tests -v ${INPUT_SESSION} || FAIL=1
 else

@@ -95,6 +95,8 @@ cd ..
 echo
 echo "Stats:"
 ~/ci-actions/aws-proofs/kernel-sloc.sh
+echo ""
+cd l4v; ~/ci-actions/aws-proofs/sorry-count.sh; cd ..
 
 echo "::endgroup::"
 

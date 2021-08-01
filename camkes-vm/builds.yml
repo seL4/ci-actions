@@ -9,7 +9,6 @@ default:
   error: 'Halting...'
   debug: release
   platform: PC99
-  req: haswell3
 
 builds:
 # PC99:

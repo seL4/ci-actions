@@ -54,7 +54,11 @@ class Build:
         self.mode = None
         self.app = None
         self.req = None
+        self.success = None
+        self.error = None
         self.settings = {}
+        self.timeout = 600
+        self.disabled = False
         [self.name] = entries.keys()
         attribs = copy.deepcopy(default)
         # this potentially overwrites the default settings dict, we restore it later
@@ -201,6 +205,137 @@ class Build:
             f"'platform': {self.platform}, 'mode': {self.get_mode()}, " \
             f"'req': {self.req}, 'app': {self.app}, 'settings': {self.settings}" '})'
 
+    def is_disabled(self) -> bool:
+        return self.disabled or self.get_platform().disabled
+
+    def get_req(self) -> List[str]:
+        req = self.req or self.get_platform().req
+        if not req or req == []:
+            return []
+        if isinstance(req, str):
+            return [req]
+        else:
+            return req
+
+    def hw_run(self, log):
+        if self.is_disabled():
+            return [['echo', f"Platform {self.get_platform().name} disabled. Skipping."]], []
+
+        machine = get_machine(self.get_req())
+        if not machine:
+            return [['echo', f"No machine for {self.name}."],
+                    ['exit', '1']], []
+
+        if machine.endswith("_pool"):
+            return [['echo', f"Specify list of machines instead of pool for {self.name}."],
+                    ['exit', '1']], []
+
+        return [
+            ['tar', 'xvzf', f"../{self.name}-images.tar.gz"],
+            mq_print_lock(machine),
+            mq_lock(machine),
+            mq_run(self.success, machine, self.files,
+                   completion_timeout=self.timeout,
+                   lock_held=True,
+                   key=job_key(),
+                   log=log,
+                   error_str=self.error)
+        ], [mq_release(machine)]
+
+
+def release_mq_locks(builds):
+    """Release locks from this job; runs the commands instead of returning a list."""
+
+    # If builds are done by platform, there will be only one req in the end,
+    # but we are not guaranteed that builds are always by platform.
+    reqs = [b.get_req() for b in builds]
+    req_set = []
+    for req in reqs:
+        if req and not req in req_set:
+            req_set.append(req)
+
+    for req in req_set:
+        machine = get_machine(req)
+
+        if machine:
+            try:
+                print(" ".join(mq_release(machine)))
+                sys.stdout.flush()
+                subprocess.run(mq_release(machine), capture_output=False)
+                subprocess.run(mq_print_lock(machine), capture_output=False)
+                sys.stdout.flush()
+            except:
+                pass
+
+
+def get_machine(req):
+    if req == []:
+        return None
+    else:
+        # assume jobs for the same platform are consecutive-ish in the build matrix
+        job_index = int(os.environ.get('INPUT_INDEX', '$0')[1:])
+        return req[job_index % len(req)]
+
+
+def job_key():
+    return os.environ.get('GITHUB_RUN_ID') + "-" + \
+        os.environ.get('GITHUB_JOB') + "-" + \
+        os.environ.get('INPUT_INDEX', '$0')[1:]
+
+
+def mq_run(success_str: str,
+           machine: str,
+           files: List[str],
+           retries: int = -1,
+           lock_timeout: int = 8,
+           completion_timeout: int = -1,
+           log: Optional[str] = None,
+           lock_held=False,
+           keep_alive=False,
+           key: Optional[str] = None,
+           error_str: Optional[str] = None):
+    """Machine queue mq.sh run command with arguments.
+
+       Expects success marker, machine name, and boot image file(s).
+       See output of mq.sh run for details on optional parameters."""
+
+    command = ['time', 'mq.sh', 'run',
+               '-c', success_str,
+               '-s', machine,
+               '-d', str(completion_timeout),
+               '-t', str(retries),
+               '-w', str(lock_timeout)]
+
+    if log:
+        command.extend(['-l', log])
+    if lock_held:
+        command.append('-n')
+    if keep_alive:
+        command.append('-a')
+    if key:
+        command.extend(['-k', key])
+    if error_str:
+        command.extend(['-e', error_str])
+    for f in files:
+        command.extend(['-f', f])
+
+    return command
+
+
+def mq_lock(machine: str) -> list:
+    """Get lock for a machine."""
+    return ['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key()]
+
+
+def mq_release(machine: str) -> list:
+    """Release lock on board. Expects machine name in file."""
+    return ['mq.sh', 'sem', '-signal', machine, '-k', job_key()]
+
+
+def mq_print_lock(machine: str) -> list:
+    """Print lock status for machine."""
+    return ['mq.sh', 'sem', '-info', machine]
+
 
 def run(args: list):
     """Echo + run command with arguments; raise exception on exit != 0"""
@@ -259,8 +394,8 @@ sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_re
                   "-q", junit_results, parsed_junit_results]
 
 
-def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = False,
-                     junit_file: str = parsed_junit_results) -> bool:
+def run_build_script(manifest_dir: str, name: str, script: list, final_script: list = [],
+                     junit: bool = False, junit_file: str = parsed_junit_results) -> bool:
     """Run a build script in a separate `build/` directory
 
     A build script is a list of commands, which itself is a list of command and
@@ -268,6 +403,9 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
 
     The build stops at the first failing step (or the end) and fails if any
     step fails.
+
+    The steps in `final_script` are run after script, regardless of failures
+    in `script`.
     """
 
     print(f"::group::{name}")
@@ -291,6 +429,14 @@ def run_build_script(manifest_dir: str, name: str, script: list, junit: bool = F
     success = True
     try:
         for line in script:
+            run(line)
+    except subprocess.CalledProcessError:
+        printc(ANSI_RED, ">>> command failed, aborting.")
+        success = False
+
+    # alway run final script tasks, even in case of failure
+    try:
+        for line in final_script:
             run(line)
     except subprocess.CalledProcessError:
         success = False
@@ -444,7 +590,7 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                 if not build.get_platform().march in v:
                     return False
             elif k == 'platform':
-                if not build.get_platform().name in v:
+                if not build.get_platform().name in [x.upper() for x in v]:
                     return False
             elif k == 'debug':
                 if build.is_debug() and not 'debug' in v:

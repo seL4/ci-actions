@@ -32,9 +32,6 @@ def run_build(manifest_dir: str, build: Build):
 
     if plat.arch == 'x86':
         del build.settings['PLATFORM']  # not used for x86 in this test, avoid warning
-        # build.req set by default in builds.yml for x86
-    else:
-        build.req = plat.req or plat.name.lower()
 
     script = [
         ["../init-build.sh"] + build.settings_args(),

@@ -18,7 +18,7 @@ architectures: [x86, arm, riscv]
 #     image_platform: name; optional
 #     simulation_binary: string; optional
 #     march: string; optional
-#     req: string; optional
+#     req: list of string; optional
 #     disabled: optional; (null = false); no hw test on this platform
 #     no_hw_build: optional; (null = false); no hw build for this platform
 
@@ -46,7 +46,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: hifive
-    req: hifive1
+    req: [hifive1]
     march: rv64imac
 
   SABRE:
@@ -55,7 +55,7 @@ platforms:
     smp: [32]
     platform: sabre
     image_platform: imx6
-    req: sabre-family
+    req: [sabre, sabre4, sabre2]
     simulation_binary: sabre
     march: armv7a
 
@@ -63,7 +63,7 @@ platforms:
     arch: arm
     modes: [64]
     platform: rockpro64
-    req: rockpro64-family
+    req: [rockpro64a]
     march: armv7a
     disabled: true
 
@@ -81,7 +81,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: imx8mq-evk
-    req: imx8mq-family
+    req: [imx8mq]
     march: armv8a
 
   IMX8MM_EVK:
@@ -89,7 +89,7 @@ platforms:
     modes: [32, 64]
     smp: [64]
     platform: imx8mm-evk
-    req: imx8mm-family
+    req: [imx8mm]
     march: armv8a
 
   KZM:
@@ -97,7 +97,7 @@ platforms:
     modes: [32]
     platform: kzm
     image_platform: imx31
-    req: kzm
+    req: [kzm]
     simulation_binary: kzm11
     march: armv6a
     disabled: true
@@ -106,7 +106,7 @@ platforms:
     arch: arm
     modes: [32]
     platform: omap3
-    req: beagle
+    req: [beagle]
     march: armv7a
 
   AM335X_BONEBLACK:
@@ -114,21 +114,21 @@ platforms:
     modes: [32]
     platform: am335x-boneblack
     image_platform: am335x
-    req: bboneblack
+    req: [bboneblack]
     march: armv8a
 
   ODROID_C2:
     arch: arm
     modes: [64]
     platform: odroidc2
-    req: odroidc2
+    req: [odroidc2]
     march: armv8a
 
   ODROID_C4:
     arch: arm
     modes: [64]
     platform: odroidc4
-    req: odroidc4
+    req: [odroidc4]
     march: armv8a
     disabled: true
     no_hw_build: true
@@ -137,7 +137,7 @@ platforms:
     arch: arm
     modes: [32]
     platform: exynos4
-    req: odroid
+    req: [odroid]
     march: armv7a
     disabled: true
 
@@ -146,7 +146,7 @@ platforms:
     modes: [32]
     aarch_hyp: [32]
     platform: exynos5410
-    req: odroid-xu
+    req: [odroid-xu]
     image_platform: exynos5
     march: armv7a
 
@@ -154,7 +154,7 @@ platforms:
     arch: arm
     modes: [32]
     platform: exynos5250
-    req: arndale
+    req: [arndale]
     image_platform: exynos5
     march: armv7a
     no_hw_build: true
@@ -164,7 +164,7 @@ platforms:
     modes: [32]
     aarch_hyp: [32]
     platform: exynos5422
-    req: odroid-xu4-1
+    req: [odroidxu4_1]
     image_platform: exynos5
     march: armv7a
 
@@ -172,7 +172,7 @@ platforms:
     arch: arm
     modes: [32]
     platform: zynq7000
-    req: zc706
+    req: [zc706]
     simulation_binary: zc706
     march: armv7a
 
@@ -181,7 +181,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: zynqmp
-    req: zcu102
+    req: [zcu102]
     march: armv8a
 
   HIKEY:
@@ -189,7 +189,7 @@ platforms:
     modes: [32, 64]
     aarch_hyp: [64]
     platform: hikey
-    req: hikey
+    req: [hikey]
     march: armv8a
 
   TK1:
@@ -197,14 +197,14 @@ platforms:
     modes: [32]
     aarch_hyp: [32]
     platform: tk1
-    req: jetson
+    req: [jetson]
     march: armv7a
 
   RPI3:
     arch: arm
     modes: [32]
     platform: rpi3
-    req: rpi3
+    req: [rpi3]
     image_platform: bcm2837
     march: armv8a
 
@@ -212,7 +212,7 @@ platforms:
     arch: arm
     modes: [64]
     platform: rpi4
-    req: rpi4
+    req: [rpi4]
     image_platform: bcm2711
     march: armv8a
     no_hw_build: true
@@ -223,7 +223,7 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: tx1
-    req: jetson tx1 family
+    req: [tx1]
     march: armv8a
 
   TX2:
@@ -232,14 +232,14 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: tx2
-    req: tx2_family
+    req: [tx2, tx2b]
     march: armv8a
 
   APQ8064:
     arch: arm
     modes: [32]
     platform: apq8064
-    req: inforce
+    req: [inforce]
     image_platform: inforce
     march: armv7a
     no_hw_build: true
@@ -265,7 +265,7 @@ platforms:
     arch: arm
     modes: [32]
     platform: imx7sabre
-    req: imx7
+    req: [imx7]
     image_platform: imx7
     # march: ?
     disabled: true
@@ -276,7 +276,7 @@ platforms:
     modes: [32, 64]
     smp: [32, 64]
     platform: x86_64
-    req: x64
+    req: [haswell3] # [skylake, haswell4, haswell3, skylake2]
     simulation_binary: x86
     march: nehalem
 

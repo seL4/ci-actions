@@ -4,6 +4,9 @@
 
 ---
 
+default:
+    success: '</testsuite>'
+
 # see seltest-sim/builds.yml for full schema example
 
 variants:

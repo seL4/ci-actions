@@ -3,19 +3,19 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 """
-Parse builds.yml and run sel4test hardware builds on each of the build definitions.
+Parse builds.yml and run sel4test hardware builds and runs on each of the build definitions.
 
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds
+from builds import Build, run_build_script, run_builds, load_builds, junit_results, release_mq_locks
 from pprint import pprint
 
 import os
 import sys
 
 
-def run_build(manifest_dir: str, build: Build):
+def hw_build(manifest_dir: str, build: Build):
     """Run one hardware build."""
 
     script = [
@@ -25,6 +25,18 @@ def run_build(manifest_dir: str, build: Build):
     ]
 
     return run_build_script(manifest_dir, build.name, script)
+
+
+def hw_run(manifest_dir: str, build: Build):
+    """Run one hardware test."""
+
+    if build.is_disabled():
+        print(f"Build {build.name} disabled, skipping.")
+        return True
+
+    script, final = build.hw_run(junit_results)
+
+    return run_build_script(manifest_dir, build.name, script, final_script=final, junit=True)
 
 
 def build_filter(build: Build) -> bool:
@@ -62,4 +74,11 @@ if __name__ == '__main__':
         pprint(builds)
         sys.exit(0)
 
-    sys.exit(run_builds(builds, run_build))
+    if len(sys.argv) > 1 and sys.argv[1] == '--hw':
+        sys.exit(run_builds(builds, hw_run))
+
+    if len(sys.argv) > 1 and sys.argv[1] == '--post':
+        release_mq_locks(builds)
+        sys.exit(0)
+
+    sys.exit(run_builds(builds, hw_build))

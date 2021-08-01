@@ -87,7 +87,7 @@ class Platform:
             opt_str(self.image_platform) and \
             opt_str(self.simulation_binary) and \
             opt_str(self.march) and \
-            opt_str(self.req) and \
+            (self.req == None or isinstance(self.req, str) or isinstance(self.req, list)) and \
             isinstance(self.disabled, bool) and \
             isinstance(self.no_hw_build, bool)
 

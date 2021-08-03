@@ -1,0 +1,25 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Set march output from platform name'
+description: |
+  Reads platform definitions and set the march for a given platform as output.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  platform:
+    description: hardware platform name
+    required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'march-of-platform'
+
+outputs:
+  march:
+    description: the march of the provided platform
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

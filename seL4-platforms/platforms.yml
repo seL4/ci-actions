@@ -288,7 +288,6 @@ mcs_unsupported_platforms:
 # at user level?
 - ZYNQ7000
 # not ported yet
-- AM335X_BONEBLACK
 - ODROID_X
 - ZYNQMP
 - IMX8MM_EVK

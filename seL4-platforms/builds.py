@@ -246,6 +246,15 @@ class Build:
 def release_mq_locks(builds):
     """Release locks from this job; runs the commands instead of returning a list."""
 
+    def run(command):
+        """Print and run a command, ignoring failure."""
+        try:
+            print(" ".join(command))
+            sys.stdout.flush()
+            subprocess.run(command)
+        except:
+            pass
+
     # If builds are done by platform, there will be only one req in the end,
     # but we are not guaranteed that builds are always by platform.
     reqs = [b.get_req() for b in builds]
@@ -258,14 +267,12 @@ def release_mq_locks(builds):
         machine = get_machine(req)
 
         if machine:
-            try:
-                print(" ".join(mq_release(machine)))
-                sys.stdout.flush()
-                subprocess.run(mq_release(machine), capture_output=False)
-                subprocess.run(mq_print_lock(machine), capture_output=False)
-                sys.stdout.flush()
-            except:
-                pass
+            # cancel any processes still waiting for locks
+            run(mq_cancel(machine))
+            # release any locks we already have claimed
+            run(mq_release(machine))
+            # show lock status (should now show "free" or "locked for another job")
+            run(mq_print_lock(machine))
 
 
 def get_machine(req):
@@ -328,8 +335,13 @@ def mq_lock(machine: str) -> list:
 
 
 def mq_release(machine: str) -> list:
-    """Release lock on board. Expects machine name in file."""
+    """Release lock on a machine."""
     return ['mq.sh', 'sem', '-signal', machine, '-k', job_key()]
+
+
+def mq_cancel(machine: str) -> list:
+    """Cancel processes waiting on lock for a machine."""
+    return ['mq.sh', 'sem', '-cancel', machine, '-k', job_key()]
 
 
 def mq_print_lock(machine: str) -> list:

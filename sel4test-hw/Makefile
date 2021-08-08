@@ -15,9 +15,9 @@ push: build
 run: build
 	docker run -e GITHUB_REPOSITORY -e GITHUB_REF \
 	  -e GITHUB_WORKSPACE -e INPUT_ARCH -e INPUT_MARCH -e INPUT_MODE \
-		-e INPUT_COMPILER -e INPUT_DEBUG $(IMG)
+		-e INPUT_COMPILER -e INPUT_DEBUG -e INPUT_SHA $(IMG)
 
 test: build
 	docker run -ti --entrypoint bash -e GITHUB_REPOSITORY -e GITHUB_REF \
 	  -e GITHUB_WORKSPACE -e INPUT_ARCH -e INPUT_MARCH -e INPUT_MODE \
-		-e INPUT_COMPILER -e INPUT_DEBUG -v $(shell pwd):/mnt:z $(IMG)
+		-e INPUT_COMPILER -e INPUT_DEBUG -e INPUT_SHA -v $(shell pwd):/mnt:z $(IMG)

@@ -25,6 +25,9 @@ inputs:
       Comma separated list of debug levels from `{debug, release, verification}`
       to filter test configs on.
     required: false
+  sha:
+    description: git sha to test
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

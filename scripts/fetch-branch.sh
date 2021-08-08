@@ -11,6 +11,14 @@
 
 URL="https://github.com/${GITHUB_REPOSITORY}.git"
 
-echo "Fetching ${GITHUB_REF} from ${URL}"
-git fetch -q --depth 1 ${URL} ${GITHUB_REF}:${GITHUB_REF}
-git checkout -q ${GITHUB_REF}
+# if an explicit SHA is set as INPUT (e.g. for pull request target), prefer that over GITHUB_REF
+if [ -n "${INPUT_SHA}" ]
+then
+  REF=${INPUT_SHA}
+else
+  REF=${GITHUB_REF}
+fi
+
+echo "Fetching ${REF} from ${URL}"
+git fetch -q --depth 1 ${URL} ${REF}:${REF}
+git checkout -q ${REF}

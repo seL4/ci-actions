@@ -1,0 +1,34 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4Test/Hardware Runs'
+description: |
+  Does sel4test test runs from previously built images for all hardware test platforms.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  manifest_repo:
+    description: Manifest repostory (e.g. 'sel4test-manifest')
+    required: true
+  manifest:
+    description: Manifest file
+    default: master.xml
+    required: false
+  sha:
+    description: |
+      override sha to advance PR repo to (e.g. sha for seL4 repo in
+      seL4/sel4test-manifest if seL4 is the repo the action is called from)
+    required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'repo-checkout'
+
+outputs:
+  xml:
+    description: repo manifest as xml, target repo advanced to PR/branch
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

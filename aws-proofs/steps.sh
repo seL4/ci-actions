@@ -67,6 +67,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_CACHE_READ \
     -o SendEnv=INPUT_CACHE_WRITE \
     -o SendEnv=INPUT_SKIP_DUPS \
+    -o SendEnv=INPUT_XML \
     -o SendEnv=GITHUB_REPOSITORY \
     -o SendEnv=GITHUB_REF \
     -o SendEnv=GITHUB_BASE_REF \

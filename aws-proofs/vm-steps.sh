@@ -21,7 +21,7 @@ fi
 
 checkout-manifest.sh
 
-if [ -n "${INPUT_ISA_BRANCH}" ]
+if [ -n "${INPUT_ISA_BRANCH}" -a -z "${INPUT_XML}" ]
 then
   cd isabelle
   echo "Fetching ${INPUT_ISA_BRANCH} from remote \"verification\""

@@ -35,6 +35,9 @@ inputs:
   manifest:
     description: "Which manifest file to use (default devel.xml)"
     required: false
+  xml:
+    description: 'Input manifest with specific repo revisions to test (optional)'
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

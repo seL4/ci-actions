@@ -27,4 +27,13 @@ git config color.ui > /dev/null || \
 echo "Starting repo checkout on branch ${REPO_BRANCH} with manifest ${REPO_MANIFEST}:"
 
 $REPO init --depth ${REPO_DEPTH} -m ${REPO_MANIFEST} -b ${REPO_BRANCH} -u "${MANIFEST_URL}"
+
+# if explicit manifest is provided via input XML, switch to that instead
+if [ -n "${INPUT_XML}" ]
+then
+  TEST_XML="the-test.xml"
+  echo "${INPUT_XML}" > ".repo/manifests/${TEST_XML}"
+  $REPO init --depth ${REPO_DEPTH} -m "${TEST_XML}"
+fi
+
 $REPO sync

@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Copyright 2020, Data61, CSRIO
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# If the l4v tests succeeded, write this version to default.xml
+#
+# This script is highly tailored to the current manifest setup.
+#
+# Outline:
+# 1. Take the exact revisions used in this build
+# 2. Write these revisions to default.xml
+# 3. Use a vanilla Isabelle release instead of ts-20xx branch
+# 4. Push resulting manifest
+#
+
+import argparse
+import copy
+from lxml import etree
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+# Local imports
+from common import *
+
+parser = argparse.ArgumentParser("Auto-update verification manifest from CI",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('-n', '--dry-run', action='store_true',
+                    help="do not push manifest (but update locally)")
+parser.add_argument('--manifest-file', default='default.xml',
+                    help="write to this manifest file")
+parser.add_argument('--isabelle-tag-match', default='Isabelle20*', metavar='PATTERN',
+                    help="public Isabelle tags (glob pattern for 'git describe'). "
+                         "Use '*' to allow all tags; '' to keep git hash")
+parser.add_argument('manifest_repo',
+                    help="URL of manifest repo to update")
+
+max_tries = 3  # when git push fails
+
+
+def main():
+    args = parser.parse_args()
+
+    print("Starting deployment...")
+
+    repo_cmd = 'repo'
+
+    output_repo = args.manifest_repo
+    output_path = args.manifest_file
+
+    for try_count in range(1, max_tries + 1):
+        output_dir = tempfile.mkdtemp(dir='.')
+        try:
+            loud_command(['git', 'clone', output_repo, output_dir])
+
+            # We will update input_manifest into orig_manifest.
+            orig_manifest = etree.parse(os.path.join(output_dir, output_path)).getroot()
+            input_manifest = etree.fromstring(loud_command([repo_cmd, 'manifest', '-r']))
+            new_manifest = copy.deepcopy(input_manifest)
+
+            # Bits of the manifest schema that we require:
+            #   <manifest>
+            #     <remote name="{name}" fetch="{url}" />
+            #     <default revision="{gitrev}" />
+            #     <project name="{name}" path="{path}" revision="{gitrev}" />
+            #     <!-- path and revision optional -->
+            #   </manifest>
+
+            # Only include repos already in orig_manifest.
+            include_repos = set(proj.attrib['name'] for proj in orig_manifest.findall('project'))
+            repos_to_release = []
+            for proj in new_manifest.findall('project'):
+                if proj.attrib['name'] in include_repos:
+                    repos_to_release.append(proj.attrib['name'])
+                else:
+                    proj.getparent().remove(proj)
+                repos_to_release.sort()
+
+            # Checkout public Isabelle branch or tag.
+            if args.isabelle_tag_match != '':
+                isabelle_proj = new_manifest.find('project[@name=\'isabelle\']')
+                if isabelle_proj is None:
+                    print("*** Error: --isabelle-tag-match is set but there is no 'isabelle' project")
+                    sys.exit(1)
+                isabelle_dir = isabelle_proj.attrib['name']
+                if 'path' in isabelle_proj.attrib:
+                    isabelle_dir = isabelle_proj.attrib['path']
+
+                # Get nearest public tag.
+                description = run_command(['git', '-C', isabelle_dir, 'describe', '--tags',
+                                           '--long', '--match', args.isabelle_tag_match]).rstrip().decode()
+                print("Isabelle repo is currently at: %s" % description)
+                m = re.match('(.*)-([0-9]+)-g[0-9a-fA-F]+$', description)
+                if m is None:
+                    print("*** Failed to parse 'git describe' output: %s" % description)
+                    sys.exit(1)
+                public_tag, num_revs = m.groups()
+
+                print("Reverting Isabelle repo by %s commit(s) to %s" % (num_revs, public_tag))
+                isabelle_proj.attrib['revision'] = 'refs/tags/' + public_tag
+                # Also clear 'upstream' attribute since it is now wrong
+                if 'upstream' in isabelle_proj.attrib:
+                    del isabelle_proj.attrib['upstream']
+
+            # Sanity checks.
+
+            # Check if revisions actually changed.
+            default_spec = orig_manifest.find('default')
+
+            def get_proj_revision(proj):
+                if 'revision' in proj.attrib:
+                    return proj.attrib['revision']
+                else:
+                    return default_spec.attrib['revision']
+
+            orig_revs = dict((proj.attrib['name'], get_proj_revision(proj))
+                             for proj in orig_manifest.findall('project'))
+            new_revs = dict((proj.attrib['name'], get_proj_revision(proj))
+                            for proj in new_manifest.findall('project'))
+            changed_projects = [name for name, rev in list(
+                new_revs.items()) if rev != orig_revs[name]]
+
+            if not changed_projects:
+                print("No revisions changed; not pushing.")
+                sys.exit()
+
+            # Check whether we're losing any repos.
+            dropped_repos = sorted(repo for repo in include_repos
+                                   if repo not in repos_to_release)
+            if dropped_repos:
+                print("*** Danger: update would remove existing project(s): " + ', '.join(dropped_repos))
+                print("Aborting.")
+                sys.exit()
+
+            # Check whether we're rolling back any repos.
+            shallow_clones = []
+            for proj in new_manifest.findall('project'):
+                name = proj.attrib['name']
+                repo_dir = name
+            if 'path' in proj.attrib:
+                repo_dir = proj.attrib['path']
+
+            if os.path.isfile(os.path.join(repo_dir, '.git', 'shallow')):
+                shallow_clones.append(name)
+            else:
+                try:
+                    run_command(['git', '-C', repo_dir, 'merge-base',
+                                 '--is-ancestor', orig_revs[name], new_revs[name]])
+                except subprocess.CalledProcessError:
+                    print("*** Warning: update to %s diverges from old rev (%s -> %s)" %
+                          (name, orig_revs[name], new_revs[name]))
+            if shallow_clones:
+                print("*** Warning: could not check shallowly-cloned repo(s): " + ', '.join(shallow_clones))
+
+            # Commit and push.
+            print("Pushing manifest to %s" % output_repo)
+            output_str = etree.tostring(new_manifest, encoding='UTF-8').decode()
+            print(indent(output_str))
+            with open(os.path.join(output_dir, output_path), 'w') as f:
+                f.writelines([
+                    '<?xml version="1.0" encoding="UTF-8"?>\n',
+                    '<!--\n',
+                    '  Copyright seL4 Project a Series of LF Projects, LLC\n',
+                    '  SPDX-License-Identifier: BSD-2-Clause\n',
+                    '-->\n'
+                ])
+                f.write(output_str)
+
+            loud_command(['git', '-C', output_dir, 'add', output_path])
+            set_repo_email(output_dir)
+            message = "Update %s. Changed: " % output_path + ', '.join(changed_projects)
+            loud_command(['git', '-C', output_dir, 'commit', '-m', format_commit_message(message)])
+            if args.dry_run:
+                print("Dry run; not pushing.")
+                sys.exit()
+            else:
+                try:
+                    loud_command(['git', '-C', output_dir, 'push'], stderr=subprocess.STDOUT)
+                    sys.exit()
+                except subprocess.CalledProcessError as e:
+                    if '[rejected]' in e.output:
+                        print("*** Push failed due to a race.")
+                        if try_count == max_tries:
+                            print("Giving up.")
+                        else:
+                            print("Trying again. (%d)" % try_count)
+                    else:
+                        print("*** Push failed. git output:")
+                        print(indent(e.output))
+                        sys.exit(1)
+        finally:
+            try:
+                shutil.rmtree(output_dir)
+            except Exception:
+                pass
+
+
+if __name__ == '__main__':
+    main()

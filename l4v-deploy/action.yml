@@ -1,0 +1,22 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Deploy l4v default.xml manifest'
+description: |
+  Constructs new l4v default.xml after successful test and deploys it to
+  seL4/verification manifest.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  xml:
+    description: manifest to deploy
+    required: true
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'l4v-deploy'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Copyright 2020, Data61, CSRIO
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# This is a post-build deploy script for the “seL4 preprocess” build.
+#
+# “seL4 preprocess” checks that seL4/master and the seL4 in
+# verification-manifest are equal after preprocessing (and hence kernel proofs
+# will work unmodified). If they are, this deploy script updates the
+# verification-manifest to seL4/master.
+#
+# Note that this modifies the manifest repo even with --dry-run, so the repo
+# should not be used afterwards.
+
+import argparse
+import os
+import re
+import subprocess
+import sys
+from xml.dom import minidom
+
+# Local imports
+from common import *
+
+parser = argparse.ArgumentParser("Update seL4 revision in verification-manifest from CI",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--seL4-path', default='seL4',
+                    help="location of latest seL4 repo")
+parser.add_argument('--verification-path', default='verification',
+                    help="location of verification repos")
+parser.add_argument('--manifest-file', default='devel.xml',
+                    help="update this manifest file")
+parser.add_argument('--ff-only', action='store_true',
+                    help="only allow fast-forwards for seL4")
+parser.add_argument('-n', '--dry-run', action='store_true',
+                    help="don't actually push new manifest")
+
+
+def main():
+    args = parser.parse_args()
+    manifest_dir = os.path.join(args.verification_path, '.repo', 'manifests')
+
+    print("Updating verification manifest...")
+
+    master_rev = run_command(['git', 'show', '-s', '--format=%H'], cwd=args.seL4_path).strip()
+
+    # Parse manifest.
+    manifest_path = os.path.join(manifest_dir, args.manifest_file)
+    manifest_text = open(manifest_path, 'r').read()
+    manifest = minidom.parseString(manifest_text)
+
+    seL4_proj = None
+    for proj in manifest.getElementsByTagName('project'):
+        if proj.getAttribute('name') == 'seL4':
+            seL4_proj = proj
+            break
+    if seL4_proj is None:
+        print("*** Manifest does not track seL4!? Contents:")
+        print(indent(manifest_text))
+        sys.exit(1)
+
+    if seL4_proj.hasAttribute('revision'):
+        old_rev = seL4_proj.getAttribute('revision')
+    else:
+        old_rev = manifest.getElementsByTagName('default')[0].getAttribute('remote')
+    if old_rev == master_rev:
+        print("seL4 already up-to-date: at %s" % master_rev)
+        sys.exit()
+
+    print("Updating seL4: %s -> %s" % (old_rev, master_rev))
+
+    # Sanity check whether we are really doing an update.
+    if args.ff_only:
+        if os.path.exists(os.path.join(args.seL4_path, '.git', 'shallow')):
+            print("*** Cannot check --ff-only because %s is a shallow clone" % args.seL4_path)
+            sys.exit(1)
+        else:
+            try:
+                loud_command(['git', 'merge-base', '--is-ancestor',
+                              old_rev, master_rev], cwd=args.seL4_path)
+            except subprocess.CalledProcessError:
+                print("*** Not a fast-forward for seL4: %s -> %s" % (old_rev, master_rev))
+                print("Aborting due to --ff-only.")
+                sys.exit(1)
+
+    # Do the update.
+    # If possible, try to preserve the exact manifest layout
+    # (the current version is hand-formatted).
+    rev_occurrences = manifest_text.count(old_rev)
+    if rev_occurrences == 1:
+        # We can do a text replace because old_rev is unambiguous.
+        with open(manifest_path, 'w') as f:
+            # FIXME: text replace may be unsafe
+            f.write(manifest_text.replace(old_rev, master_rev))
+    else:
+        # Write machine-formatted XML.
+        seL4_proj.setAttribute('revision', master_rev)
+        with open(manifest_path, 'w') as f:
+            f.write(manifest.toxml(encoding='UTF-8'))
+
+    message = "Update seL4 to cpp-compatible version"
+    # Git needs an email address to be set
+    set_repo_email(manifest_dir)
+    loud_command(['git', 'commit', '-m', format_commit_message(message),
+                  args.manifest_file], cwd=manifest_dir)
+
+    # Push the update.
+    if args.dry_run:
+        print("Dry run; not pushing.")
+    else:
+        # For some silly reason, Google Repo sets up manifest_dir with the
+        # dummy branch name 'default', which git refuses to push to remote branch
+        # 'master' unless explicitly told to.
+        remote_branch = run_command(['git', 'rev-parse', '--abbrev-ref',
+                                     '@{upstream}'], cwd=manifest_dir).rstrip()
+        remote, branch = remote_branch.split('/')
+        try:
+            loud_command(['git', 'push', remote, 'HEAD:%s' % branch], cwd=manifest_dir)
+        except subprocess.CalledProcessError:
+            print("*** Push failed.")
+            sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()

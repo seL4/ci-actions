@@ -12,6 +12,7 @@ them, `run_build_script` for a standard test driver frame, and
 `default_junit_results` for a standard place to leave a jUnit summary file.
 """
 
+from junitparser.junitparser import Failure, Error
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
 from typing import Optional, List
@@ -394,7 +395,17 @@ def summarise_junit(file_path: str) -> bool:
         printc(ANSI_RED, f"errors:    {xml.errors}")
     print()
 
-    return success
+    failures = []
+    errors = []
+    if xml.failures + xml.errors > 0:
+        for case in xml:
+            for r in case.result:
+                if isinstance(r, Failure):
+                    failures.append(str(case.name))
+                if isinstance(r, Error):
+                    errors.append(str(case.name))
+
+    return success, failures, errors
 
 
 # where junit results are left after sanitising:
@@ -453,9 +464,11 @@ def run_build_script(manifest_dir: str, name: str, script: list, final_script: l
     except subprocess.CalledProcessError:
         success = False
 
+    failures = []
+    errors = []
     if success and junit:
         try:
-            success = summarise_junit(junit_file)
+            success, failures, errors = summarise_junit(junit_file)
         except IOError:
             printc(ANSI_RED, f"Error reading {junit_file}")
             success = False
@@ -470,6 +483,13 @@ def run_build_script(manifest_dir: str, name: str, script: list, final_script: l
         printc(ANSI_GREEN, f"{name} succeeded")
     else:
         printc(ANSI_RED, f"{name} FAILED")
+        max_print = 10
+        if failures != []:
+            printc(ANSI_RED, "Failed cases: " + ", ".join(failures[:max_print]) +
+                   (" ..." if len(failures) > max_print else ""))
+        if errors != []:
+            printc(ANSI_RED, "Error cases: " + ", ".join(errors[:max_print]) +
+                   (" ..." if len(errors) > max_print else ""))
     print("")
     sys.stdout.flush()
 

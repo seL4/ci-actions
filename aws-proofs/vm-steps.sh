@@ -22,7 +22,7 @@ fi
 TESTBOARD=seL4/gh-testboard
 if [ "${GITHUB_REPOSITORY}" = "${TESTBOARD}" ]
 then
-  export MANIFEST_URL="https://github.com/${TESTBOARD}.git"}
+  export MANIFEST_URL="https://github.com/${TESTBOARD}.git"
 fi
 
 checkout-manifest.sh

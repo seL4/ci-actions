@@ -23,6 +23,7 @@ TESTBOARD=seL4/gh-testboard
 if [ "${GITHUB_REPOSITORY}" = "${TESTBOARD}" ]
 then
   export MANIFEST_URL="https://github.com/${TESTBOARD}.git"
+  export REPO_BRANCH="${GITHUB_REF}"
 fi
 
 checkout-manifest.sh

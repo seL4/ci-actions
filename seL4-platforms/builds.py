@@ -395,17 +395,10 @@ def summarise_junit(file_path: str) -> bool:
         printc(ANSI_RED, f"errors:    {xml.errors}")
     print()
 
-    failures = []
-    errors = []
-    if xml.failures + xml.errors > 0:
-        for case in xml:
-            for r in case.result:
-                if isinstance(r, Failure):
-                    failures.append(str(case.name))
-                if isinstance(r, Error):
-                    errors.append(str(case.name))
+    failures = {str(case.name) for case in xml
+                if any([isinstance(r, Failure) or isinstance(r, Error) for r in case.result])}
 
-    return success, failures, errors
+    return success, list(failures)
 
 
 # where junit results are left after sanitising:
@@ -465,10 +458,9 @@ def run_build_script(manifest_dir: str, name: str, script: list, final_script: l
         success = False
 
     failures = []
-    errors = []
     if success and junit:
         try:
-            success, failures, errors = summarise_junit(junit_file)
+            success, failures = summarise_junit(junit_file)
         except IOError:
             printc(ANSI_RED, f"Error reading {junit_file}")
             success = False
@@ -483,13 +475,10 @@ def run_build_script(manifest_dir: str, name: str, script: list, final_script: l
         printc(ANSI_GREEN, f"{name} succeeded")
     else:
         printc(ANSI_RED, f"{name} FAILED")
-        max_print = 10
         if failures != []:
+            max_print = 10
             printc(ANSI_RED, "Failed cases: " + ", ".join(failures[:max_print]) +
                    (" ..." if len(failures) > max_print else ""))
-        if errors != []:
-            printc(ANSI_RED, "Error cases: " + ", ".join(errors[:max_print]) +
-                   (" ..." if len(errors) > max_print else ""))
     print("")
     sys.stdout.flush()
 

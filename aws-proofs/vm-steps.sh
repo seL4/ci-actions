@@ -19,9 +19,15 @@ then
   export REPO_MANIFEST="${INPUT_MANIFEST}"
 fi
 
+TESTBOARD=seL4/gh-testboard
+if [ "${GITHUB_REPOSITORY}" = "${TESTBOARD}" ]
+then
+  export MANIFEST_URL="https://github.com/${TESTBOARD}.git"}
+fi
+
 checkout-manifest.sh
 
-if [ -n "${INPUT_ISA_BRANCH}" -a -z "${INPUT_XML}" ]
+if [ -n "${INPUT_ISA_BRANCH}" ] && [ -z "${INPUT_XML}" ]
 then
   cd isabelle
   echo "Fetching ${INPUT_ISA_BRANCH} from remote \"verification\""
@@ -30,16 +36,14 @@ then
   cd ..
 fi
 
-cd $(repo-util path ${GITHUB_REPOSITORY})
 echo "Testing ${GITHUB_REPOSITORY}"
 
-if [ -z ${GITHUB_BASE_REF} ]
+if [ "${GITHUB_REPOSITORY}" != "${TESTBOARD}" ]
 then
+  cd $(repo-util path ${GITHUB_REPOSITORY})
   fetch-branch.sh
-else
-  fetch-pr.sh
+  cd - >/dev/null
 fi
-cd - >/dev/null
 
 repo-util hashes
 

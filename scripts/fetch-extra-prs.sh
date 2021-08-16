@@ -9,6 +9,7 @@
 
 if [ -z "${INPUT_XML}" ] && [ -n "${INPUT_EXTRA_PRS}" ]
 then
+  echo "extra PRs: ${INPUT_EXTRA_PRS}"
 
   for PR in ${INPUT_EXTRA_PRS}
   do

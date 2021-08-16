@@ -9,6 +9,15 @@
 # For now we keep an active ssh session during the test so that we get live
 # logs.
 
+if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ] ||
+   [ "${GITHUB_EVENT_NAME}" = "pull_request" ]
+then
+  echo "::group::PR info"
+  pip3 install -U PyGithub
+  INPUT_EXTRA_PRS="$(get-prs)"
+  echo "::endgroup::"
+fi
+
 echo "::group::AWS"
 # fail on any error
 set -e
@@ -69,6 +78,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_CACHE_WRITE \
     -o SendEnv=INPUT_SKIP_DUPS \
     -o SendEnv=INPUT_XML \
+    -o SendEnv=INPUT_EXTRA_PRS \
     -o SendEnv=GITHUB_REPOSITORY \
     -o SendEnv=GITHUB_REF \
     -o SendEnv=GITHUB_BASE_REF \

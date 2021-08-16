@@ -44,7 +44,7 @@ then
   cd $(repo-util path ${GITHUB_REPOSITORY})
   fetch-branch.sh
   cd - >/dev/null
-
+  export INPUT_EXTRA_PRS
   fetch-extra-prs.sh
 fi
 

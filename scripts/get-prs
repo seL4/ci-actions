@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+#
+# Copyright 2021 Proofcraft Pty Ltd
+# SPDX-License-Identifier: BSD-2-Clause
+
+# Parse a PR description body for comments of the form
+#   "Test with org/repo#id ((, | and) org/repo#id)*"
+#
+# Expects a GitHub event file to be available for the PR number.
+#
+# Outputs space separated list of "org/repo#id"
+# Outputs empty string if no such references.
+#
+# Fails if not a PR.
+
+import json
+import os
+import re
+import sys
+
+from github import Github
+
+test_start_re = "[Tt]est with:?"
+repo_ref_re = "([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+#[0-9]+)"
+pr_re = re.compile(repo_ref_re)
+repo_sep_re = "([, ]+(and)?[ ]*)"
+test_re = re.compile(f"{test_start_re}[ ]*({repo_ref_re}{repo_sep_re}?)+")
+
+if __name__ == '__main__':
+    if os.environ['GITHUB_EVENT_NAME'] != 'pull_request' and \
+       os.environ['GITHUB_EVENT_NAME'] != 'pull_request_target':
+        print('Not a pull request')
+        sys.exit(1)
+
+    with open(os.environ['GITHUB_EVENT_PATH']) as f:
+      event = json.load(f)
+    number = event['number']
+
+    # get body dynamically so we don't miss updates on test re-run:
+    gh = Github()
+    repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
+    issue = repo.get_issue(number=int(number))
+
+    prs = []
+    for line in issue.body.split('\n'):
+        if test_re.match(line):
+          prs.extend(pr_re.findall(line))
+
+    print(" ".join(prs))

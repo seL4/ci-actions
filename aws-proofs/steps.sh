@@ -5,8 +5,9 @@
 # SPDX-License-Identifier: BSD-2-Clause
 #
 
-# The GitHub action mostly starts up an AWS and hands over to there. For now we
-# keep an active ssh session during the test so that we get live logs.
+# The GitHub action mostly starts up an AWS instance and hands over to there.
+# For now we keep an active ssh session during the test so that we get live
+# logs.
 
 echo "::group::AWS"
 # fail on any error

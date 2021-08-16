@@ -42,8 +42,9 @@ if __name__ == '__main__':
     issue = repo.get_issue(number=int(number))
 
     prs = []
-    for line in issue.body.split('\n'):
-        if test_re.match(line):
-          prs.extend(pr_re.findall(line))
+    if issue.body:
+      for line in issue.body.split('\n'):
+          if test_re.match(line):
+            prs.extend(pr_re.findall(line))
 
     print(" ".join(prs))

@@ -19,12 +19,14 @@ then
   if [ -n "${INPUT_SHA}" ]
   then
     REF=${INPUT_SHA}
+    FETCH=${REF}
   else
     REF=${GITHUB_REF}
+    FETCH=${REF}:${REF}
   fi
 
   echo "Fetching ${REF} from ${URL}"
-  git fetch -q --depth 1 ${URL} ${REF}:${REF}
+  git fetch -q --depth 1 ${URL} ${FETCH}
   git checkout -q ${REF}
 
 fi

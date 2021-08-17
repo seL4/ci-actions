@@ -5,23 +5,23 @@
 # The context of this Dockerfiles is the repo root (../)
 
 ARG WORKSPACE=/workspace
+ARG SCRIPTS=/ci-scripts
+ARG ACTION=sel4test-sim
 
 FROM trustworthysystems/sel4-riscv
 
-RUN pip3 install junitparser
+RUN pip3 install junitparser PyGithub
 
-COPY sel4test-sim/steps.sh \
-     scripts/checkout-manifest.sh \
-     scripts/fetch-branch.sh \
-     scripts/repo-util \
-     /usr/bin/
-
-WORKDIR /usr/bin
-RUN chmod a+rx checkout-manifest.sh fetch-branch.sh repo-util steps.sh
+ARG SCRIPTS
+ARG ACTION
+RUN mkdir ${SCRIPTS}
+COPY ${ACTION}/steps.sh scripts/* ${SCRIPTS}/
+RUN chmod a+rx ${SCRIPTS}/*
+ENV  PATH "${SCRIPTS}:${PATH}"
 
 RUN mkdir /builds
-COPY sel4test-sim/builds.yml \
-     sel4test-sim/build.py \
+COPY ${ACTION}/builds.yml \
+     ${ACTION}/build.py \
      seL4-platforms/platforms.yml \
      seL4-platforms/platforms.py \
      seL4-platforms/builds.py \

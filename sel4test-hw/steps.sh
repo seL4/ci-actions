@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 #
 
-# Docker entrypoint for seL4 cparser test
+# Docker entrypoint for seL4 hardware build test
 
 set -e
 
@@ -14,11 +14,7 @@ export REPO_MANIFEST="master.xml"
 export MANIFEST_URL="https://github.com/seL4/sel4test-manifest.git"
 checkout-manifest.sh
 
-cd $(repo-util path ${GITHUB_REPOSITORY})
-fetch-branch.sh
-cd - >/dev/null
-
-repo-util hashes
+fetch-branches.sh
 echo "::endgroup::"
 
 # start test

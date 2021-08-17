@@ -22,11 +22,7 @@ export REPO_MANIFEST="master.xml"
 export MANIFEST_URL="https://github.com/seL4/sel4-tutorials-manifest.git"
 checkout-manifest.sh
 
-cd $(repo-util path ${GITHUB_REPOSITORY})
-fetch-branch.sh
-cd - >/dev/null
-
-repo-util hashes
+fetch-branches.sh
 echo "::endgroup::"
 
 # GitHub sets its own home dir, but we want the caches set up in /root

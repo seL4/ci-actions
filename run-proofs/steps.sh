@@ -26,15 +26,7 @@ fi
 cd $(repo-util path ${GITHUB_REPOSITORY})
 echo "Testing ${GITHUB_REPOSITORY}"
 
-if [ -z ${GITHUB_BASE_REF} ]
-then
-  fetch-branch.sh
-else
-  fetch-pr.sh
-fi
-cd - >/dev/null
-
-repo-util hashes
+fetch-branches.sh
 
 # GitHub sets its own HOME, but we have .isabelle data pre-installed in the
 # Docker image

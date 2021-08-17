@@ -22,11 +22,7 @@ export REPO_MANIFEST="${INPUT_MANIFEST}"
 export MANIFEST_URL="https://github.com/seL4/${INPUT_MANIFEST_REPO}"
 checkout-manifest.sh
 
-cd $(repo-util path ${GITHUB_REPOSITORY})
-fetch-branch.sh
-cd - >/dev/null
-
-repo-util hashes
+fetch-branches.sh
 
 echo "::endgroup::"
 

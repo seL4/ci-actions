@@ -14,7 +14,7 @@ export PATH=/home/test-runner/ci-actions/scripts:/home/test-runner/.local/bin:/h
 mkdir ver
 cd ver
 
-if [ -n ${INPUT_MANIFEST} ]
+if [ -n "${INPUT_MANIFEST}" ]
 then
   export REPO_MANIFEST="${INPUT_MANIFEST}"
 fi
@@ -63,7 +63,7 @@ then
 fi
 
 echo "::group::Cache"
-if [ -n ${CACHE_NAME} ]
+if [ -n "${CACHE_NAME}" ]
 then
   echo "Getting image cache ${CACHE_NAME}"
   # it's Ok for this command to fail, cache might not yet exist
@@ -83,7 +83,7 @@ export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 FAIL=0
 
 cd l4v
-if [ -n ${INPUT_SESSION} ]
+if [ -n "${INPUT_SESSION}" ]
 then
   ./run_tests -v ${INPUT_SESSION} || FAIL=1
 else

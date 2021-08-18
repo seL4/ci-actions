@@ -11,7 +11,7 @@ import subprocess
 
 def run_command(*args, **kwargs):
     '''Trivial wrapper for subprocess.check_output'''
-    return subprocess.check_output(*args, **kwargs).decode(sys.stdout.encoding)
+    return subprocess.check_output(*args, **kwargs)
 
 
 def loud_command(*args, **kwargs):

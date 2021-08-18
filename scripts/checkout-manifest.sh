@@ -43,4 +43,4 @@ then
   $REPO init ${DEPTH} -m "${TEST_XML}"
 fi
 
-$REPO sync
+$REPO sync -j 4

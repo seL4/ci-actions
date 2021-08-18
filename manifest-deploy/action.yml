@@ -1,0 +1,25 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Deploy sel4test and other manifests after test'
+description: |
+  Constructs default.xml manifests after successful test and deploys it to
+  the corresponding manifest repo.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  xml:
+    description: manifest to deploy in xml
+    required: true
+  manifest_repo:
+    description: the manifest repository to deploy to
+    required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'manifest-deploy'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

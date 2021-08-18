@@ -5,13 +5,17 @@
 name: 'Deploy l4v default.xml manifest'
 description: |
   Constructs new l4v default.xml after successful test and deploys it to
-  seL4/verification manifest.
+  seL4/verification manifest. Tests can be proof runs or automated preprocess
+  bumps.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   xml:
     description: manifest to deploy
     required: true
+  preprocess:
+    description: if set, deploy a prepresses bump instead of proof run.
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

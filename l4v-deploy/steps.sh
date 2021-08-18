@@ -20,18 +20,30 @@ eval $(ssh-agent)
 ssh-add -q - <<< "${GH_SSH}"
 echo "::endgroup::"
 
-echo "::group::Repo checkout"
-export REPO_DEPTH=0
-checkout-manifest.sh
+if [ -z "${INPUT_PREPROCESS}" ]
+then
+  echo "::group::Repo checkout"
+  export REPO_DEPTH=0
+  checkout-manifest.sh
 
-echo "Fetching Isabelle tags"
-cd $(repo-util path seL4/isabelle)
-git fetch verification --tags
-cd - > /dev/null
+  echo "Fetching Isabelle tags"
+  cd $(repo-util path seL4/isabelle)
+  git fetch verification --tags
+  cd - > /dev/null
 
-repo-util hashes
-echo "::endgroup::"
+  repo-util hashes
+  echo "::endgroup::"
 
-echo "::group::Deploy"
-staging-manifest ssh://git@github.com/seL4/verification-manifest.git
-echo "::endgroup::"
+  echo "::group::Deploy"
+  staging-manifest ssh://git@github.com/seL4/verification-manifest.git
+  echo "::endgroup::"
+else
+  echo "::group::Repo checkout"
+  checkout-manifest.sh
+  repo-util hashes
+  echo "::endgroup::"
+
+  echo "::group::Deploy"
+  seL4-pp --verification-path .
+  echo "::endgroup::"
+fi

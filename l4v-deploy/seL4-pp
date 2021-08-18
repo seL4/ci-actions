@@ -32,6 +32,10 @@ parser.add_argument('--verification-path', default='verification',
                     help="location of verification repos")
 parser.add_argument('--manifest-file', default='devel.xml',
                     help="update this manifest file")
+parser.add_argument('--upstream', default='ssh://git@github.com/seL4/verification-manifest.git',
+                    help="upstream remote to push to")
+parser.add_argument('--branch', default='master',
+                    help="upstream branch to push to")
 parser.add_argument('--ff-only', action='store_true',
                     help="only allow fast-forwards for seL4")
 parser.add_argument('-n', '--dry-run', action='store_true',
@@ -108,16 +112,13 @@ def main():
 
     # Push the update.
     if args.dry_run:
-        print("Dry run; not pushing.")
+        print(f"Dry run; not pushing to {args.upstream} {args.branch}.")
     else:
         # For some silly reason, Google Repo sets up manifest_dir with the
         # dummy branch name 'default', which git refuses to push to remote branch
         # 'master' unless explicitly told to.
-        remote_branch = run_command(['git', 'rev-parse', '--abbrev-ref',
-                                     '@{upstream}'], cwd=manifest_dir).rstrip()
-        remote, branch = remote_branch.split('/')
         try:
-            loud_command(['git', 'push', remote, 'HEAD:%s' % branch], cwd=manifest_dir)
+            loud_command(['git', 'push', args.upstream, 'HEAD:' + args.branch], cwd=manifest_dir)
         except subprocess.CalledProcessError:
             print("*** Push failed.")
             sys.exit(1)

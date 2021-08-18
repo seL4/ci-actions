@@ -40,3 +40,4 @@ git_commit_email = 'ci@sel4.systems'
 def set_repo_email(repo='.', user=git_commit_user, email=git_commit_email):
     loud_command(['git', 'config', 'user.name', user], cwd=repo)
     loud_command(['git', 'config', 'user.email', email], cwd=repo)
+    loud_command(['git', 'config', '--add', 'gerrit.createChangeId', '0'], cwd=repo)

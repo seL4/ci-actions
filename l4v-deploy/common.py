@@ -5,13 +5,13 @@
 #
 # Common utils.
 
-import os
+import sys
 import subprocess
 
 
 def run_command(*args, **kwargs):
     '''Trivial wrapper for subprocess.check_output'''
-    return subprocess.check_output(*args, **kwargs)
+    return subprocess.check_output(*args, **kwargs).decode(sys.stdout.encoding)
 
 
 def loud_command(*args, **kwargs):

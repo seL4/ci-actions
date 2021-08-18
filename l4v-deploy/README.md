@@ -21,10 +21,10 @@ The [staging-manifest] script updates [verification-manifest] from after a
 successful [proof run]. This can update the reference of any project in the
 [verification-manifest].
 
-<!-- The [seL4-pp] script updates the `seL4` reference in [verification-manifest]
+The [seL4-pp] script updates the `seL4` reference in [verification-manifest]
 after a successful run of the [preprocess] test, this usually means `seL4` was
 updated but did not introduce any changes to the code-base used for
-verification. -->
+verification.
 
 [preprocess]: ../preprocess/
 [staging-manifest]: ./staging-manifest
@@ -34,6 +34,7 @@ verification. -->
 ## Arguments
 
 - `xml`: the manifest file to update to
+- `preprocess`: if set, deploy for a preprocess bump instead of proof run
 
 ## Environment
 

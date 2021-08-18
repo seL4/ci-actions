@@ -10,7 +10,6 @@
 set -e
 
 # required parameters:
-TEST_REF="${GITHUB_REF}"
 export L4V_ARCH="${INPUT_L4V_ARCH}"
 export L4V_FEATURES="${INPUT_L4V_FEATURES}"
 
@@ -22,19 +21,16 @@ REPOS="$(pwd)"
 SEL4_REPO="${REPOS}/seL4"
 MANIFEST_REV=$(git -C ${SEL4_REPO} rev-parse HEAD)
 
-# additional setup if we're running in an GitHub action:
-if [ -n "${GITHUB_ACTIONS}" ]
-then
-  cd seL4
-  fetch-pr.sh
+cd "${SEL4_REPO}"
+export BRANCH_NAME="github-ci-work/pr-branch"
+fetch-branch.sh
 
-  # Use sha from here
-  TEST_REF=$(git rev-parse HEAD)
+# Use sha from here
+TEST_REF=$(git rev-parse HEAD)
 
-  # restore previous state
-  git checkout -q ${MANIFEST_REV}
-  cd ..
-fi
+# restore previous state
+git checkout -q ${MANIFEST_REV}
+cd - > /dev/null
 
 repo-util hashes
 

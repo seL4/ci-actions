@@ -28,7 +28,7 @@ then
   echo "Fetching ${REF} from ${URL}"
   git fetch -q --depth 1 ${URL} ${FETCH}
   git checkout -q ${REF}
-  if [ -n "BRANCH_NAME" ]
+  if [ -n "${BRANCH_NAME}" ]
   then
     git checkout -b "${BRANCH_NAME}"
   fi

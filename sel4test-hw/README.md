@@ -43,6 +43,7 @@ use one or more of the following:
 - `compiler`: one of `{gcc, clang}`
 - `debug`: comma separated list of debug levels from `{debug, release,
   verification}`  to filter on.
+- `xml`: [sel4test][sel4test-manifest] xml manifest to test
 
 ## Example
 

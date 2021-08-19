@@ -28,6 +28,9 @@ inputs:
   sha:
     description: git sha to test
     required: false
+  xml:
+    description: sel4test xml manifest to test
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

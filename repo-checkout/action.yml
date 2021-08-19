@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: 'seL4Test/Hardware Runs'
+name: 'Repo Checkout'
 description: |
   Does sel4test test runs from previously built images for all hardware test platforms.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>

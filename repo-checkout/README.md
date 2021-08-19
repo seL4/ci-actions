@@ -12,7 +12,7 @@ only), and to record that state for later use by other actions.
 
 This mostly exists to make sure that separate jobs in a matrix build see exactly
 the same sources, especially when there are job dependencies and one or more jobs
-could start signficantly (hours) later than others. If manifests or branches are
+could start significantly (hours) later than others. If manifests or branches are
 updated in between, the later job might otherwise see different sources.
 
 [sel4test-manifest]: https://github.com/seL4/sel4test-manifest
@@ -25,7 +25,7 @@ The steps of this action are defined in [steps.sh].
 
 ## Arguments
 
-- `manifest_repo` (required): the manifest repostory to check out (e.g. 'sel4test-manifest')
+- `manifest_repo` (required): the manifest repository to check out (e.g. 'sel4test-manifest')
 - `manifest`: the manifest file to use (default `master.xml`)
 - `sha:`: override sha to advance PR repo to (e.g. sha for `seL4` repo in `seL4/sel4test-manifest`
           if seL4 is the repo the action is called from)

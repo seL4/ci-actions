@@ -49,6 +49,7 @@ def main():
     print("Updating verification manifest...")
 
     master_rev = run_command(['git', 'show', '-s', '--format=%H'], cwd=args.seL4_path).strip()
+    master_rev = master_rev.decode(sys.stdout.encoding)
 
     # Parse manifest.
     manifest_path = os.path.join(manifest_dir, args.manifest_file)

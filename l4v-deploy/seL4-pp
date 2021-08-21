@@ -98,7 +98,7 @@ def main():
         # We can do a text replace because old_rev is unambiguous.
         with open(manifest_path, 'w') as f:
             # FIXME: text replace may be unsafe
-            f.write(manifest_text.replace(old_rev, master_rev.decode(sys.stdout.encoding)))
+            f.write(manifest_text.replace(old_rev, master_rev))
     else:
         # Write machine-formatted XML.
         seL4_proj.setAttribute('revision', master_rev)

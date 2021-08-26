@@ -1,0 +1,16 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# Maps manifest name to the repo that contains the main test setup for this
+# manifest. Assumes all repos are in the GitHub seL4 org.
+
+verification-manifest: l4v
+sel4test-manifest: seL4
+sel4bench-manifest: sel4bench
+camkes-manifest: camkes-tool
+camkes-vm-examples-manifest: camkes-vm-examples
+sel4-tutorials-manifest: sel4-tutorials
+sel4webserver-manifest: sel4webserver

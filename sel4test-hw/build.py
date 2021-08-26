@@ -53,6 +53,9 @@ def build_filter(build: Build) -> bool:
         if build.is_hyp() and build.get_mode() == 64 and build.is_release() and \
            plat.name == 'HIKEY':
             return False
+        # No MCS + SMP for platforms with global timer for now (see seL4/seL4#513)
+        if plat.name == 'SABRE' and build.is_smp() and build.is_mcs():
+            return False
 
     if plat.arch == 'x86':
         # Bamboo config says no VTX for SMP or verification

@@ -1,0 +1,130 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+# --- GENERATED -- DO NOT EDIT
+# run ./gen-notify.py to regenerate this file
+
+cakeml_libs:
+- camkes-tool
+camkes:
+- camkes-tool
+camkes-arm-vm:
+- sel4webserver
+camkes-tool:
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+camkes-vm:
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+camkes-vm-images:
+- camkes-vm-examples
+- sel4webserver
+camkes-vm-linux:
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+capdl:
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+cogent:
+- camkes-tool
+global-components:
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+graph-refine:
+- l4v
+hol:
+- l4v
+isabelle:
+- l4v
+libzmq:
+- camkes-vm-examples
+lwip:
+- camkes-tool
+- camkes-vm-examples
+musllibc:
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+nanopb:
+- seL4
+- sel4bench
+opensbi:
+- seL4
+- sel4bench
+- camkes-tool
+picotcp:
+- camkes-tool
+- camkes-vm-examples
+polly:
+- camkes-vm-examples
+- sel4-tutorials
+polyml:
+- l4v
+projects_libs:
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+pruner:
+- camkes-tool
+rumprun:
+- camkes-tool
+sel4:
+- l4v
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+sel4_libs:
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+sel4_projects_libs:
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+sel4_tools:
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+sel4runtime:
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver
+sel4test:
+- seL4
+util_libs:
+- seL4
+- sel4bench
+- camkes-tool
+- camkes-vm-examples
+- sel4-tutorials
+- sel4webserver

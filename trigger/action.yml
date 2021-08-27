@@ -1,0 +1,21 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Trigger repository_dispatch'
+description: |
+  Trigger test run in the main repository of a repo manifest set.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  token:
+    description: authentication token with repo scope for target repos.
+    required: true
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'trigger'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

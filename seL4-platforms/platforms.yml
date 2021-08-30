@@ -92,6 +92,14 @@ platforms:
     req: [imx8mm]
     march: armv8a
 
+  TQMA8XQP1GB:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: tqma8xqp1gb
+    march: armv8a
+
   KZM:
     arch: arm
     modes: [32]

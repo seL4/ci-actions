@@ -96,7 +96,6 @@ platforms:
     arch: arm
     modes: [64]
     smp: [64]
-    aarch_hyp: [64]
     platform: tqma8xqp1gb
     march: armv8a
 

@@ -58,7 +58,7 @@ def add_to_map(map: dict, repos: List[str], notif: str) -> dict:
     """ Add notification to each of the provided repos in the provided map. """
 
     for r in repos:
-        if r != notif:
+        if r.lower() != notif.lower():
             map[r] = map.get(r, []) + [notif]
 
 

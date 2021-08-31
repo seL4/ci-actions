@@ -85,7 +85,6 @@ rumprun:
 - camkes-tool
 sel4:
 - l4v
-- seL4
 - sel4bench
 - camkes-tool
 - camkes-vm-examples

@@ -4,7 +4,7 @@
 
 # The context for this Dockerfile is the repo root
 
-FROM trustworthysystems/l4v-riscv
+FROM trustworthysystems/l4v:latest
 
 COPY scripts/*.sh scripts/repo-util run-proofs/steps.sh /usr/bin/
 COPY run-proofs/settings /isabelle/etc/

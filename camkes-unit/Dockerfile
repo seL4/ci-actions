@@ -4,7 +4,7 @@
 
 # The context for this Dockerfile is the repo root
 
-FROM trustworthysystems/camkes
+FROM trustworthysystems/camkes:lastest
 
 COPY scripts/*.sh camkes-unit/steps.sh /usr/bin/
 

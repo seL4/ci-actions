@@ -8,7 +8,7 @@ ARG WORKSPACE=/workspace
 ARG SCRIPTS=/ci-scripts
 ARG ACTION=camkes-test
 
-FROM trustworthysystems/camkes-cakeml-cogent-riscv-rust:latest
+FROM trustworthysystems/camkes-cakeml-cogent-rust:latest
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

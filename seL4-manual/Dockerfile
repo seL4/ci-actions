@@ -6,7 +6,7 @@
 
 ARG WORKSPACE=/workspace
 
-FROM trustworthysystems/sel4
+FROM trustworthysystems/sel4:latest
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

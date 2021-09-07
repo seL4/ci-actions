@@ -12,14 +12,7 @@
 ARG WORKSPACE=/workspace
 ARG CP_DEST=/c-parser/standalone-parser
 
-FROM trustworthysystems/sel4 AS builder
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       mlton \
-    && apt-get clean autoclean \
-    && apt-get autoremove --yes \
-    && rm -rf /var/lib/{apt,dpkg,cache,log}/
+FROM trustworthysystems/l4v:latest AS builder
 
 COPY scripts/checkout-manifest.sh /usr/bin/
 RUN chmod a+rx /usr/bin/checkout-manifest.sh

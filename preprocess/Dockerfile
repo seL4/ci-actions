@@ -8,7 +8,7 @@ ARG WORKSPACE=/workspace
 ARG SCRIPTS=/ci-scripts
 ARG ACTION=preprocess
 
-FROM trustworthysystems/sel4-riscv
+FROM trustworthysystems/sel4:latest
 
 COPY --from=sel4/cparser-builder /c-parser /c-parser
 

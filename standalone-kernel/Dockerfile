@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-FROM trustworthysystems/sel4-riscv:latest
+FROM trustworthysystems/sel4:latest
 
 COPY compile_kernel.sh /compile_kernel.sh
 

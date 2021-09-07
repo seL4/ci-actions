@@ -283,7 +283,7 @@ def gen_web(runs: List[Run], yml, file_name: str):
         f.write(f'<h2>Compilation Details</h2>\n')
 
         f.write(f'<p>')
-        f.write(f'All benchmarks were built using the trustworthy-systems/sel4-riscv\n')
+        f.write(f'All benchmarks were built using the trustworthy-systems/sel4\n')
         f.write(f'docker image from the <a href="https://github.com/seL4/seL4-CAmkES-L4v-dockerfiles">seL4\n')
         f.write(f'docker file repository</a>')
         f.write(f'</p>')

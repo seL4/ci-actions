@@ -17,15 +17,6 @@ inputs:
     description: 'Which compiler suite to use. One of gcc, llvm'
     required: true
 
-  PYTHON:
-    description: 'Which version of Python to use. One of py2, py3'
-    required: true
-
-  action_name:
-    description: 'internal -- do not use'
-    required: false
-    default: 'standalone-kernel'
-
 runs:
   using: 'docker'
   image: 'Dockerfile'

@@ -30,12 +30,6 @@ The `COMPILER` input is the the choice of which compiler suite is to be used.
 Valid values are `gcc`, `llvm`.
 Note that not all `ARCH`s support all compilers.
 
-### PYTHON
-
-The `PYTHON` input is the the choice of which version of Python should be used during
-compilation.
-Valid values are `py2`, `py3`.
-
 They are best used in a matrix to run the test for all architectures
 concurrently.
 
@@ -52,7 +46,6 @@ standalone_kernel:
       matrix:
         arch: [ARM, ARM_HYP, RISCV64, X64]
         compiler: [gcc, llvm]
-        python: [py2, py3]
         exclude:
           # llvm RISCV64 compilation is not currently supported
           - arch: RISCV64

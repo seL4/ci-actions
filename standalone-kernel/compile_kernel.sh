@@ -7,7 +7,6 @@
 
 echo "Arch: $INPUT_ARCH"
 echo "Comp: $INPUT_COMPILER"
-echo "Pyth: $INPUT_PYTHON"
 
 set -e
 
@@ -40,10 +39,6 @@ case $INPUT_ARCH in
         echo "Unknown ARCH"
         exit 1
 esac
-
-if [ "$INPUT_PYTHON" = "py3" ]; then
-    extra_config="${extra_config} -DPYTHON=python3"
-fi
 
 echo "::group::Run CMake"
 set -x

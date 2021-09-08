@@ -1,0 +1,32 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'CAmkES Hardware Test'
+description: |
+  The hardware runs for the CAmkES test suite.
+  Depends previously built impages.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  name:
+    description: Comma separated list of build names to filter build list on.
+    required: false
+  platform:
+    description: Comma separated list of platforms to build for.
+    required: false
+  mode:
+    description: Comma separated list of modes to build for. One of `{32, 64}.`
+    required: false
+  index:
+    description: job index in matrix build
+    required: true
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'camkes-hw'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'
+  post: '../js/post.js'

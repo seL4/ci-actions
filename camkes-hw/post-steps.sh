@@ -15,6 +15,6 @@ export PATH="$(pwd)/machine_queue":$PATH
 # python
 export ACTION_DIR="${SCRIPTS}/.."
 export PYTHONPATH="${ACTION_DIR}/seL4-platforms"
-python3 "${ACTION_DIR}/sel4test-hw-run/build.py" --post
+python3 "${ACTION_DIR}/camkes-hw/build.py" --post
 
 echo "::endgroup::"

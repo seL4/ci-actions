@@ -52,4 +52,10 @@ use one or more of the following:
 - `platform`: platform name for a test run
 - `index`: **(required)** job index in matrix builds (use 0 if no matrix build)
 
+## Environment
+
+The action expects the following environment variables to be set.
+
+- `HW_SSH`: secret ssh key for the CI account to use the machine queue at UNSW.
+
 See the [seL4/seL4](https://github.com/seL4/seL4) repository for an example.

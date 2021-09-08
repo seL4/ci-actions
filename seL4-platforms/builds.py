@@ -60,6 +60,7 @@ class Build:
         self.settings = {}
         self.timeout = 600
         self.disabled = False
+        self.image_base_name = "sel4test-driver"
         [self.name] = entries.keys()
         attribs = copy.deepcopy(default)
         # this potentially overwrites the default settings dict, we restore it later
@@ -82,7 +83,7 @@ class Build:
         self.settings["PLATFORM"] = p.get_platform(m)
         # somewhat misnamed now; sets test output to parsable xml:
         self.settings["BAMBOO"] = "TRUE"
-        self.files = p.image_names(m, "sel4test-driver")
+        self.files = p.image_names(m, self.image_base_name)
         if self.req == 'sim':
             self.settings["SIMULATION"] = "TRUE"
 
@@ -204,7 +205,8 @@ class Build:
         return \
             f"Build('{self.name}': " '{' \
             f"'platform': {self.platform}, 'mode': {self.get_mode()}, " \
-            f"'req': {self.req}, 'app': {self.app}, 'settings': {self.settings}" '})'
+            f"'req': {self.req}, 'app': {self.app}, 'settings': {self.settings}, " \
+            f"'success': {self.success}, 'base': {self.image_base_name}" '})'
 
     def is_disabled(self) -> bool:
         return self.disabled or self.get_platform().disabled

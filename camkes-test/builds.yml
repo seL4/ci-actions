@@ -4,7 +4,10 @@
 
 ---
 
-# The CAmkES build matrix is a bit differnt to the, since it is mostly organised
+default:
+  image_base_name: 'capdl-loader'
+
+# The CAmkES build matrix is a bit different, since it is mostly organised
 # by app and not by build platform.
 #
 # For hardware builds, we use app variants on all platforms here to generate all

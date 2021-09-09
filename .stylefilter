@@ -1,0 +1,11 @@
+# Copyright 2021 Proofcraft Pty Ltd
+# SPDX-License-Identifier: BSD-2-Clause
+
+# scripts that use bash "<<<", which we do want:
+aws-proofs/steps.sh
+scripts/setup-hw-ssh.sh
+l4v-deploy/steps.sh
+manifest-deploy/steps.sh
+
+# uses bash nullglob, which we also do want:
+aws-proofs/vm-steps.sh

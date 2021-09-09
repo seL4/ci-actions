@@ -7,6 +7,10 @@ description: 'Runs coding style checks of the seL4 Foundation'
 author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
+  diff_only:
+    description: even on "push", check only the diff to the head of the branch
+                 before the push, not all files. Does not work for force-push.
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

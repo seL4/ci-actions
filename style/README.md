@@ -16,7 +16,12 @@ just calls this script.
 
 ## Arguments
 
-None
+- `diff_only`: by default this action checks changed files on pull requests, and
+               all files on `push`. Set `diff_only` to true to only check the
+               diff on `push` as well. The diff is between the head of the branch
+               before the push and the current head of the branch. This breaks for
+               force-push, where the previous head of the branch might not exist
+               any more.
 
 ## Example
 

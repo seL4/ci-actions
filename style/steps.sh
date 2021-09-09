@@ -20,20 +20,34 @@ sudo apt-get install -qq astyle > /dev/null
 checkout.sh
 # fetch pull request base if PR
 [ -n "${GITHUB_BASE_REF}" ] && fetch-base.sh
-
 echo "::endgroup::"
 
 echo
 if [ -n "${GITHUB_BASE_REF}" ]
 then
-  # running in a pull request
+  # on pull request: check against BASE_REF
+  BASE=${GITHUB_BASE_REF}
+else
+  # on push: check against BASE if requested
+  if [ -n "${INPUT_DIFF_ONLY}" ] && [ "${GITHUB_EVENT_NAME}" = "push" ]
+  then
+    BASE=$(jq -r ".before" "${GITHUB_EVENT_PATH}")
+    echo "On push, base is ${BASE}, fetching history."
+    git fetch -q --no-tags --unshallow
+    echo "done"
+  fi
+fi
+
+if [ -n "${BASE}" ]
+then
+  # comparing against BASE
   echo "Checking the following files:"
-  echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
+  echo "$(git diff --name-only ${BASE} test-revision)"
   echo
-  git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 \
+  git diff -z --name-only ${BASE} test-revision | xargs -0 \
     ${SEL4_TOOLS}/misc/style.sh
 else
-  # not running in pull request
+  # check everything
   ${SEL4_TOOLS}/misc/style-all.sh .
 fi
 

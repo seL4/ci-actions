@@ -38,7 +38,7 @@ directory. To filter the build variants defined there for a specific run,
 use one or more of the following:
 
 - `arch`: comma separated list of architecture to filter on, e.g `arm, riscv`.
-- `march`: comma separated list of `march` flags, e.g. `armv6a, nehalem`
+- `march`: comma separated list of `march` flags, e.g. `armv7a, nehalem`
 - `mode`: one of `{32, 64}`
 - `compiler`: one of `{gcc, clang}`
 - `debug`: comma separated list of debug levels from `{debug, release,
@@ -61,7 +61,7 @@ jobs:
     steps:
     strategy:
           matrix:
-            march: ["armv6a, armv8a", armv7a, nehalem, rv32imac, rv64imac]
+            march: ["armv7a, armv8a", nehalem, rv32imac, rv64imac]
             compiler: [gcc, clang]
     steps:
     - uses: seL4/ci-actions/sel4test-sim@master

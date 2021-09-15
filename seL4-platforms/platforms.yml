@@ -99,16 +99,6 @@ platforms:
     platform: tqma8xqp1gb
     march: armv8a
 
-  KZM:
-    arch: arm
-    modes: [32]
-    platform: kzm
-    image_platform: imx31
-    req: [kzm]
-    simulation_binary: kzm11
-    march: armv6a
-    disabled: true
-
   OMAP3:
     arch: arm
     modes: [32]

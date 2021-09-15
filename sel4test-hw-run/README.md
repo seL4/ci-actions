@@ -44,7 +44,7 @@ directory. To filter the build variants defined there for a specific run,
 use one or more of the following:
 
 - `arch`: comma separated list of architecture to filter on, e.g `arm, riscv`.
-- `march`: comma separated list of `march` flags, e.g. `armv6a, nehalem`
+- `march`: comma separated list of `march` flags, e.g. `armv7a, nehalem`
 - `mode`: one of `{32, 64}`
 - `compiler`: one of `{gcc, clang}`
 - `debug`: comma separated list of debug levels from `{debug, release,

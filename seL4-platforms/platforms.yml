@@ -232,6 +232,7 @@ platforms:
     platform: tx2
     req: [tx2b]
     march: armv8a
+    disabled: true
 
   APQ8064:
     arch: arm

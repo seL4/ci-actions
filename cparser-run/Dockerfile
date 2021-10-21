@@ -12,6 +12,12 @@ FROM trustworthysystems/sel4-riscv
 
 COPY --from=sel4/cparser-builder /c-parser /c-parser
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libffi-dev \
+    && apt-get clean autoclean \
+    && apt-get autoremove --yes \
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN pip3 install junitparser PyGithub
 
 ARG ACTION

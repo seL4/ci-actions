@@ -10,6 +10,12 @@ ARG ACTION=camkes-vm
 
 FROM trustworthysystems/camkes:latest
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libffi-dev \
+    && apt-get clean autoclean \
+    && apt-get autoremove --yes \
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN pip3 install junitparser PyGithub
 
 ARG ACTION

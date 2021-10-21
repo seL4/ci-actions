@@ -230,9 +230,8 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: tx2
-    req: [tx2b]
+    req: [tx2a, tx2b]
     march: armv8a
-    disabled: true
 
   APQ8064:
     arch: arm

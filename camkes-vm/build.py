@@ -8,7 +8,7 @@ Parse builds.yml and run CAmkES VM test on each of the build definitions.
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds
+from builds import Build, run_build_script, run_builds, load_builds, release_mq_locks
 from pprint import pprint
 
 import os
@@ -39,18 +39,28 @@ def run_build(manifest_dir: str, build: Build):
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"],
     ]
 
-    if plat.simulation_binary:
+    if plat.simulation_binary and plat.name != 'PC99':
         script.append(
             ["bash", "-c",
              f"expect -c 'spawn ./simulate; set timeout 3000; expect \"{build.success}\"'"]
         )
 
-    if not plat.disabled:
-        script.append(["echo", f"Hardware run for {build.req}, skipping"])
-    else:
-        script.append(["echo", f"Platform for build {build.name} disabled, skipping"])
-
     return run_build_script(manifest_dir, build.name, script)
+
+
+def hw_run(manifest_dir: str, build: Build):
+    """Run one hardware test."""
+
+    if build.is_disabled():
+        print(f"Build {build.name} disabled, skipping.")
+        return True
+
+    plat = build.get_platform()
+    build.files = plat.image_names(build.get_mode(), "capdl-loader")
+
+    script, final = build.hw_run('log.txt')
+
+    return run_build_script(manifest_dir, build.name, script, final_script=final)
 
 
 # If called as main, run all builds from builds.yml
@@ -59,6 +69,11 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] == '--dump':
         pprint(builds)
+        sys.exit(0)
+    elif len(sys.argv) > 1 and sys.argv[1] == '--hw':
+        sys.exit(run_builds(builds, hw_run))
+    elif len(sys.argv) > 1 and sys.argv[1] == '--post':
+        release_mq_locks(builds)
         sys.exit(0)
 
     sys.exit(run_builds(builds, run_build))

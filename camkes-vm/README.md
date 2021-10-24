@@ -32,6 +32,7 @@ use one or more of the following:
 
 - `name`: comma separated list of full test names, e.g. `optiplex9020`.
 - `march`: comma separated list of march, e.g. `armv7a, armv8a`.
+- `xml`: explicit manifest to use (instead of `seL4/camkes-vm-examples-manifest`).
 
 ## Example
 

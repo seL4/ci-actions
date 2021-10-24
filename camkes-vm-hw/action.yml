@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: 'CAmkES VM Tests'
+name: 'CAmkES VM Hardware Tests'
 description: |
-  The CAmkES VM test suite.
+  The CAmkES VM hardware test suite. Depends on images built in the camkes-vm job.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
@@ -14,10 +14,15 @@ inputs:
   march:
     description: 'Comma-separated list of march to filter on (for matrix builds)'
     required: false
-  xml:
-    description: xml manifest to test
+  index:
+    description: job index in matrix build
+    required: true
+  action_name:
+    description: 'internal -- do not use'
     required: false
+    default: 'camkes-vm-hw'
 
 runs:
-  using: 'docker'
-  image: 'docker://sel4/camkes-vm:latest'
+  using: 'node12'
+  main: '../js/index.js'
+  post: '../js/post.js'

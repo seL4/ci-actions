@@ -5,7 +5,7 @@
 name: 'CAmkES Hardware Test'
 description: |
   The hardware runs for the CAmkES test suite.
-  Depends previously built impages.
+  Depends on previously built impages.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:

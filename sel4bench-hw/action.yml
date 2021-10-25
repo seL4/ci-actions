@@ -1,0 +1,37 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4 Benchmark Runs'
+description: |
+  Runs sel4bench images on hardware. Expects images built by sel4bench action.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  arch:
+    description: Comma separated list of architectures to filter test configs on.
+    required: false
+  march:
+    description: Comma separated list of march flags to filter test configs on.
+    required: false
+  mode:
+    description: Comma separated list of modes (32/64) to filter test configs on.
+    required: false
+  platform:
+    description: Comma separated list of hardware platforms to run the test for.
+    required: false
+  req:
+    description: Machine to run test for (e.g. skylake or haswell3)
+    required: false
+  index:
+    description: job index in matrix build
+    required: true
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4bench-hw'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'
+  post: '../js/post.js'

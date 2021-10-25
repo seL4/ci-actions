@@ -1,0 +1,40 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+default:
+    image_base_name: sel4benchapp
+    success: All is well in the universe.
+    debug: release
+    compiler: gcc
+    settings:
+        FASTPATH: "TRUE"
+        HARDWARE: "TRUE"
+        FAULT: "TRUE"
+
+variants:
+    smp: ['', SMP]
+    mcs: ['', MCS]
+    mode: [32, 64]
+
+# builds in addition to the variant matrix above
+more_builds:
+    - SABRE_32_nofastpath:
+        platform: SABRE
+        mode: 32
+        settings:
+            FASTPATH: "FALSE"
+
+    - PC99_64_nofastpath:
+        platform: PC99
+        mode: 64
+        settings:
+            FASTPATH: "FALSE"
+
+    - PC99_64_noksw:
+        platform: PC99
+        mode: 64
+        settings:
+            KernelSkimWindow: "FALSE"

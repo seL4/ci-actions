@@ -196,7 +196,7 @@ platforms:
     modes: [32]
     aarch_hyp: [32]
     platform: tk1
-    req: [jetson]
+    req: [jetson1]
     march: armv7a
 
   RPI3:

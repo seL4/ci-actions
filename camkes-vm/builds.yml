@@ -14,10 +14,13 @@ builds:
 # PC99:
 - optiplex9020:
     mode: 64
+    req: haswell3
 - minimal:
     mode: 32
+    req: haswell3
 - zmq_samples:
     mode: 64
+    req: haswell3
     success: 'Finished running all scenarios'
     error: 'Exited with error'
 

@@ -146,6 +146,7 @@ platforms:
     req: [odroid-xu]
     image_platform: exynos5
     march: armv7a
+    disabled: true
 
   ARNDALE:
     arch: arm
@@ -223,6 +224,7 @@ platforms:
     platform: tx1
     req: [tx1]
     march: armv8a
+    disabled: true
 
   TX2:
     arch: arm

@@ -54,7 +54,7 @@ echo "Setting up Isabelle components"
 isabelle/bin/isabelle components -a
 
 CACHE_NAME=${INPUT_CACHE_NAME}
-if [ -n "${INPUT_CACHE_READ}" ] && [ -z "${CACHE_NAME}" ]
+if [ -z "${CACHE_NAME}" ]
 then
   # construct default cache name
   BRANCH=${INPUT_ISA_BRANCH:-default}
@@ -63,7 +63,7 @@ then
 fi
 
 echo "::group::Cache"
-if [ -n "${CACHE_NAME}" ]
+if [ -n "${INPUT_CACHE_READ}" ]
 then
   echo "Getting image cache ${CACHE_NAME}"
   # it's Ok for this command to fail, cache might not yet exist
@@ -100,7 +100,7 @@ cd l4v; ~/ci-actions/aws-proofs/sorry-count.sh; cd ..
 echo "::endgroup::"
 
 echo "::group::Cache and logs"
-if [ -n "${CACHE_NAME}" ] && [ -n "${INPUT_CACHE_WRITE}" ]
+if [ -n "${INPUT_CACHE_WRITE}" ]
 then
   echo "Writing image cache ${CACHE_NAME}"
   # compress not too much; s3 upload is fast and compression winnings are meager

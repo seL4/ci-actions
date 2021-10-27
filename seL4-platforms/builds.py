@@ -15,7 +15,7 @@ them, `run_build_script` for a standard test driver frame, and
 from junitparser.junitparser import Failure, Error
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
-from typing import Optional, List
+from typing import Optional, List, Union
 from junitparser import JUnitXml
 
 import copy
@@ -220,9 +220,32 @@ class Build:
         else:
             return req
 
+    # create a Run on the fly if we only want one Run per Build
     def hw_run(self, log):
-        if self.is_disabled():
-            return [['echo', f"Platform {self.get_platform().name} disabled. Skipping."]], []
+        Run(self).hw_run(log)
+
+
+class Run:
+    """Represents a test run. There can be multiple runs for a single build.
+
+    Most run-like attributes such as success, timeout, etc are stored in the
+    Build class. So far we only vary machine requirements (req) and name in a Run.
+    """
+
+    def __init__(self, build: Build, suffix: Optional[str] = None,
+                 req: Optional[str] = None):
+        self.build = build
+        self.name = build.name + suffix if suffix else build.name
+        self.req = req
+
+    def get_req(self) -> List[str]:
+        return self.req or self.build.get_req()
+
+    def hw_run(self, log):
+        build = self.build
+
+        if build.is_disabled():
+            return [['echo', f"Platform {build.get_platform().name} disabled. Skipping."]], []
 
         machine = get_machine(self.get_req())
         if not machine:
@@ -234,19 +257,19 @@ class Build:
                     ['exit', '1']], []
 
         return [
-            ['tar', 'xvzf', f"../{self.name}-images.tar.gz"],
+            ['tar', 'xvzf', f"../{self.build.name}-images.tar.gz"],
             mq_print_lock(machine),
             mq_lock(machine),
-            mq_run(self.success, machine, self.files,
-                   completion_timeout=self.timeout,
+            mq_run(build.success, machine, build.files,
+                   completion_timeout=build.timeout,
                    lock_held=True,
                    key=job_key(),
                    log=log,
-                   error_str=self.error)
+                   error_str=build.error)
         ], [mq_release(machine)]
 
 
-def release_mq_locks(builds):
+def release_mq_locks(runs: List[Union[Run, Build]]):
     """Release locks from this job; runs the commands instead of returning a list."""
 
     def run(command):
@@ -260,7 +283,7 @@ def release_mq_locks(builds):
 
     # If builds are done by platform, there will be only one req in the end,
     # but we are not guaranteed that builds are always by platform.
-    reqs = [b.get_req() for b in builds]
+    reqs = [r.get_req() for r in runs]
     req_set = []
     for req in reqs:
         if req and not req in req_set:
@@ -701,13 +724,13 @@ def load_builds(file_name: Optional[str], filter_fun=lambda x: True,
 
 
 def run_builds(builds: list, run_fun) -> int:
-    """Run a list of build definitions, given a test driver function.
+    """Run a list of build or run definitions, given a test driver function.
 
     Expects the current directory to be a manifest directory, in which
     tests are started (usually creating `build/` directory and running there).
 
     The driver function `run_fun` should take a directory (manifest dir)
-    and a Build, and run this build, returning true iff the build was successful.
+    and a Build (or Run), and run this build, returning true iff it was successful.
     """
 
     print()

@@ -332,27 +332,27 @@ def mq_run(success_str: str,
     return command
 
 
-def mq_lock(machine: str) -> list:
+def mq_lock(machine: str) -> List[str]:
     """Get lock for a machine."""
     return ['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key()]
 
 
-def mq_release(machine: str) -> list:
+def mq_release(machine: str) -> List[str]:
     """Release lock on a machine."""
     return ['mq.sh', 'sem', '-signal', machine, '-k', job_key()]
 
 
-def mq_cancel(machine: str) -> list:
+def mq_cancel(machine: str) -> List[str]:
     """Cancel processes waiting on lock for a machine."""
     return ['mq.sh', 'sem', '-cancel', machine, '-k', job_key()]
 
 
-def mq_print_lock(machine: str) -> list:
+def mq_print_lock(machine: str) -> List[str]:
     """Print lock status for machine."""
     return ['mq.sh', 'sem', '-info', machine]
 
 
-def run(args: list):
+def run(args: List[str]):
     """Echo + run command with arguments; raise exception on exit != 0"""
 
     printc(ANSI_YELLOW, "+++ " + " ".join(args))
@@ -412,7 +412,7 @@ sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_re
                   "-q", junit_results, parsed_junit_results]
 
 
-def run_build_script(manifest_dir: str, name: str, script: list, final_script: list = [],
+def run_build_script(manifest_dir: str, name: str, script: List[str], final_script: List[str] = [],
                      junit: bool = False, junit_file: str = parsed_junit_results) -> bool:
     """Run a build script in a separate `build/` directory
 

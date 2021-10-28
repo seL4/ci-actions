@@ -664,7 +664,11 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
             elif k == 'hyp':
                 if v != '' and not build.is_hyp():
                     return False
-            elif k in ['name', 'app', 'req']:
+            elif k == 'req':
+                for req in v:
+                    if not req in build.get_req():
+                        return False
+            elif k in ['name', 'app']:
                 if not vars(build).get(k) in v:
                     return False
             elif not vars(build.get_platform()).get(k):

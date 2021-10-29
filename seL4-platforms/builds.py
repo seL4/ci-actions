@@ -222,7 +222,7 @@ class Build:
 
     # create a Run on the fly if we only want one Run per Build
     def hw_run(self, log):
-        Run(self).hw_run(log)
+        return Run(self).hw_run(log)
 
 
 class Run:

@@ -222,9 +222,8 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: tx1
-    req: [tx1]
+    req: [tx1a]
     march: armv8a
-    disabled: true
 
   TX2:
     arch: arm

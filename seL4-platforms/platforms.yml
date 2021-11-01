@@ -165,6 +165,7 @@ platforms:
     req: [odroidxu4_1]
     image_platform: exynos5
     march: armv7a
+    disabled: true
 
   ZYNQ7000:
     arch: arm
@@ -231,7 +232,7 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: tx2
-    req: [tx2, tx2b]
+    req: [tx2b] # [tx2, tx2b]
     march: armv8a
 
   APQ8064:

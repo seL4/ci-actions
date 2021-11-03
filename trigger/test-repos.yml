@@ -14,3 +14,4 @@ camkes-manifest: camkes-tool
 camkes-vm-examples-manifest: camkes-vm-examples
 sel4-tutorials-manifest: sel4-tutorials
 sel4webserver-manifest: sel4webserver
+rumprun-sel4-demoapps: rumprun-sel4-demoapps

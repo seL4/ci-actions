@@ -13,7 +13,6 @@ import yaml
 import tempfile
 from subprocess import run
 from xml.etree.ElementTree import parse as xml_parse
-from pprint import pprint
 from shutil import rmtree
 
 

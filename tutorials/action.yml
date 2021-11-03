@@ -20,6 +20,9 @@ inputs:
   matrix:
     description: Set to true to dump build matrix only
     required: false
+  xml:
+    description: sel4test xml manifest to test
+    required: false
 
 runs:
   using: 'docker'

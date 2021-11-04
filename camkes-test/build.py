@@ -8,7 +8,7 @@ Parse builds.yml and run CAmkES test on each of the build definitions.
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds, release_mq_locks
+from builds import Build, run_build_script, run_builds, load_builds, release_mq_locks, SKIP
 from pprint import pprint
 from typing import List, Union
 
@@ -82,7 +82,7 @@ def hw_run(manifest_dir: str, build: Build):
 
     if build.is_disabled():
         print(f"Build {build.name} disabled, skipping.")
-        return True
+        return SKIP
 
     build.success = apps[build.app]['success']
     script, final = build.hw_run('log.txt')

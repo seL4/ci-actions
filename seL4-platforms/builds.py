@@ -245,7 +245,7 @@ class Run:
         build = self.build
 
         if build.is_disabled():
-            return [['echo', f"Platform {build.get_platform().name} disabled. Skipping."]], []
+            return [lambda r: SKIP], []
 
         machine = get_machine(self.get_req())
         if not machine:

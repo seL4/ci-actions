@@ -9,6 +9,7 @@ Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
 from builds import Build, run_build_script, run_builds, load_builds, junit_results, release_mq_locks
+from builds import SKIP
 from pprint import pprint
 
 import os
@@ -32,7 +33,7 @@ def hw_run(manifest_dir: str, build: Build):
 
     if build.is_disabled():
         print(f"Build {build.name} disabled, skipping.")
-        return True
+        return SKIP
 
     script, final = build.hw_run(junit_results)
 

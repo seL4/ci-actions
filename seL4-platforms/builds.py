@@ -15,7 +15,7 @@ them, `run_build_script` for a standard test driver frame, and
 from junitparser.junitparser import Failure, Error
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
-from typing import Optional, List, Union
+from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
 
 import copy
@@ -375,8 +375,21 @@ def mq_print_lock(machine: str) -> List[str]:
     return ['mq.sh', 'sem', '-info', machine]
 
 
-def run(args: List[str]):
-    """Echo + run command with arguments; raise exception on exit != 0"""
+# return codes for a test run or single step of a run
+FAILURE = 0
+SUCCESS = 1
+SKIP = 2
+REPEAT = 3
+
+
+def success_from_bool(success: bool) -> int:
+    if success:
+        return SUCCESS
+    else:
+        return FAILURE
+
+def run(args: List[str]) -> int:
+    """Echo + run command with arguments"""
 
     printc(ANSI_YELLOW, "+++ " + " ".join(args))
     sys.stdout.flush()
@@ -389,15 +402,14 @@ def run(args: List[str]):
         sys.stdout.flush()
         sys.stderr.flush()
     ret = process.wait()
-    if not ret == 0:
-        raise subprocess.CalledProcessError(ret, args)
 
+    return success_from_bool(ret == 0)
 
 def printc(color: str, content: str):
     print(color + content + ANSI_RESET)
 
 
-def summarise_junit(file_path: str) -> bool:
+def summarise_junit(file_path: str) -> Tuple[int, List[str]]:
     """Parse jUnit output and show a summary.
 
     Returns True if there were no failures or errors, raises exception
@@ -423,7 +435,7 @@ def summarise_junit(file_path: str) -> bool:
     failures = {str(case.name) for case in xml
                 if any([isinstance(r, Failure) or isinstance(r, Error) for r in case.result])}
 
-    return success, list(failures)
+    return success_from_bool(success), list(failures)
 
 
 # where junit results are left after sanitising:
@@ -436,7 +448,7 @@ sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_re
 
 
 def run_build_script(manifest_dir: str, name: str, script: List[str], final_script: List[str] = [],
-                     junit: bool = False, junit_file: str = parsed_junit_results) -> bool:
+                     junit: bool = False, junit_file: str = parsed_junit_results) -> int:
     """Run a build script in a separate `build/` directory
 
     A build script is a list of commands, which itself is a list of command and
@@ -449,65 +461,86 @@ def run_build_script(manifest_dir: str, name: str, script: List[str], final_scri
     in `script`.
     """
 
+    result = SKIP
+    tries_left = 2
+
     print(f"::group::{name}")
     printc(ANSI_BOLD, f"-----------[ start test {name} ]-----------")
     sys.stdout.flush()
 
-    os.chdir(manifest_dir)
+    while tries_left > 0:
+        os.chdir(manifest_dir)
 
-    build_dir = 'build'
-    try:
-        shutil.rmtree(build_dir)
-    except IOError:
-        pass
-
-    os.mkdir(build_dir)
-    os.chdir(build_dir)
-
-    if junit:
-        script = script + [sanitise_junit]
-
-    success = True
-    try:
-        for line in script:
-            run(line)
-    except subprocess.CalledProcessError:
-        printc(ANSI_RED, ">>> command failed, aborting.")
-        success = False
-
-    # alway run final script tasks, even in case of failure
-    try:
-        for line in final_script:
-            run(line)
-    except subprocess.CalledProcessError:
-        success = False
-
-    failures = []
-    if success and junit:
+        build_dir = 'build'
         try:
-            success, failures = summarise_junit(junit_file)
+            shutil.rmtree(build_dir)
         except IOError:
-            printc(ANSI_RED, f"Error reading {junit_file}")
-            success = False
-        except:
-            printc(ANSI_RED, f"Error parsing {junit_file}")
-            success = False
+            pass
+
+        os.mkdir(build_dir)
+        os.chdir(build_dir)
+
+        if junit:
+            script = script + [sanitise_junit]
+
+        result = SUCCESS
+        for line in script:
+            result = run(line)
+            if result != SUCCESS:
+                break
+
+        if result == FAILURE:
+            printc(ANSI_RED, ">>> command failed, aborting.")
+        elif result == SKIP:
+            printc(ANSI_YELLOW, ">>> skipping this test.")
+        elif result == REPEAT and tries_left > 0:
+            tries_left -= 1
+            printc(ANSI_YELLOW, ">>> command failed, repeating test.")
+        elif result == REPEAT and tries_left == 0:
+            result = FAILURE
+            printc(ANSI_RED, ">>> command failed, no tries left.")
+
+        # run final script tasks even in case of failure, but not for SKIP
+        if result != SKIP:
+            for line in final_script:
+                r = run(line)
+                if r != SUCCESS and result != REPEAT:
+                    result = r
+                    break
+
+        failures = []
+        if result == SUCCESS and junit:
+            try:
+                result, failures = summarise_junit(junit_file)
+            except IOError:
+                printc(ANSI_RED, f"Error reading {junit_file}")
+                result = FAILURE
+            except:
+                printc(ANSI_RED, f"Error parsing {junit_file}")
+                result = FAILURE
+
+        if result != REPEAT:
+            break
 
     printc(ANSI_BOLD, f"-----------[ end test {name} ]-----------")
     print("::endgroup::")
     # after group, so that it's easier to scan for failed jobs
-    if success:
+    if result == SUCCESS:
         printc(ANSI_GREEN, f"{name} succeeded")
-    else:
+    elif result == SKIP:
+        printc(ANSI_YELLOW, f"{name} skipped")
+    elif result == FAILURE:
         printc(ANSI_RED, f"{name} FAILED")
         if failures != []:
             max_print = 10
             printc(ANSI_RED, "Failed cases: " + ", ".join(failures[:max_print]) +
                    (" ..." if len(failures) > max_print else ""))
+    else:
+        printc(ANSI_RED, f"{name} with REPEAT at end of test, we should not see this.")
     print("")
     sys.stdout.flush()
 
-    return success
+    return result
 
 
 def list_mult(xs: list, ys: list) -> list:
@@ -741,14 +774,18 @@ def run_builds(builds: list, run_fun) -> int:
     sys.stdout.flush()
 
     manifest_dir = os.getcwd()
-    successes = []
-    fails = []
+
+    results = {SUCCESS: [], FAILURE: [], SKIP: []}
     for build in builds:
-        (successes if run_fun(manifest_dir, build) else fails).append(build.name)
+        results[run_fun(manifest_dir, build)].append(build.name)
 
-    printc(ANSI_GREEN if fails == [] else "", "Successful tests: " + ", ".join(successes))
-    if fails != []:
+    no_failures = results[FAILURE] == []
+    printc(ANSI_GREEN if no_failures else "", "Successful tests: " + ", ".join(results[SUCCESS]))
+    if results[SKIP] != []:
         print()
-        printc(ANSI_RED, "FAILED tests: " + ", ".join(fails))
+        printc(ANSI_YELLOW, "SKIPPED tests: " + ", ".join(results[SKIP]))
+    if results[FAILURE] != []:
+        print()
+        printc(ANSI_RED, "FAILED tests: " + ", ".join(results[FAILURE]))
 
-    return 0 if fails == [] else 1
+    return 0 if no_failures else 1

@@ -25,7 +25,7 @@ def run_cparser(manifest_dir: str, build):
          '--underscore_idents', 'kernel/kernel_all_pp.c'],
     ]
 
-    return run_build_script(manifest_dir, build.name, script)
+    return run_build_script(manifest_dir, build, script)
 
 
 # If called as main, run all builds from builds.yml

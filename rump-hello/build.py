@@ -36,7 +36,7 @@ def run_build(manifest_dir: str, build: Build):
         script.append(["tar", "czf", f"../{build.name}-images.tar.gz", "images/"])
         script.append(["echo", f"hardware run for {build.req}, skipping"])
 
-    return run_build_script(manifest_dir, build.name, script)
+    return run_build_script(manifest_dir, build, script)
 
 
 # If called as main, run all builds from builds.yml

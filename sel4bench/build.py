@@ -34,10 +34,10 @@ def hw_build(manifest_dir: str, build: Build):
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"]
     ]
 
-    return run_build_script(manifest_dir, build.name, script)
+    return run_build_script(manifest_dir, build, script)
 
 
-def extract_json(results: str, run: Run) -> bool:
+def extract_json(results: str, run: Run) -> int:
     """Process test logs to extract JSON results."""
 
     res = subprocess.run(
@@ -48,7 +48,13 @@ def extract_json(results: str, run: Run) -> bool:
         shell=True
     )
 
-    return res.returncode == 0
+    if res.returncode != 0:
+        printc(ANSI_RED, f"Run {run.name} failed to parse JSON results.")
+        sys.stdout.flush()
+
+    # If the JSON output is not wellformed, repeat this test.
+    # Likely just a garbled character on the serial console.
+    return SUCCESS if res.returncode == 0 else REPEAT
 
 
 def hw_run(manifest_dir: str, run: Run):
@@ -56,21 +62,17 @@ def hw_run(manifest_dir: str, run: Run):
 
     if run.build.is_disabled():
         print(f"Run {run.name} disabled, skipping.")
-        return True
+        return SKIP
 
     results = 'results.txt'
     script, final = run.hw_run(results)
 
-    success = run_build_script(manifest_dir, run.name, script, final_script=final)
+    success = run_build_script(manifest_dir, run, script, final_script=final)
 
-    # parse and store results
-    if success:
-        success = extract_json(results, run)
-        if not success:
-            printc(ANSI_RED, f"Run {run.name} failed to parse JSON results.")
-            sys.stdout.flush()
-
-    return success
+    if success == SUCCESS:
+        return extract_json(results, run)
+    else:
+        return success
 
 
 def build_filter(build: Build) -> bool:

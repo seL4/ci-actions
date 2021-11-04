@@ -24,7 +24,7 @@ def hw_build(manifest_dir: str, build: Build):
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"]
     ]
 
-    return run_build_script(manifest_dir, build.name, script)
+    return run_build_script(manifest_dir, build, script)
 
 
 def hw_run(manifest_dir: str, build: Build):
@@ -36,7 +36,7 @@ def hw_run(manifest_dir: str, build: Build):
 
     script, final = build.hw_run(junit_results)
 
-    return run_build_script(manifest_dir, build.name, script, final_script=final, junit=True)
+    return run_build_script(manifest_dir, build, script, final_script=final, junit=True)
 
 
 def build_filter(build: Build) -> bool:

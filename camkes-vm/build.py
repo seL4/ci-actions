@@ -45,7 +45,7 @@ def run_build(manifest_dir: str, build: Build):
              f"expect -c 'spawn ./simulate; set timeout 3000; expect \"{build.success}\"'"]
         )
 
-    return run_build_script(manifest_dir, build.name, script)
+    return run_build_script(manifest_dir, build, script)
 
 
 def hw_run(manifest_dir: str, build: Build):
@@ -60,7 +60,7 @@ def hw_run(manifest_dir: str, build: Build):
 
     script, final = build.hw_run('log.txt')
 
-    return run_build_script(manifest_dir, build.name, script, final_script=final)
+    return run_build_script(manifest_dir, build, script, final_script=final)
 
 
 # If called as main, run all builds from builds.yml

@@ -27,7 +27,7 @@ def run_simulation(manifest_dir: str, build: Build):
          f"expect -c 'spawn ./simulate; set timeout 3000; expect {expect}' | tee {junit_results}"]
     ]
 
-    return run_build_script(manifest_dir, build.name, script, junit=True)
+    return run_build_script(manifest_dir, build, script, junit=True)
 
 
 # If called as main, run all builds from builds.yml

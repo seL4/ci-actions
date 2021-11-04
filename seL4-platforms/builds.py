@@ -19,6 +19,7 @@ from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
 
 import copy
+import time
 import os
 import shutil
 import subprocess
@@ -265,8 +266,24 @@ class Run:
                    lock_held=True,
                    key=job_key(),
                    log=log,
-                   error_str=build.error)
+                   error_str=build.error),
+            lambda r: repeat_on_boot_failure(log)
         ], [mq_release(machine)]
+
+
+def repeat_on_boot_failure(log: str) -> int:
+    """Try to repeat the test run if the board failed to boot."""
+
+    with open(log, 'r') as f:
+        lines = iter(f)
+        for line in lines:
+            if "[[Boot Timeout]]" in line and \
+               "None" in lines.next() and \
+               "0 tries remaining.." in lines.next():
+                time.sleep(10)
+                return REPEAT
+
+    return SUCCESS
 
 
 def release_mq_locks(runs: List[Union[Run, Build]]):

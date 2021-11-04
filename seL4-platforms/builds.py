@@ -388,22 +388,28 @@ def success_from_bool(success: bool) -> int:
     else:
         return FAILURE
 
-def run(args: List[str]) -> int:
-    """Echo + run command with arguments"""
 
-    printc(ANSI_YELLOW, "+++ " + " ".join(args))
-    sys.stdout.flush()
-    # Print output as it arrives. Some of the build commands take too long to
-    # wait until all output is there. Keep stderr separate, but flush it.
-    process = subprocess.Popen(args, text=True, stdout=subprocess.PIPE,
-                               stderr=sys.stderr, bufsize=1)
-    for line in process.stdout:
-        print(line.rstrip())
+def run_cmd(cmd, run: Union[Run, Build]) -> int:
+    """If the command is a List[str], echo + run command with arguments, otherwise
+    expect a function, and run that function on the supplied Run."""
+
+    if isinstance(cmd, list):
+        printc(ANSI_YELLOW, "+++ " + " ".join(cmd))
         sys.stdout.flush()
-        sys.stderr.flush()
-    ret = process.wait()
+        # Print output as it arrives. Some of the build commands take too long to
+        # wait until all output is there. Keep stderr separate, but flush it.
+        process = subprocess.Popen(cmd, text=True, stdout=subprocess.PIPE,
+                                   stderr=sys.stderr, bufsize=1)
+        for line in process.stdout:
+            print(line.rstrip())
+            sys.stdout.flush()
+            sys.stderr.flush()
+        ret = process.wait()
 
-    return success_from_bool(ret == 0)
+        return success_from_bool(ret == 0)
+    else:
+        return cmd(run)
+
 
 def printc(color: str, content: str):
     print(color + content + ANSI_RESET)
@@ -447,8 +453,12 @@ sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_re
                   "-q", junit_results, parsed_junit_results]
 
 
-def run_build_script(manifest_dir: str, name: str, script: List[str], final_script: List[str] = [],
-                     junit: bool = False, junit_file: str = parsed_junit_results) -> int:
+def run_build_script(manifest_dir: str,
+                     run: Union[Run, Build],
+                     script,
+                     final_script=[],
+                     junit: bool = False,
+                     junit_file: str = parsed_junit_results) -> int:
     """Run a build script in a separate `build/` directory
 
     A build script is a list of commands, which itself is a list of command and
@@ -464,8 +474,8 @@ def run_build_script(manifest_dir: str, name: str, script: List[str], final_scri
     result = SKIP
     tries_left = 2
 
-    print(f"::group::{name}")
-    printc(ANSI_BOLD, f"-----------[ start test {name} ]-----------")
+    print(f"::group::{run.name}")
+    printc(ANSI_BOLD, f"-----------[ start test {run.name} ]-----------")
     sys.stdout.flush()
 
     while tries_left > 0:
@@ -485,7 +495,7 @@ def run_build_script(manifest_dir: str, name: str, script: List[str], final_scri
 
         result = SUCCESS
         for line in script:
-            result = run(line)
+            result = run_cmd(line, run)
             if result != SUCCESS:
                 break
 
@@ -503,7 +513,7 @@ def run_build_script(manifest_dir: str, name: str, script: List[str], final_scri
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
             for line in final_script:
-                r = run(line)
+                r = run_cmd(line, run)
                 if r != SUCCESS and result != REPEAT:
                     result = r
                     break
@@ -522,21 +532,21 @@ def run_build_script(manifest_dir: str, name: str, script: List[str], final_scri
         if result != REPEAT:
             break
 
-    printc(ANSI_BOLD, f"-----------[ end test {name} ]-----------")
+    printc(ANSI_BOLD, f"-----------[ end test {run.name} ]-----------")
     print("::endgroup::")
     # after group, so that it's easier to scan for failed jobs
     if result == SUCCESS:
-        printc(ANSI_GREEN, f"{name} succeeded")
+        printc(ANSI_GREEN, f"{run.name} succeeded")
     elif result == SKIP:
-        printc(ANSI_YELLOW, f"{name} skipped")
+        printc(ANSI_YELLOW, f"{run.name} skipped")
     elif result == FAILURE:
-        printc(ANSI_RED, f"{name} FAILED")
+        printc(ANSI_RED, f"{run.name} FAILED")
         if failures != []:
             max_print = 10
             printc(ANSI_RED, "Failed cases: " + ", ".join(failures[:max_print]) +
                    (" ..." if len(failures) > max_print else ""))
     else:
-        printc(ANSI_RED, f"{name} with REPEAT at end of test, we should not see this.")
+        printc(ANSI_RED, f"{run.name} with REPEAT at end of test, we should not see this.")
     print("")
     sys.stdout.flush()
 

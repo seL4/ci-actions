@@ -74,7 +74,7 @@ def run_build(manifest_dir: str, build: Union[Build, SimBuild]):
     else:
         print(f"Warning: unknown build type for {build.name}")
 
-    return run_build_script(manifest_dir, build.name, script)
+    return run_build_script(manifest_dir, build, script)
 
 
 def hw_run(manifest_dir: str, build: Build):
@@ -87,7 +87,7 @@ def hw_run(manifest_dir: str, build: Build):
     build.success = apps[build.app]['success']
     script, final = build.hw_run('log.txt')
 
-    return run_build_script(manifest_dir, build.name, script, final_script=final)
+    return run_build_script(manifest_dir, build, script, final_script=final)
 
 
 def build_filter(build: Build):

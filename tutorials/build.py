@@ -26,7 +26,7 @@ def run_simulation(manifest_dir: str, build: Build):
          f"--config={build.get_platform().name.lower()} | tee {junit_results}"]
     ]
 
-    return run_build_script(manifest_dir, build.name, script, junit=True)
+    return run_build_script(manifest_dir, build, script, junit=True)
 
 
 def build_filter(build: Build) -> bool:

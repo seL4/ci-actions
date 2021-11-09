@@ -38,3 +38,54 @@ more_builds:
         mode: 64
         settings:
             KernelSkimWindow: "FALSE"
+
+
+# for generating the results page:
+
+boards:
+    Sabre:
+        core: A9
+        soc: i.MX6
+        clock: 1.0 GHz
+        compiler: arm-linux-gnueabi-gcc GNU 8.3.0
+    Haswell:
+        soc: i7-4770
+        clock: 3.4 GHz
+        compiler: gcc GNU 8.4.0
+    Skylake:
+        soc: i7-6700
+        note: (without meltdown mitigation)
+        clock: 3.4 GHz
+        compiler: gcc GNU 8.4.0
+    Jetson:
+        core: A57
+        soc: Tx1
+        clock: 1.9 GHz
+        compiler: aarch64-linux-gnu-gcc GNU 8.3.0
+    Hifive:
+        core: U54-MC
+        soc: SiFive Freedom U540
+        clock: 1.5 GHz
+        compiler: riscv64-unknown-linux-gnu-gcc GNU 10.2.0
+
+results:
+    Default:
+        - board: Sabre
+          run: SABRE_32
+        - board: Haswell
+          run: PC99_64_haswell3
+        - board: Skylake
+          run: PC99_64_noksw_skylake
+        - board: Jetson
+          run: TX1_64
+        - board: Hifive
+          run: HIFIVE_64
+    MCS:
+        - board: Sabre
+          run: SABRE_MCS_32
+        - board: Haswell
+          run: PC99_MCS_64_haswell3
+        - board: Jetson
+          run: TX1_MCS_64
+        - board: Hifive
+          run: HIFIVE_MCS_64

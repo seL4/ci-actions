@@ -180,6 +180,17 @@ class Platform:
             'riscv': [f"images/{root_task}-image-riscv-{im_plat}"],
         }[self.arch]
 
+    def getISA(self, mode: int) -> str:
+        """Return the ISA for this platform"""
+
+        if self.arch == "x86":
+            return {32: "IA32", 64: "x86_64"}[mode]
+
+        if self.arch == "riscv":
+            return {32: "RC32IMAC", 64: "RV64IMAC"}[mode]
+
+        return self.march.capitalize()
+
 
 def load_yaml(file_name):
     """Load a yaml file"""

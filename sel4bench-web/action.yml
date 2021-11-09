@@ -1,0 +1,18 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Publish seL4 Benchmark Results'
+description: |
+  Publish sel4bench results to https://github.com/seL4/website
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4bench-web'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

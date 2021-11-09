@@ -221,6 +221,9 @@ class Build:
         else:
             return req
 
+    def getISA(self) -> str:
+        return self.get_platform().getISA(self.get_mode())
+
     # create a Run on the fly if we only want one Run per Build
     def hw_run(self, log):
         return Run(self).hw_run(log)

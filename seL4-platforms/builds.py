@@ -277,9 +277,9 @@ def repeat_on_boot_failure(log: str) -> int:
     with open(log, 'r') as f:
         lines = iter(f)
         for line in lines:
-            if "[[Boot Timeout]]" in line and \
-               "None" in lines.next() and \
-               "0 tries remaining.." in lines.next():
+            if "[[Boot timeout]]" in line and \
+               "None" in lines.__next__() and \
+               "0 tries remaining.." in lines.__next__():
                 time.sleep(10)
                 return REPEAT
 

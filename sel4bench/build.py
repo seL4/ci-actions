@@ -10,7 +10,7 @@ Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 
 from builds import Build, Run, run_build_script, run_builds, load_builds, load_yaml
 from builds import release_mq_locks, filtered, get_env_filters, printc, ANSI_RED
-from builds import SKIP, SUCCESS, REPEAT
+from builds import SKIP, SUCCESS, REPEAT, FAILURE
 
 from pprint import pprint
 from typing import List
@@ -65,15 +65,25 @@ def hw_run(manifest_dir: str, run: Run):
         print(f"Run {run.name} disabled, skipping.")
         return SKIP
 
+    tries = 2
     results = 'results.txt'
-    script, final = run.hw_run(results)
 
-    success = run_build_script(manifest_dir, run, script, final_script=final)
+    while tries > 0:
+        tries -= 1
 
-    if success == SUCCESS:
-        return extract_json(results, run)
-    else:
-        return success
+        script, final = run.hw_run(results)
+        result = run_build_script(manifest_dir, run, script, final_script=final)
+
+        if result == SUCCESS:
+            result = extract_json(results, run)
+            if result == SUCCESS:
+                return SUCCESS
+            elif result == REPEAT and tries > 0:
+                continue
+            else:
+                return FAILURE
+        else:
+            return result
 
 
 def build_filter(build: Build) -> bool:

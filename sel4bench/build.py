@@ -65,7 +65,7 @@ def hw_run(manifest_dir: str, run: Run):
         print(f"Run {run.name} disabled, skipping.")
         return SKIP
 
-    tries = 2
+    tries = 3
     results = 'results.txt'
 
     while tries > 0:
@@ -79,6 +79,7 @@ def hw_run(manifest_dir: str, run: Run):
             if result == SUCCESS:
                 return SUCCESS
             elif result == REPEAT and tries > 0:
+                os.times.sleep(10)
                 continue
             else:
                 return FAILURE

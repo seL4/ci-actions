@@ -34,7 +34,9 @@ code in [build.py].
 ## Arguments
 
 To modify the generated page, edit [builds.yml][Build] and/or [build.py] in this
-directory. There are no other arguments to this action.
+directory.
+
+- `manifest_sha`: the SHA of the manifest that the test ran on.
 
 ## Example
 

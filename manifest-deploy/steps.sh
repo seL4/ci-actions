@@ -40,3 +40,6 @@ echo "::endgroup::"
 echo "::group::Deploy"
 releaseit nightly --release
 echo "::endgroup::"
+
+SHA=$(git -C .repo/manifests rev-parse HEAD)
+echo "::set-output name=manifest_sha::${SHA}"

@@ -8,6 +8,10 @@ description: |
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
+  manifest_sha:
+    description: The SHA of the manifest file the test ran on
+    required: true
+
   action_name:
     description: 'internal -- do not use'
     required: false

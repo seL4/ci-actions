@@ -211,10 +211,9 @@ platforms:
     arch: arm
     modes: [64]
     platform: rpi4
-    req: [rpi4]
+    req: [pi4B]
     image_platform: bcm2711
     march: armv8a
-    no_hw_build: true
 
   TX1:
     arch: arm

@@ -269,9 +269,11 @@ class Run:
                    lock_held=True,
                    key=job_key(),
                    log=log,
-                   error_str=build.error),
-            lambda r: repeat_on_boot_failure(log)
-        ], [mq_release(machine)]
+                   error_str=build.error)
+        ], [
+            lambda r: repeat_on_boot_failure(log),
+            mq_release(machine)
+        ]
 
 
 def repeat_on_boot_failure(log: str) -> int:
@@ -523,12 +525,6 @@ def run_build_script(manifest_dir: str,
             printc(ANSI_RED, ">>> command failed, aborting.")
         elif result == SKIP:
             printc(ANSI_YELLOW, ">>> skipping this test.")
-        elif result == REPEAT and tries_left > 0:
-            tries_left -= 1
-            printc(ANSI_YELLOW, ">>> command failed, repeating test.")
-        elif result == REPEAT and tries_left == 0:
-            result = FAILURE
-            printc(ANSI_RED, ">>> command failed, no tries left.")
 
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
@@ -548,6 +544,13 @@ def run_build_script(manifest_dir: str,
             except:
                 printc(ANSI_RED, f"Error parsing {junit_file}")
                 result = FAILURE
+
+        if result == REPEAT and tries_left > 0:
+            tries_left -= 1
+            printc(ANSI_YELLOW, ">>> command failed, repeating test.")
+        elif result == REPEAT and tries_left == 0:
+            result = FAILURE
+            printc(ANSI_RED, ">>> command failed, no tries left.")
 
         if result != REPEAT:
             break

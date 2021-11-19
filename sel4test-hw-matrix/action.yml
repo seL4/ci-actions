@@ -1,0 +1,17 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4Test/Hardware Run Matrix'
+description: Generates matrix for hardware runs.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4test-hw-matrix'
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'

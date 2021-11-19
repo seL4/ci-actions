@@ -83,6 +83,7 @@ platforms:
     platform: imx8mq-evk
     req: [imx8mq]
     march: armv8a
+    disabled: true
 
   IMX8MM_EVK:
     arch: arm
@@ -98,6 +99,7 @@ platforms:
     smp: [64]
     platform: tqma8xqp1gb
     march: armv8a
+    disabled: true
 
   OMAP3:
     arch: arm
@@ -173,6 +175,7 @@ platforms:
     req: [zc706]
     simulation_binary: zc706
     march: armv7a
+    disabled: true
 
   ZYNQMP:
     arch: arm
@@ -190,6 +193,7 @@ platforms:
     platform: hikey
     req: [hikey]
     march: armv8a
+    disabled: true
 
   TK1:
     arch: arm
@@ -206,6 +210,7 @@ platforms:
     req: [rpi3]
     image_platform: bcm2837
     march: armv8a
+    disabled: true
 
   RPI4:
     arch: arm
@@ -214,6 +219,7 @@ platforms:
     req: [pi4B]
     image_platform: bcm2711
     march: armv8a
+    disabled: true
 
   TX1:
     arch: arm

@@ -530,9 +530,17 @@ def run_build_script(manifest_dir: str,
         if result != SKIP:
             for line in final_script:
                 r = run_cmd(line, run)
-                if r != SUCCESS and result != REPEAT:
-                    result = r
+                if r == FAILURE:
+                    # If a final script task fails, the overall task fails unless
+                    # we have already decided to repeat. In either case we stop
+                    # the final script.
+                    result = FAILURE if result != REPEAT else REPEAT
                     break
+                elif r == REPEAT:
+                    # If a final script task repeats, the overall task repeats,
+                    # but we continue the final script.
+                    result = REPEAT
+                # for SKIP and SUCCESS in final script do not change overall result
 
         failures = []
         if result == SUCCESS and junit:

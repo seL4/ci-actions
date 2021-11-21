@@ -336,7 +336,7 @@ boot_fail_patterns = [
         "sbi_trap_error: hart2: t2=",
         "sbi_trap_error: hart2: t4=",
         "sbi_trap_error: hart2: t6=",
-        ""
+        "",
         "[[Timeout]]",
         "None",
         "",

@@ -275,6 +275,7 @@ class Run:
             mq_release(machine)
         ]
 
+
 # Pattern fires if consecutive lines each contain the corresponding pattern line
 boot_fail_patterns = [
     [
@@ -313,6 +314,7 @@ boot_fail_patterns = [
         "console_run returned -1"
     ]
 ]
+
 
 def repeat_on_boot_failure(log: str) -> int:
     """Try to repeat the test run if the board failed to boot."""

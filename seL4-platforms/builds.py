@@ -275,18 +275,56 @@ class Run:
             mq_release(machine)
         ]
 
+# Pattern fires if consecutive lines each contain the corresponding pattern line
+boot_fail_patterns = [
+    [
+        # all boards occasionally:
+        "[[Boot timeout]]",
+        "None",
+        "0 tries remaining..",
+        "",
+        "[[Timeout]]"
+    ],
+    [
+        # tx2:
+        "*** ERROR: `ipaddr' not set",
+        "Config file not found",
+        "Tegra186 (P2771-0000-500) #",
+        "[[Timeout]]",
+        "None"
+    ],
+    [
+        # hifive:
+        "ARP Retry count exceeded; starting again",
+        "## Starting application at",
+        "",
+        "[[Timeout]]",
+        "None",
+        "",
+        "console_run returned -1"
+    ],
+    [
+        # hifive:
+        "PMP1    : 0x0000000000000000-0x0000007fffffffff (A,R,W,X)",
+        "",
+        "[[Timeout]]",
+        "None",
+        "",
+        "console_run returned -1"
+    ]
+]
 
 def repeat_on_boot_failure(log: str) -> int:
     """Try to repeat the test run if the board failed to boot."""
 
     with open(log, 'r') as f:
-        lines = iter(f)
-        for line in lines:
-            if "[[Boot timeout]]" in line and \
-               "None" in lines.__next__() and \
-               "0 tries remaining.." in lines.__next__():
-                time.sleep(10)
-                return REPEAT
+        lines = list(iter(f))
+        for pat in boot_fail_patterns:
+            for i in range(len(lines)):
+                if all(p in lines[i+j] for j, p in enumerate(pat)):
+                    printc(ANSI_RED, "Boot failure detected.")
+                    time.sleep(10)
+                    return REPEAT
 
     return SUCCESS
 
@@ -494,13 +532,15 @@ def run_build_script(manifest_dir: str,
     """
 
     result = SKIP
-    tries_left = 2
+    tries_left = 3
 
     print(f"::group::{run.name}")
     printc(ANSI_BOLD, f"-----------[ start test {run.name} ]-----------")
     sys.stdout.flush()
 
     while tries_left > 0:
+        tries_left -= 1
+
         os.chdir(manifest_dir)
 
         build_dir = 'build'
@@ -554,7 +594,6 @@ def run_build_script(manifest_dir: str,
                 result = FAILURE
 
         if result == REPEAT and tries_left > 0:
-            tries_left -= 1
             printc(ANSI_YELLOW, ">>> command failed, repeating test.")
         elif result == REPEAT and tries_left == 0:
             result = FAILURE

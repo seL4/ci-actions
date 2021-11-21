@@ -271,7 +271,7 @@ class Run:
                    log=log,
                    error_str=build.error)
         ], [
-            lambda r: repeat_on_boot_failure(log),
+            lambda r, log: repeat_on_boot_failure(log),
             mq_release(machine)
         ]
 
@@ -316,19 +316,20 @@ boot_fail_patterns = [
 ]
 
 
-def repeat_on_boot_failure(log: str) -> int:
+def repeat_on_boot_failure(log: Optional[List[str]]) -> int:
     """Try to repeat the test run if the board failed to boot."""
 
-    with open(log, 'r') as f:
-        lines = list(iter(f))
+    if log:
         for pat in boot_fail_patterns:
-            for i in range(len(lines)):
-                if all(p in lines[i+j] for j, p in enumerate(pat)):
+            for i in range(len(log)+1-len(pat)):
+                if all(p in log[i+j] for j, p in enumerate(pat)):
                     printc(ANSI_RED, "Boot failure detected.")
                     time.sleep(10)
-                    return REPEAT
+                    return REPEAT, None
+    else:
+        print("No log to check boot failure on.")
 
-    return SUCCESS
+    return SUCCESS, None
 
 
 def release_mq_locks(runs: List[Union[Run, Build]]):
@@ -451,9 +452,10 @@ def success_from_bool(success: bool) -> int:
         return FAILURE
 
 
-def run_cmd(cmd, run: Union[Run, Build]) -> int:
+def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> int:
     """If the command is a List[str], echo + run command with arguments, otherwise
-    expect a function, and run that function on the supplied Run."""
+    expect a function, and run that function on the supplied Run plus outputs from
+    previous command."""
 
     if isinstance(cmd, list):
         printc(ANSI_YELLOW, "+++ " + " ".join(cmd))
@@ -462,15 +464,18 @@ def run_cmd(cmd, run: Union[Run, Build]) -> int:
         # wait until all output is there. Keep stderr separate, but flush it.
         process = subprocess.Popen(cmd, text=True, stdout=subprocess.PIPE,
                                    stderr=sys.stderr, bufsize=1)
+        lines = []
         for line in process.stdout:
-            print(line.rstrip())
+            line = line.rstrip()
+            lines.append(line)
+            print(line)
             sys.stdout.flush()
             sys.stderr.flush()
         ret = process.wait()
 
-        return success_from_bool(ret == 0)
+        return success_from_bool(ret == 0), lines
     else:
-        return cmd(run)
+        return cmd(run, prev_output)
 
 
 def printc(color: str, content: str):
@@ -558,8 +563,9 @@ def run_build_script(manifest_dir: str,
             script = script + [sanitise_junit]
 
         result = SUCCESS
+        output = None
         for line in script:
-            result = run_cmd(line, run)
+            result, ouput = run_cmd(line, run, output)
             if result != SUCCESS:
                 break
 
@@ -571,7 +577,7 @@ def run_build_script(manifest_dir: str,
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
             for line in final_script:
-                r = run_cmd(line, run)
+                r, output = run_cmd(line, run, ouput)
                 if r == FAILURE:
                     # If a final script task fails, the overall task fails unless
                     # we have already decided to repeat. In either case we stop

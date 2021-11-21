@@ -312,6 +312,35 @@ boot_fail_patterns = [
         "None",
         "",
         "console_run returned -1"
+    ],
+    [
+        # hifive:
+        "ARP Retry count exceeded; starting again",
+        "## Starting application at",
+        "sbi_trap_error: hart2:",
+        "sbi_trap_error: hart2: mcause=",
+        "sbi_trap_error: hart2: mepc=",
+        "sbi_trap_error: hart2: ra=",
+        "sbi_trap_error: hart2: gp=",
+        "sbi_trap_error: hart2: s0=",
+        "sbi_trap_error: hart2: a0=",
+        "sbi_trap_error: hart2: a2=",
+        "sbi_trap_error: hart2: a4=",
+        "sbi_trap_error: hart2: a6=",
+        "sbi_trap_error: hart2: s2=",
+        "sbi_trap_error: hart2: s4=",
+        "sbi_trap_error: hart2: s6=",
+        "sbi_trap_error: hart2: s8=",
+        "sbi_trap_error: hart2: s10=",
+        "sbi_trap_error: hart2: t0=",
+        "sbi_trap_error: hart2: t2=",
+        "sbi_trap_error: hart2: t4=",
+        "sbi_trap_error: hart2: t6=",
+        ""
+        "[[Timeout]]",
+        "None",
+        "",
+        "console_run returned -1",
     ]
 ]
 

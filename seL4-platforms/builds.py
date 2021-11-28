@@ -331,7 +331,7 @@ boot_fail_patterns = [
         "sbi_trap_error: hart",
         "sbi_trap_error: hart",
         "sbi_trap_error: hart",
-        "sbi_trap_error: hart=",
+        "sbi_trap_error: hart",
         "sbi_trap_error: hart",
         "sbi_trap_error: hart",
         "sbi_trap_error: hart",

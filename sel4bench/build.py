@@ -21,6 +21,7 @@ import json
 import os
 import sys
 import subprocess
+import time
 
 
 def adjust_build_settings(build: Build):
@@ -86,7 +87,7 @@ def hw_run(manifest_dir: str, run: Run):
             if result == SUCCESS:
                 return SUCCESS
             elif result == REPEAT and tries > 0:
-                os.times.sleep(10)
+                time.sleep(10)
                 continue
             else:
                 return FAILURE

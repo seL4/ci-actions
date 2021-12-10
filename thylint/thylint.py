@@ -103,6 +103,7 @@ diag_words = (
         'prop',
         'thm',
         'typ',
+        'apply_trace',
     ])
 )
 

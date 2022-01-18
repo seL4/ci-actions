@@ -67,6 +67,13 @@ platforms:
     march: armv8a
     disabled: true
 
+  QUARTZ64:
+    arch: arm
+    modes: [64]
+    platform: quartz64
+    march: armv8a
+    disabled: true
+
   ARMVIRT:
     arch: arm
     modes: [64]

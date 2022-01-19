@@ -72,7 +72,7 @@ platforms:
     modes: [64]
     platform: qemu-arm-virt
     simulation_binary: qemu-arm-virt
-    march: armv8a
+    march: armv8a # Cortex-A53 is emulated by default
     disabled: true
     no_hw_build: true
 
@@ -208,7 +208,7 @@ platforms:
     platform: rpi3
     req: [rpi3]
     image_platform: bcm2837
-    march: armv8a
+    march: armv8a # ARMv8 platform currently used in AARCH32 mode only.
     disabled: true
 
   RPI4:

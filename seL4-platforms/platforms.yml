@@ -64,7 +64,7 @@ platforms:
     modes: [64]
     platform: rockpro64
     req: [rockpro64a]
-    march: armv7a
+    march: armv8a
     disabled: true
 
   ARMVIRT:

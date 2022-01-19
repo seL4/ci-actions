@@ -260,7 +260,7 @@ platforms:
     arch: arm
     modes: [32]
     platform: allwinner20
-    # march: ?
+    march: armv7a
     disabled: true
     no_hw_build: true
 

@@ -26,12 +26,7 @@ aws configure set default.region us-east-2
 aws configure set default.output json
 
 echo "Starting AWS instance..."
-aws ec2 run-instances --image-id ami-03cd89c4df0aa0409 --count 1 \
-                      --instance-type c5.4xlarge \
-                      --iam-instance-profile "Name=test-runner-role" \
-                      --security-group-ids sg-0491b450a86520294 \
-                      --instance-market-options "MarketType=spot" \
-                      --instance-initiated-shutdown-behavior terminate > instance.txt
+aws ec2 run-instances --launch-template "LaunchTemplateName=l4v-runner" --count 1 > instance.txt
 
 ID=$(cat instance.txt | jq -r '.Instances[0].InstanceId')
 

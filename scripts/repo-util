@@ -135,7 +135,9 @@ def path_of(gh_repo: str, projects: dict) -> str:
     """Get the path of a given repo in projects dict.
     Accepts GITHUB_REPOSITORY-style references like seL4/seL4 (for repo "seL4")"""
     repo = gh_repo.split('/')[-1]
-    return projects.get(repo.lower(), (None, None))[0]
+    # remove optional -priv suffix for private forks
+    repo = removesuffix(repo.lower(), '-priv')
+    return projects.get(repo, (None, None))[0]
 
 
 # main program:

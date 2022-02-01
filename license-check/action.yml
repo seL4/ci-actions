@@ -7,6 +7,9 @@ description: 'Runs the FSFE reuse license tool'
 author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
+  token:
+    description: 'GitHub token for read access to repository'
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

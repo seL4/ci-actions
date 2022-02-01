@@ -31,6 +31,7 @@ No arguments are required. The following are available.
 * `doc_root`: Document root for absolute links
 * `num_requests`: Maximum number of concurrent requests
 * `verbose`: Print more information if set (default unset)
+* `token`: GitHub PA token to authenticate for private repos
 
 ## Example
 

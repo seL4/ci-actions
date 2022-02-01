@@ -26,7 +26,7 @@ just calls this script.
 
 ## Arguments
 
-None
+- `token`: GitHub PA token to authenticate for private repos (optional)
 
 ## Example
 

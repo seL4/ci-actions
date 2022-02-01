@@ -28,6 +28,10 @@ inputs:
   cache_name:
     description: 'Custom cache name. Should contain at least L4V_ARCH.'
     required: false
+  cache_bucket:
+    description: 'Custom S3 bucket for the isabelle image cache.'
+    default: 'isabelle-images'
+    required: false
   skip_dups:
     description: 'Skip duplicate proofs. Set to empty string to run duplicate proofs'
     default: "1"

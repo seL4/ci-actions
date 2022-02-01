@@ -67,7 +67,7 @@ if [ -n "${INPUT_CACHE_READ}" ]
 then
   echo "Getting image cache ${CACHE_NAME}"
   # it's Ok for this command to fail, cache might not yet exist
-  aws s3 cp "s3://isabelle-images/${CACHE_NAME}.tar.xz" - | tar -C ~/.isabelle -vJx || true
+  aws s3 cp "s3://${INPUT_CACHE_BUCKET}/${CACHE_NAME}.tar.xz" - | tar -C ~/.isabelle -vJx || true
 else
   echo "Skipping image cache read"
 fi
@@ -105,7 +105,7 @@ then
   echo "Writing image cache ${CACHE_NAME}"
   # compress not too much; s3 upload is fast and compression winnings are meager
   tar -C ~/.isabelle -vc heaps/ | xz -T0 -3 - | \
-    aws s3 cp - "s3://isabelle-images/${CACHE_NAME}.tar.xz"
+    aws s3 cp - "s3://${INPUT_CACHE_BUCKET}/${CACHE_NAME}.tar.xz"
 else
   echo "Skipping image cache write"
 fi

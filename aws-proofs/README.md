@@ -21,6 +21,7 @@ automatically spins up and terminates the corresponding AWS instance.
 - `isa-branch`:  which branch of the Isabelle repo (e.g. `ts-2020`, default as in
                  manifest)
 - `manifest`:    which manifest file (e.g. `devel.xml`, `mcs.xml`, `default.xml`)
+- `cache_bucket`: name of the AWS S3 bucket to use for isabelle images (optional).
 - `cache_read`:  whether to read Isabelle images from cache. Default true. Set to
                  empty string to skip.
 - `cache_write`: whether to write Isabelle images to cache. Default true. Set to

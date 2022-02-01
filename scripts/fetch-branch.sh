@@ -13,7 +13,15 @@ then
   # Assumes a repo manifest checkout, and current working dir in the repo
   # to fetch the branch for.
 
-  URL="https://github.com/${GITHUB_REPOSITORY}.git"
+  REPO_PATH="github.com/${GITHUB_REPOSITORY}.git"
+
+  if [ -n "${INPUT_TOKEN}" ]
+  then
+    URL="https://${INPUT_TOKEN}@${REPO_PATH}"
+    REPO_PATH="token@${REPO_PATH}"
+  else
+    URL="https://${REPO_PATH}"
+  fi
 
   # if an explicit SHA is set as INPUT (e.g. for pull request target), prefer that over GITHUB_REF
   if [ -n "${INPUT_SHA}" ]
@@ -25,7 +33,7 @@ then
     FETCH=${REF}:${REF}
   fi
 
-  echo "Fetching ${REF} from ${URL}"
+  echo "Fetching ${REF} from ${REPO_PATH}"
   git fetch -q --depth 1 ${URL} ${FETCH}
   git checkout -q ${REF}
   if [ -n "${BRANCH_NAME}" ]

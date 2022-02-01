@@ -16,11 +16,20 @@ then
     REPO=${PR%#*}
     ID=${PR#*#}
 
-    URL="https://github.com/${REPO}.git"
+    REPO_PATH="github.com/${REPO}.git"
+
+    if [ -n "${INPUT_TOKEN}" ]
+    then
+      URL="https://${INPUT_TOKEN}@${REPO_PATH}"
+      REPO_PATH="token@${REPO_PATH}"
+    else
+      URL="https://${REPO_PATH}"
+    fi
+
     REF="refs/pull/${ID}/head"
 
     cd $(repo-util path ${REPO})
-    echo "Fetching ${REF} from ${URL}"
+    echo "Fetching ${REF} from ${REPO_PATH}"
     git fetch -q --depth 1 ${URL} ${REF}:${REF}
     git checkout -q ${REF}
     cd - > /dev/null

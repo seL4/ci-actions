@@ -68,6 +68,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_MANIFEST \
     -o SendEnv=INPUT_ISA_BRANCH \
     -o SendEnv=INPUT_SESSION \
+    -o SendEnv=INPUT_CACHE_BUCKET \
     -o SendEnv=INPUT_CACHE_NAME \
     -o SendEnv=INPUT_CACHE_READ \
     -o SendEnv=INPUT_CACHE_WRITE \

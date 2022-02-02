@@ -46,7 +46,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: hifive
-    req: [hifive1]
+    req: [hifive, hifive1]
     march: rv64imac
 
   SABRE:

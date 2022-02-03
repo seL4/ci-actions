@@ -28,7 +28,8 @@ The entry point is the script [`steps.sh`](steps.sh/)
 ### L4V_ARCH
 
 The `L4V_ARCH` input is the architecture tag that selects the verified
-configuration to be test. Valid values are `ARM`, `ARM_HYP`, `RISCV64`, `X64`.
+configuration to be test. Valid values are `ARM`, `ARM_HYP`, `AARCH64`,
+`RISCV64`, `X64`.
 
 They are best used in a matrix to run the test for all architectures
 concurrently.

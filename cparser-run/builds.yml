@@ -30,7 +30,7 @@ builds:
 
 - AARCH64:
     platform: TX2
-    l4v_arch: X64 # only word size relevant
+    l4v_arch: AARCH64
 
 - AARCH32HYP:
     platform: TK1
@@ -40,7 +40,7 @@ builds:
 
 - AARCH64HYP:
     platform: TX2
-    l4v_arch: X64 # only word size relevant
+    l4v_arch: AARCH64
     settings:
       ARM_HYP: "TRUE"
 

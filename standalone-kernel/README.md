@@ -22,7 +22,7 @@ The entry point is the script [`compile_kernel.sh`](compile_kernel.sh/)
 ### ARCH
 
 The `ARCH` input is the architecture tag that selects the configuration to be compiled.
-Valid values are `ARM`, `ARM_HYP`, `RISCV64`, `X64`.
+Valid values are `ARM`, `ARM_HYP`, `AARCH64`, `RISCV64`, `X64`.
 
 ### COMPILER
 
@@ -44,7 +44,7 @@ standalone_kernel:
     strategy:
       fail-fast: false
       matrix:
-        arch: [ARM, ARM_HYP, RISCV64, X64]
+        arch: [ARM, ARM_HYP, AARCH64, RISCV64, X64]
         compiler: [gcc, llvm]
         exclude:
           # llvm RISCV64 compilation is not currently supported
@@ -56,5 +56,4 @@ standalone_kernel:
       with:
         ARCH: ${{ matrix.arch }}
         COMPILER: ${{ matrix.compiler }}
-        PYTHON: ${{ matrix.python }}
 ```

@@ -29,6 +29,19 @@ case $INPUT_ARCH in
                 exit 1
         esac
         ;;
+    AARCH64)
+        case $INPUT_COMPILER in
+            gcc)
+                extra_config="${extra_config} -DAARCH64=TRUE"
+                ;;
+            llvm)
+                extra_config="${extra_config} -DTRIPLE=aarch64-linux-gnu"
+                ;;
+            *)
+                echo "Unknown input compiler"
+                exit 1
+        esac
+        ;;
     RISCV64)
         extra_config="${extra_config} -DRISCV64=TRUE"
         ;;

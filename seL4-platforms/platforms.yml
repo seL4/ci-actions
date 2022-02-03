@@ -184,6 +184,14 @@ platforms:
     req: [zcu102]
     march: armv8a
 
+  ZYNQMP106:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: zynqmp
+    req: [zcu106]
+    march: armv8a
+
   HIKEY:
     arch: arm
     modes: [32, 64]

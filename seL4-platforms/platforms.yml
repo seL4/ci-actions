@@ -81,9 +81,8 @@ platforms:
     modes: [64]
     smp: [64]
     platform: imx8mq-evk
-    req: [imx8mq]
+    req: [imx8mq2]
     march: armv8a
-    disabled: true
 
   IMX8MM_EVK:
     arch: arm

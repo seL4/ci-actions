@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [ARM, ARM_HYP, RISCV64, X64]
+        arch: [ARM, ARM_HYP, AARCH64, RISCV64, X64]
     steps:
     - uses: seL4/ci-actions/preprocess@master
       with:

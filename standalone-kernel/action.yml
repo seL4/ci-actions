@@ -10,7 +10,7 @@ author: Luke Mondy <luke.mondy@data61.csiro.au>
 
 inputs:
   ARCH:
-    description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
+    description: 'Architecture to test. One of ARM, ARM_HYP, AARCH64, RISCV64, X64'
     required: true
 
   COMPILER:

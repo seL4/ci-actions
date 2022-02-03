@@ -32,7 +32,7 @@ RUN mkdir -p ${CP_DEST}
 WORKDIR ${CP_DEST}
 ARG CP_SRC=${CPARSER_DIR}/standalone-parser
 RUN cp ${CP_SRC}/c-parser .
-RUN cp -r ${CP_SRC}/ARM ${CP_SRC}/ARM_HYP ${CP_SRC}/RISCV64 ${CP_SRC}/X64 .
+RUN cp -r ${CP_SRC}/ARM ${CP_SRC}/ARM_HYP ${CP_SRC}/AARCH64 ${CP_SRC}/RISCV64 ${CP_SRC}/X64 .
 
 FROM scratch
 ARG CP_DEST

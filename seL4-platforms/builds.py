@@ -295,6 +295,12 @@ boot_fail_patterns = [
         "None"
     ],
     [
+        # imx8mq:
+        "Retry count exceeded; starting again",
+        "u-boot=>",
+        "[[Timeout]]"
+    ],
+    [
         # hifive:
         "ARP Retry count exceeded; starting again",
         "## Starting application at",

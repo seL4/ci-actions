@@ -306,15 +306,6 @@ boot_fail_patterns = [
     ],
     [
         # hifive:
-        "PMP1    : 0x0000000000000000-0x0000007fffffffff (A,R,W,X)",
-        "",
-        "[[Timeout]]",
-        "None",
-        "",
-        "console_run returned -1"
-    ],
-    [
-        # hifive:
         "ARP Retry count exceeded; starting again",
         "## Starting application at",
         "sbi_trap_error: hart",

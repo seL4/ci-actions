@@ -19,6 +19,7 @@ on:
 jobs:
   docker:
     name: Docker (RumpHello)
+    if: ${{ github.repository_owner == 'seL4' }}
     runs-on: ubuntu-latest
     steps:
     - uses: docker/setup-buildx-action@v1

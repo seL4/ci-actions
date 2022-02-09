@@ -17,9 +17,10 @@ that can be displayed as source annotation with the [yuzutech/annotations][1] ac
 
 ## Arguments
 
-* `disable`: a comma-separated list of warning classes to disable (default: none).
+- `disable`: a comma-separated list of warning classes to disable (default: none).
              One of `diag`, `find-proofs`, `sorry`, `axiom`, `style`.
              Do not use spaces between comma and warning class.
+- `token`: GitHub PA token to authenticate for private repos (optional)
 
 ## Example
 

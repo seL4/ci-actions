@@ -11,6 +11,9 @@ inputs:
     description: even on "push", check only the diff to the head of the branch
                  before the push, not all files. Does not work for force-push.
     required: false
+  token:
+    description: 'GitHub token for read access to repository'
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

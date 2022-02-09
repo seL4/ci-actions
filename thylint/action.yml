@@ -7,6 +7,9 @@ description: 'Runs the thylint tool on pull requests'
 author: Gerwin Klein <kleing@unsw.edu.au>
 
 inputs:
+  token:
+    description: 'GitHub token for read access to repository'
+    required: false
   disable:
     description: 'Comma-separated list (no spaces) of warning classes to disable (default: none)'
     required: false
@@ -17,4 +20,5 @@ runs:
     - run: ${{ github.action_path }}/steps.sh
       shell: bash
       env:
+        INPUT_TOKEN: $${{ inputs.token }}
         INPUT_DISABLE: ${{ inputs.disable }}

@@ -10,6 +10,9 @@ inputs:
   config:
     description: 'Path within target repo to a custom .gitlint file'
     required: false
+  token:
+    description: 'GitHub token for read access to repository'
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

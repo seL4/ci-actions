@@ -15,7 +15,7 @@ The main action happens in [`steps.sh`](steps.sh)
 
 ## Arguments
 
-None.
+- `token`: GitHub PA token to authenticate for private repos (optional)
 
 ## Example
 

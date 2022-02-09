@@ -22,6 +22,7 @@ just calls this script.
                before the push and the current head of the branch. This breaks for
                force-push, where the previous head of the branch might not exist
                any more.
+- `token`: GitHub PA token to authenticate for private repos (optional)
 
 ## Example
 

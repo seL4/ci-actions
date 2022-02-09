@@ -22,10 +22,10 @@ just calls this script.
 
 ## Arguments
 
-### Gitlint config file location
+- `token`: GitHub PA token to authenticate for private repos (optional)
+- `config`: gitlint config file location
 
-The `config` input can be used to provide the path to custom gitlint config
-file. Example:
+Example:
 
 ```yaml
     - uses: seL4/ci-actions/gitlint@master

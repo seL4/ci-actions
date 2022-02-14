@@ -4,12 +4,12 @@
 
 name: 'Repo Checkout'
 description: |
-  Does sel4test test runs from previously built images for all hardware test platforms.
+  Checks out repositories based on a manifest file.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   manifest_repo:
-    description: Manifest repostory (e.g. 'sel4test-manifest')
+    description: Manifest repostory (e.g. 'sel4test-manifest', 'sel4bench-manifest')
     required: true
   manifest:
     description: Manifest file

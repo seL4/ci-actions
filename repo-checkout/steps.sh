@@ -1,11 +1,9 @@
-#!/bin/bash
+#!/bin/bash -eu
 #
 # Copyright 2021, Proofcraft Pty Ltd
 #
 # SPDX-License-Identifier: BSD-2-Clause
 #
-
-set -e
 
 echo "::group::Setting up"
 

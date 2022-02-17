@@ -364,8 +364,9 @@ def main():
             try:
                 matches += lint_file(file, matchers)
             except IOError:
-                print('IO error for file "{0}"'.format(file), file=sys.stderr)
-                failures = True
+                if not args.diff_only:
+                    print('IO error for file "{0}"'.format(file), file=sys.stderr)
+                    failures = True
 
     if args.diff_only:
         matches = filter_matches(matches, args.diff_only[0], args.files)

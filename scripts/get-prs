@@ -26,7 +26,50 @@ pr_re = re.compile(repo_ref_re)
 repo_sep_re = "([, ]+(and)?[ ]*)"
 test_re = re.compile(f"{test_start_re}[ ]*({repo_ref_re}{repo_sep_re}?)+")
 
-if __name__ == '__main__':
+def find_pr_to_test_with(text):
+    prs = []
+    if text is not None:
+        for line in text.splitlines():
+          if test_re.match(line):
+            prs.extend(pr_re.findall(line))
+    return prs
+
+def unit_test():
+    a = find_pr_to_test_with(
+        "This is a test\n" \
+        "-- Good case tests for basic things:\n" \
+        "Test with: org101/repo101#101\n" \
+        "test with org102/repo102#102\n" \
+        "Test with: \n" \
+        "-- Good case tests for lists:\n" \
+        "Test with: org103/repo103#103 and org104/repo104#104," \
+            "org105/repo105#105, and org106/repo106#106\n" \
+        "-- Trailing list separators are accepted:\n" \
+        "Test with: org107/repo107#107,\n" \
+        "Test with: org108/repo108#108 and \n" \
+        "-- Space separators are accepted:\n" \
+        "Test with: org109/repo109#109 org110/repo110#110\n" \
+        "-- Multiple commas are supported:\n" \
+        "Test with: org111/repo111#111,, , , and org112/repo112#112\n" \
+        "-- Lines with trailing data are accepted, references there are ignored\n" \
+        "*** TEST END ***"
+    )
+    print("matches:", a)
+    assert a[0]  == "org101/repo101#101"
+    assert a[1]  == "org102/repo102#102"
+    assert a[2]  == "org103/repo103#103"
+    assert a[3]  == "org104/repo104#104"
+    assert a[4]  == "org105/repo105#105"
+    assert a[5]  == "org106/repo106#106"
+    assert a[6]  == "org107/repo107#107"
+    assert a[7]  == "org108/repo108#108"
+    assert a[8]  == "org109/repo109#109"
+    assert a[9]  == "org110/repo110#110"
+    assert a[10] == "org111/repo111#111"
+    assert a[11] == "org112/repo112#112"
+    assert len(a) == 12
+
+def main():
     if os.environ['GITHUB_EVENT_NAME'] != 'pull_request' and \
        os.environ['GITHUB_EVENT_NAME'] != 'pull_request_target':
         print('Not a pull request')
@@ -41,10 +84,11 @@ if __name__ == '__main__':
     repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
     issue = repo.get_issue(number=issue_id)
 
-    prs = []
-    if issue.body:
-      for line in issue.body.splitlines():
-          if test_re.match(line):
-            prs.extend(pr_re.findall(line))
-
+    # parse the issue body
+    prs = find_pr_to_test_with(issue.body)
     print(" ".join(prs))
+
+
+if __name__ == '__main__':
+    #unit_test()
+    main()

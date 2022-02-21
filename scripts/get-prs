@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     prs = []
     if issue.body:
-      for line in issue.body.split('\n'):
+      for line in issue.body.splitlines():
           if test_re.match(line):
             prs.extend(pr_re.findall(line))
 

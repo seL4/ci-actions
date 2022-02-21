@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 #
 # Copyright 2021 Proofcraft Pty Ltd
+# Copyright 2022 Axel Heider (axelheider@gmx.de)
+#
 # SPDX-License-Identifier: BSD-2-Clause
-
+#
+#
 # Parse a PR description body for comments of the form
-#   "Test with org/repo#id ((, | and) org/repo#id)*"
+#   "[T|t]est with[:]? <ref> ((, | and) <ref>)*"
+# where
+#   <ref> = "<org>/<repo>#<id>" | "https://github.com/<org>/<repo>/pull/<id>"
+#
+# For URLs in comments, the Github GUI displays URLs pointing to PRs on Github
+# as "<org>/<repo>#<id>", even if "https://github.com/<org>/<repo>/pull/<id>" is
+# what the parser finds. For convenience, we support both forms.
 #
 # Expects a GitHub event file to be available for the PR number.
 #
@@ -20,18 +29,45 @@ import sys
 
 from github import Github
 
-test_start_re = "[Tt]est with:?"
-repo_ref_re = "([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+#[0-9]+)"
-pr_re = re.compile(repo_ref_re)
-repo_sep_re = "([, ]+(and)?[ ]*)"
-test_re = re.compile(f"{test_start_re}[ ]*({repo_ref_re}{repo_sep_re}?)+")
+# Using "(?:...)" makes a regex a non-capturing group, which is an atomic
+# expression that operators can be applied to safely.
+def regex_atom(regex):
+    return f"(?:{regex})"
+
+test_start_re = regex_atom("[Tt]est with:?")
+org_re        = regex_atom("[a-zA-Z0-9_-]+")
+repo_re       = regex_atom("[a-zA-Z0-9_-]+")
+pr_id_re      = regex_atom("[0-9]+")
+
+# Any match of "pr_ref" will yield a 3-tupel, where either the first element or
+# the last two elements ("org_re/repo_re" and "pr_id_re") are not empty. That
+# nicely allows determining what PR reference form we have found.
+pr_ref_short_re = regex_atom(f"({org_re}/{repo_re}#{pr_id_re})")
+pr_ref_url_re   = regex_atom(f"https://github.com/({org_re}/{repo_re})/pull/({pr_id_re})")
+pr_ref_re       = regex_atom(f"{pr_ref_short_re}|{pr_ref_url_re}")
+
+# For the reference list, multiple commas or spaces work ("<ref>,  ,, <ref>"),
+# it's practically support of empty items. The Oxford comma ("<ref>, and <ref>")
+# is also supported.
+ref_sep_re           = regex_atom("[, ]+(?:and)?[ ]*")
+pr_list_next_item_re = regex_atom(f"{ref_sep_re}{pr_ref_re}")
+pr_list_re           = regex_atom(f"{pr_ref_re}{pr_list_next_item_re}*")
+
+# Finally, the complete regex can be build. In Python the number of groups that
+# match an expression is fixed. For repeating matches like in the list, only the
+# last match is returned for each group. To work around this, a matching group
+# for the whole reference list is used and then decomposed in a second step.
+test_with_prs_cre = re.compile(f"{test_start_re}[ ]+({pr_list_re})")
+pr_ref_cre        = re.compile(pr_ref_re)
 
 def find_pr_to_test_with(text):
     prs = []
     if text is not None:
         for line in text.splitlines():
-          if test_re.match(line):
-            prs.extend(pr_re.findall(line))
+            m = test_with_prs_cre.match(line)
+            if m:
+                for t in pr_ref_cre.findall(m.group(0)):
+                    prs.append(t[0] if t[0] else f"{t[1]}#{t[2]}")
     return prs
 
 def unit_test():
@@ -39,19 +75,28 @@ def unit_test():
         "This is a test\n" \
         "-- Good case tests for basic things:\n" \
         "Test with: org101/repo101#101\n" \
-        "test with org102/repo102#102\n" \
+        "test with https://github.com/org102/repo102/pull/102\n" \
         "Test with: \n" \
         "-- Good case tests for lists:\n" \
         "Test with: org103/repo103#103 and org104/repo104#104," \
-            "org105/repo105#105, and org106/repo106#106\n" \
+            "https://github.com/org105/repo105/pull/105, and org106/repo106#106\n" \
         "-- Trailing list separators are accepted:\n" \
-        "Test with: org107/repo107#107,\n" \
+        "Test with: https://github.com/org107/repo107/pull/107,\n" \
         "Test with: org108/repo108#108 and \n" \
         "-- Space separators are accepted:\n" \
         "Test with: org109/repo109#109 org110/repo110#110\n" \
         "-- Multiple commas are supported:\n" \
         "Test with: org111/repo111#111,, , , and org112/repo112#112\n" \
         "-- Lines with trailing data are accepted, references there are ignored\n" \
+        "Test with: org113/repo113#113 android org901/repo901#901\n"\
+        "-- A proper separator is required, otherwise it's considered a comment\n" \
+        "-- This can become quite odd\n" \
+        "Test with: org114/repo114#114org902/repo902#902\n" \
+        "Test with: org115/repo115#115 org116/repo116#116org903/repo903#903\n" \
+        "Test with: org117/repo117#117andorg904/repo904#904\n" \
+        "Test with: org118/repo118#118gliberishorg905/repo905#905\n" \
+        "-- Leading space makes the parser ignore things:\n" \
+        "  Test with: https://github.com/org906/repo906/pull/906\n" \
         "*** TEST END ***"
     )
     print("matches:", a)
@@ -67,7 +112,13 @@ def unit_test():
     assert a[9]  == "org110/repo110#110"
     assert a[10] == "org111/repo111#111"
     assert a[11] == "org112/repo112#112"
-    assert len(a) == 12
+    assert a[12] == "org113/repo113#113"
+    assert a[13] == "org114/repo114#114"
+    assert a[14] == "org115/repo115#115"
+    assert a[15] == "org116/repo116#116"
+    assert a[16] == "org117/repo117#117"
+    assert a[17] == "org118/repo118#118"
+    assert len(a) == 18
 
 def main():
     if os.environ['GITHUB_EVENT_NAME'] != 'pull_request' and \

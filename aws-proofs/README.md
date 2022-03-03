@@ -33,6 +33,7 @@ automatically spins up and terminates the corresponding AWS instance.
 - `skip_dups`:   skip duplicated proofs (default true).
                  Set to empty string to also run proofs that are already checked
                  in other proof sessions.
+- `ci_branch`:   ci-actions branch to use on AWS VM (optional).
 - `token`:       GitHub PA token to authenticate for private repos (optional)
 
 ## Environment

@@ -61,7 +61,7 @@ fi
 
 echo "::endgroup::"
 
-export INPUT_CI_BRANCH=master
+export INPUT_CI_BRANCH=${INPUT_CI_BRANCH:-master}
 
 ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_L4V_ARCH \

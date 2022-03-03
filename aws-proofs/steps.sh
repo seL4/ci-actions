@@ -73,6 +73,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_CACHE_READ \
     -o SendEnv=INPUT_CACHE_WRITE \
     -o SendEnv=INPUT_SKIP_DUPS \
+    -o SendEnv=INPUT_SIMPL_EXPORT \
     -o SendEnv=INPUT_TOKEN \
     -o SendEnv=INPUT_XML \
     -o SendEnv=INPUT_EXTRA_PRS \
@@ -82,7 +83,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SetEnv=GITHUB_WORKSPACE=/home/test-runner \
     test-runner@${IP} ./run
 
-# leave logs on GitHub runner for later artifact upload
-scp test-runner@${IP}:logs.tar.xz .
+# leave artifacts on GitHub runner for later upload
+scp -r test-runner@${IP}:logs.tar.xz test-runner@${IP}:artifacts .
 
 # instance termination is in post-steps.sh

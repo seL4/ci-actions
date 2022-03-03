@@ -42,6 +42,13 @@ inputs:
   xml:
     description: 'Input manifest with specific repo revisions to test (optional)'
     required: false
+  simpl_export:
+    description: |
+      Whether to export the C graph-lang for binary verification.
+      Set to any non-empty string to enable.
+      Ignored for architectures that don't support SimplExportAndRefine,
+      so it's safe to set across a matrix.
+    required: false
   ci_branch:
     description: 'ci-actions branch to use on AWS VM (optional)'
     default: 'master'

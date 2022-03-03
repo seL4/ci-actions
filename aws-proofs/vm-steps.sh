@@ -82,14 +82,15 @@ export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 
 FAIL=0
 
-cd l4v
+L4V_DIR="$PWD/l4v"
 if [ -n "${INPUT_SESSION}" ]
 then
-  ./run_tests -v ${INPUT_SESSION} || FAIL=1
+  do_run_tests() { (cd "$L4V_DIR" && ./run_tests -v ${INPUT_SESSION} "$@"); }
 else
-  ./run_tests -v -x AutoCorresSEL4 || FAIL=1
+  do_run_tests() { (cd "$L4V_DIR" && ./run_tests -v -x AutoCorresSEL4 "$@"); }
 fi
-cd ..
+
+do_run_tests || FAIL=1
 
 echo
 echo "Stats:"
@@ -99,7 +100,7 @@ cd l4v; ~/ci-actions/aws-proofs/sorry-count.sh; cd ..
 
 echo "::endgroup::"
 
-echo "::group::Cache and logs"
+echo "::group::Cache"
 if [ -n "${INPUT_CACHE_WRITE}" ]
 then
   echo "Writing image cache ${CACHE_NAME}"
@@ -109,17 +110,44 @@ then
 else
   echo "Skipping image cache write"
 fi
+echo "::endgroup::"
 
-# bundle up logs for artifact upload outside the VM
+# Prepare artifacts for upload outside the VM
+mkdir -p ~/artifacts
+
+# Export C graph-lang for binary verification
+if [ -n "$INPUT_SIMPL_EXPORT" ]; then
+  echo "::group::C graph-lang export"
+  SIMPL_EXPORT_FILE="$L4V_DIR/proof/asmrefine/export/$L4V_ARCH/CFunDump.txt"
+  if [ -f "$SIMPL_EXPORT_FILE" ]; then
+    echo "Found CFunctions.txt"
+    xz < "$SIMPL_EXPORT_FILE" > ~/artifacts/CFunctions.txt.xz
+  elif do_run_tests -L | grep -q SimplExportAndRefine; then
+    # SimplExportAndRefine was among the tests that should have run,
+    # which means we want a C graph export.
+    # However, we didn't get one, because the SimplExportAndRefine
+    # image was cached.
+    # So we force another export, but don't need to check refinement.
+    echo "Regenerating CFunctions.txt"
+    cd "$L4V_DIR/proof" && make SimplExport
+    xz < "$SIMPL_EXPORT_FILE" > ~/artifacts/CFunctions.txt.xz
+  else
+    echo "Nothing to export"
+  fi
+  echo "::endgroup::"
+fi
+
+# Collect logs.
+echo "::group::Logs"
 # xz compression does help even if there are many .gz files in this set
 cd ~/.isabelle/heaps
 # usually one of the two globs below will not exist
 shopt -s nullglob
 # do not fail the test if log collection fails
 tar -Jcf ~/logs.tar.xz */log/* */*/log/* || touch ~/logs.tar.xz
-
-# shut down VM 5 min after exiting (leave some time for log upload)
-sudo shutdown -h +5
 echo "::endgroup::"
+
+# shut down VM 5 min after exiting (leave some time for artifact upload)
+sudo shutdown -h +5
 
 exit $FAIL

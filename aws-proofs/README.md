@@ -18,9 +18,10 @@ automatically spins up and terminates the corresponding AWS instance.
 - `session`:     which session to run (e.g. `CRefine` or `ASpec`, or `ASpec
                  CRefine`, i.e. a space-separated string). Runs all sessions if
                  unset.
-- `isa-branch`:  which branch of the Isabelle repo (e.g. `ts-2020`, default as in
+- `isa_branch`:  which branch of the Isabelle repo (e.g. `ts-2020`, default as in
                  manifest)
 - `manifest`:    which manifest file (e.g. `devel.xml`, `mcs.xml`, `default.xml`)
+- `xml`:         input manifest with specific repo revisions to test (optional).
 - `cache_bucket`: name of the AWS S3 bucket to use for isabelle images (optional).
 - `cache_read`:  whether to read Isabelle images from cache. Default true. Set to
                  empty string to skip.

@@ -53,13 +53,16 @@ repo-util hashes
 echo "Setting up Isabelle components"
 isabelle/bin/isabelle components -a
 
+export L4V_ARCH=${INPUT_L4V_ARCH}
+export L4V_FEATURES=${INPUT_L4V_FEATURES}
+
 CACHE_NAME=${INPUT_CACHE_NAME}
 if [ -z "${CACHE_NAME}" ]
 then
   # construct default cache name
   BRANCH=${INPUT_ISA_BRANCH:-default}
   MANIFEST=${INPUT_MANIFEST:-devel}
-  CACHE_NAME="${GITHUB_REPOSITORY}-${BRANCH}-${MANIFEST}-${INPUT_L4V_ARCH}"
+  CACHE_NAME="${GITHUB_REPOSITORY}-${BRANCH}-${MANIFEST}-${L4V_ARCH}${L4V_FEATURES:+-${L4V_FEATURES}}"
 fi
 
 echo "::group::Cache"
@@ -77,7 +80,6 @@ echo "::endgroup::"
 
 echo "::group::Proof run"
 
-export L4V_ARCH=${INPUT_L4V_ARCH}
 export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 
 FAIL=0

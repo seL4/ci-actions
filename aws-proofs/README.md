@@ -15,6 +15,7 @@ automatically spins up and terminates the corresponding AWS instance.
 
 - `L4V_ARCH` (required): which architecture to run the proofs for. One of `ARM`,
                  `ARM_HYP`, `RISCV64`, `X64`
+- `L4V_FEATURES`: Optional kernel features to test. Either `MCS` or empty.
 - `session`:     which session to run (e.g. `CRefine` or `ASpec`, or `ASpec
                  CRefine`, i.e. a space-separated string). Runs all sessions if
                  unset.
@@ -28,8 +29,9 @@ automatically spins up and terminates the corresponding AWS instance.
 - `cache_write`: whether to write Isabelle images to cache. Default true. Set to
                  empty string to skip.
 - `cache_name`:  optional custom name for image cache. Should at least contain
-                 `L4V_ARCH`. Default is distinguishes separate caches for separate
-                 values of `isa-branch`, `manifest`, and `L4V_ARCH`.
+                 `L4V_ARCH`. The default results in separate caches for distinct
+                 combinations of `isa-branch`, `manifest`, `L4V_ARCH`,
+                 and `L4V_FEATURES`.
 - `skip_dups`:   skip duplicated proofs (default true).
                  Set to empty string to also run proofs that are already checked
                  in other proof sessions.

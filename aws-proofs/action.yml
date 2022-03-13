@@ -11,6 +11,9 @@ inputs:
   L4V_ARCH:
     description: 'Architecture to test. One of ARM, ARM_HYP, RISCV64, X64'
     required: true
+  L4V_FEATURES:
+    description: 'Kernel features to test (optional). Either MCS or unset.'
+    requred: false
   session:
     description: 'Which proof session to run (space-separated string)'
     required: false

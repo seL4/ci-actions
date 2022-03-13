@@ -74,7 +74,6 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_CACHE_READ \
     -o SendEnv=INPUT_CACHE_WRITE \
     -o SendEnv=INPUT_SKIP_DUPS \
-    -o SendEnv=INPUT_SIMPL_EXPORT \
     -o SendEnv=INPUT_TOKEN \
     -o SendEnv=INPUT_XML \
     -o SendEnv=INPUT_EXTRA_PRS \

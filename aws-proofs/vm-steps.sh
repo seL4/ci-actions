@@ -117,27 +117,26 @@ echo "::endgroup::"
 # Prepare artifacts for upload outside the VM
 mkdir -p ~/artifacts
 
-# Export C graph-lang for binary verification
-if [ -n "$INPUT_SIMPL_EXPORT" ]; then
-  echo "::group::C graph-lang export"
-  SIMPL_EXPORT_FILE="$L4V_DIR/proof/asmrefine/export/$L4V_ARCH/CFunDump.txt"
-  if [ -f "$SIMPL_EXPORT_FILE" ]; then
-    echo "Found CFunctions.txt"
-    xz < "$SIMPL_EXPORT_FILE" > ~/artifacts/CFunctions.txt.xz
-  elif do_run_tests -L | grep -q SimplExportAndRefine; then
-    # SimplExportAndRefine was among the tests that should have run,
-    # which means we want a C graph export.
-    # However, we didn't get one, because the SimplExportAndRefine
-    # image was cached.
-    # So we force another export, but don't need to check refinement.
-    echo "Regenerating CFunctions.txt"
-    cd "$L4V_DIR/proof" && make SimplExport
-    xz < "$SIMPL_EXPORT_FILE" > ~/artifacts/CFunctions.txt.xz
-  else
-    echo "Nothing to export"
-  fi
-  echo "::endgroup::"
+# Export the C graph-lang for use in binary verification, if it was generated.
+# If it wasn't generated, there are several possible reasons:
+# - SimplExportAndRefine is not enabled for this configuration.
+# - SimplExportAndRefine or one of its dependenies failed.
+# - SimplExportAndRefine is enabled, but didn't run, because the cached
+#   Isabelle image was valid. This means that the C spec didn't change from
+#   the previous run of this configuration.
+# In all cases where the C graph-lang wasn't generated, we're not interested
+# in running binary verification, so we skip the artifact export.
+echo "::group::C graph-lang export"
+SIMPL_EXPORT_FILE="$L4V_DIR/proof/asmrefine/export/$L4V_ARCH/CFunDump.txt"
+if [ -f "$SIMPL_EXPORT_FILE" ]; then
+  echo "Found CFunctions.txt"
+  xz < "$SIMPL_EXPORT_FILE" > ~/artifacts/CFunctions.txt.xz
+elif do_run_tests -L | grep -q SimplExportAndRefine; then
+  echo "Nothing to export: SimplExportAndRefine failed or used a cached image"
+else
+  echo "Nothing to export: SimplExportAndRefine was not enabled"
 fi
+echo "::endgroup::"
 
 # Collect logs.
 echo "::group::Logs"

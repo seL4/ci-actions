@@ -26,6 +26,7 @@ inputs:
     description: |
       An identifier that can be used to distinguish multiple uses of
       this action in a job.
+    required: false
 
 runs:
   using: 'node12'

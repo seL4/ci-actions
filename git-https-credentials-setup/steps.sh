@@ -7,6 +7,8 @@
 
 set -e
 
+echo "::group::Creating credentials file"
+
 GIT_CREDENTIALS="${HOME}/.git-credentials-${INPUT_STORE_ID:-seL4}"
 
 if [ -e "${GIT_CREDENTIALS}" ]; then
@@ -14,10 +16,12 @@ if [ -e "${GIT_CREDENTIALS}" ]; then
   exit 1
 fi
 
-echo "::group::Storing credentials"
-
 touch "${GIT_CREDENTIALS}"
 chmod 0600 "${GIT_CREDENTIALS}"
+
+echo "::endgroup::"
+
+echo "::group::Storing credentials"
 
 for REPO in ${INPUT_REPOS}; do
   cat <<< "https://${INPUT_USERNAME}:${INPUT_TOKEN}@github.com/${REPO}"

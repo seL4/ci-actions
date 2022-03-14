@@ -6,6 +6,7 @@ aws-proofs/steps.sh
 scripts/setup-hw-ssh.sh
 l4v-deploy/steps.sh
 manifest-deploy/steps.sh
+git-https-credentials-setup/steps.sh
 
 # uses bash nullglob, which we also do want:
 aws-proofs/vm-steps.sh

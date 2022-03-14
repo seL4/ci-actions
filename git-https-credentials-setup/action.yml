@@ -1,0 +1,33 @@
+# Copyright 2022, Kry10 Limited
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'GitHub HTTPS Credentials Setup'
+description: |
+  Configures Git credential store to access GitHub repositories over HTTPS.
+author: Matthew Brecknell <matt@kry10.com>
+
+inputs:
+  username:
+    description: |
+      The GitHub username to use for HTTPS access, e.g. `seL4-ci`.
+    required: true
+  token:
+    description: |
+      A personal access token (PAT) owned by the given user, with the
+      required access to the given GitHub repositories.
+    required: true
+  repos:
+    description: |
+      A space-separated list of GitHub repositories, given as
+      organisation/repo pairs, e.g. `seL4/seL4 seL4/l4v`.
+    required: true
+  store_id:
+    description: |
+      An identifier that can be used to distinguish multiple uses of
+      this action in a job.
+
+runs:
+  using: 'node12'
+  main: '../js/index.js'
+  post: '../js/post.js'

@@ -55,6 +55,7 @@ isabelle/bin/isabelle components -a
 
 export L4V_ARCH=${INPUT_L4V_ARCH}
 export L4V_FEATURES=${INPUT_L4V_FEATURES}
+L4V_ARCH_FEATURES="${L4V_ARCH}${L4V_FEATURES:+-${L4V_FEATURES}}"
 
 CACHE_NAME=${INPUT_CACHE_NAME}
 if [ -z "${CACHE_NAME}" ]
@@ -62,7 +63,7 @@ then
   # construct default cache name
   BRANCH=${INPUT_ISA_BRANCH:-default}
   MANIFEST=${INPUT_MANIFEST:-devel}
-  CACHE_NAME="${GITHUB_REPOSITORY}-${BRANCH}-${MANIFEST}-${L4V_ARCH}${L4V_FEATURES:+-${L4V_FEATURES}}"
+  CACHE_NAME="${GITHUB_REPOSITORY}-${BRANCH}-${MANIFEST}-${L4V_ARCH_FEATURES}"
 fi
 
 echo "::group::Cache"
@@ -130,7 +131,9 @@ echo "::group::C graph-lang export"
 SIMPL_EXPORT_FILE="$L4V_DIR/proof/asmrefine/export/$L4V_ARCH/CFunDump.txt"
 if [ -f "$SIMPL_EXPORT_FILE" ]; then
   echo "Found CFunctions.txt"
-  xz < "$SIMPL_EXPORT_FILE" > ~/artifacts/CFunctions.txt.xz
+  SIMPL_EXPORT_ARTIFACT_DIR="${HOME}/artifacts/simpl-export"
+  mkdir -p "${SIMPL_EXPORT_ARTIFACT_DIR}"
+  cp "$SIMPL_EXPORT_FILE" "${SIMPL_EXPORT_ARTIFACT_DIR}/CFunctions-${L4V_ARCH_FEATURES}.txt"
 elif do_run_tests -L | grep -q SimplExportAndRefine; then
   echo "Nothing to export: SimplExportAndRefine failed or used a cached image"
 else

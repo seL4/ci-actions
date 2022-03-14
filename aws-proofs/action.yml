@@ -13,7 +13,7 @@ inputs:
     required: true
   L4V_FEATURES:
     description: 'Kernel features to test (optional). Either MCS or unset.'
-    requred: false
+    required: false
   session:
     description: 'Which proof session to run (space-separated string)'
     required: false

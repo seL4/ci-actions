@@ -34,12 +34,12 @@ if __name__ == '__main__':
 
     with open(os.environ['GITHUB_EVENT_PATH']) as f:
       event = json.load(f)
-    number = event['number']
+    issue_id = int(event['number'])
 
     # get body dynamically so we don't miss updates on test re-run:
     gh = Github()
     repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
-    issue = repo.get_issue(number=int(number))
+    issue = repo.get_issue(number=issue_id)
 
     prs = []
     if issue.body:

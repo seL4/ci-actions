@@ -41,6 +41,15 @@ platforms:
     disabled: true
     no_hw_build: true
 
+  RISCVVIRT64:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: qemu-riscv-virt
+    simulation_binary: qemu-riscv-virt
+    disabled: true
+    no_hw_build: true
+
   HIFIVE:
     arch: riscv
     modes: [64]
@@ -303,6 +312,7 @@ mcs_unsupported_platforms:
 - IMX8MM_EVK
 - IMX8MQ_EVK
 - ROCKPRO64
+- QUARTZ64 # To be tested, for now this just copies the setting of ROCKPRO64.
 - ODROID_XU4
 
 # named machines

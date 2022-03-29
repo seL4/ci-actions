@@ -86,12 +86,7 @@ export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 FAIL=0
 
 L4V_DIR="$PWD/l4v"
-if [ -n "${INPUT_SESSION}" ]
-then
-  do_run_tests() { (cd "$L4V_DIR" && ./run_tests -j 2 ${INPUT_SESSION} "$@"); }
-else
-  do_run_tests() { (cd "$L4V_DIR" && ./run_tests -j 2 -x AutoCorresSEL4 "$@"); }
-fi
+do_run_tests() { (cd "$L4V_DIR" && ./run_tests -j 2 ${INPUT_SESSION} "$@"); }
 
 do_run_tests || FAIL=1
 

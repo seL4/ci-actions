@@ -41,7 +41,8 @@ platforms:
     disabled: true
     no_hw_build: true
 
-  RISCVVIRT64:
+  RISCVVIRT:
+  # test
     arch: riscv
     modes: [64]
     smp: [64]

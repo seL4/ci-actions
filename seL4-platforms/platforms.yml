@@ -84,6 +84,14 @@ platforms:
     req: [imx8mq2]
     march: armv8a
 
+  MAAXBOARD
+    arch: arm
+    modes: [32, 64]
+    smp: [64]
+    platform: maaxboard
+    march: armv8a
+    disabled: true
+
   IMX8MM_EVK:
     arch: arm
     modes: [32, 64]
@@ -302,6 +310,7 @@ mcs_unsupported_platforms:
 - ZYNQMP
 - IMX8MM_EVK
 - IMX8MQ_EVK
+- MAAXBOARD # To be tested, for now this just copies the setting of IMX8MQ_EVK.
 - ROCKPRO64
 - ODROID_XU4
 

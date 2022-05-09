@@ -10,18 +10,18 @@ import requests
 import sys
 
 if __name__ == '__main__':
-    token = os.environ.get('INPUT_TOKEN')
-    if not token:
-        print("Need $INPUT_TOKEN for authentication.")
-        sys.exit(1)
-
     src_repo = os.environ.get('GITHUB_REPOSITORY')
     if not src_repo:
         print("GITHUB_REPOSITORY not set.")
         sys.exit(1)
 
     if not src_repo.startswith('seL4/'):
-        print("This action is only for repositories in the seL4 GitHub org.")
+        print("This action is only for repositories in the seL4 GitHub org. Skipping event dispatch.")
+        sys.exit(0)
+
+    token = os.environ.get('INPUT_TOKEN')
+    if not token:
+        print("Need $INPUT_TOKEN for authentication.")
         sys.exit(1)
 
     # remove 'seL4/' prefix and standardise case for lookup in notify.yml

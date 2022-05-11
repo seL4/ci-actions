@@ -400,7 +400,9 @@ def get_machine(req):
 
 
 def job_key():
-    return os.environ.get('GITHUB_RUN_ID') + "-" + \
+    return os.environ.get('GITHUB_REPOSITORY') + "-" + \
+        os.environ.get('GITHUB_WORKFLOW') + "-" + \
+        os.environ.get('GITHUB_RUN_ID') + "-" + \
         os.environ.get('GITHUB_JOB') + "-" + \
         os.environ.get('INPUT_INDEX', '$0')[1:]
 

@@ -84,7 +84,7 @@ platforms:
     req: [imx8mq2]
     march: armv8a
 
-  MAAXBOARD
+  MAAXBOARD:
     arch: arm
     modes: [32, 64]
     smp: [64]

@@ -79,8 +79,6 @@ echo "::endgroup::"
 
 echo "::endgroup::"
 
-echo "::group::Proof run"
-
 export SKIP_DUPLICATED_PROOFS=${INPUT_SKIP_DUPS}
 
 FAIL=0
@@ -95,8 +93,6 @@ echo "Stats:"
 ~/ci-actions/aws-proofs/kernel-sloc.sh
 echo ""
 cd l4v; ~/ci-actions/aws-proofs/sorry-count.sh; cd ..
-
-echo "::endgroup::"
 
 echo "::group::Cache"
 if [ -n "${INPUT_CACHE_WRITE}" ]

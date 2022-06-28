@@ -4,7 +4,7 @@
 
 # Build and push docker image on changes to relevant files
 
-name: Deploy
+name: Deploy CParser Builder
 
 # Why deploy the builder image if it is supposed to be ephemeral? Because we
 # couldn't get the docker GitHub action to refer to a local-only image, even

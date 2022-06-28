@@ -4,7 +4,7 @@
 
 # Build and push docker image on changes to relevant files
 
-name: Deploy
+name: Deploy CAmkES Test
 
 on:
   push:

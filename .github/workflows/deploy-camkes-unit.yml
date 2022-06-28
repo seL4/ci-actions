@@ -4,7 +4,7 @@
 
 # Build and push camkes-unit docker image on changes to relevant files
 
-name: Deploy
+name: Deploy CAmkES Unit
 
 on:
   push:

@@ -4,7 +4,7 @@
 
 # Build and push link-check docker image on changes to relevant files
 
-name: Deploy
+name: Deploy Preprocess Test
 
 on:
   # the real build trigger is in deploy-cparser-builder

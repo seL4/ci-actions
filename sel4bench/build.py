@@ -27,7 +27,8 @@ import time
 def adjust_build_settings(build: Build):
     del build.settings['BAMBOO']  # not used in this build, avoid warning
 
-    if build.is_smp():
+    # see discussion on https://github.com/seL4/sel4bench/pull/20 for hifive exclusion
+    if build.is_smp() or build.get_platform().name == 'HIFIVE':
         build.settings['HARDWARE'] = 'FALSE'
         build.settings['FAULT'] = 'FALSE'
 

@@ -21,7 +21,7 @@ echo "::endgroup::"
 
 echo
 echo "Checking the following files:"
-echo "$(git diff --name-only ${GITHUB_BASE_REF} test-revision)"
+echo "$(git diff --name-only --diff-filter=rd ${GITHUB_BASE_REF} test-revision)"
 echo
-git diff -z --name-only ${GITHUB_BASE_REF} test-revision | xargs -0 \
+git diff -z --name-only --diff-filter=rd ${GITHUB_BASE_REF} test-revision | xargs -0 \
   ${SEL4_TOOLS}/misc/is-valid-shell-script && echo "Check successful!"

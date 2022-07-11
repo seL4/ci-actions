@@ -42,9 +42,9 @@ if [ -n "${BASE}" ]
 then
   # comparing against BASE
   echo "Checking the following files:"
-  echo "$(git diff --name-only ${BASE} test-revision)"
+  echo "$(git diff --name-only --diff-filter=rd ${BASE} test-revision)"
   echo
-  git diff -z --name-only ${BASE} test-revision | xargs -0 \
+  git diff -z --name-only --diff-filter=rd ${BASE} test-revision | xargs -0 \
     ${SEL4_TOOLS}/misc/style.sh
 else
   # check everything

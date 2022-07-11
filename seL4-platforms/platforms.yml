@@ -299,18 +299,12 @@ platforms:
     simulation_binary: x86
     march: nehalem
 
+# platforms where MCS is wholly unsupported
+# (for platforms with partial support see sel4test-hw/build.py and comments below)
 mcs_unsupported_platforms:
-# tx1 - scheduler accuracy fails, problem with clk rate in kernel or timestamp
-# at user level?
-# - TX1
-# zynq - scheduler accuracy fails, problem with clk rate in kernel or timestamp
-# at user level?
-- ZYNQ7000
-# not ported yet
-- ODROID_X
-- ZYNQMP
-- IMX8MM_EVK
-- IMX8MQ_EVK
-- MAAXBOARD # To be tested, for now this just copies the setting of IMX8MQ_EVK.
-- ROCKPRO64
-- ODROID_XU4
+  # fails SCHED0012
+  - IMX8MQ_EVK
+  # unsupported for specific configs: ODROID_X4, TX2
+  # unsupported for multicore: SABRE, IMX8MM_EVK
+  # see also https://github.com/seL4/ci-actions/blob/master/sel4test-hw/build.py
+  # function "build_filter" for more MCS exclusions

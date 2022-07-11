@@ -23,11 +23,18 @@ then
     URL="https://${REPO_PATH}"
   fi
 
-  # if an explicit SHA is set as INPUT (e.g. for pull request target), prefer that over GITHUB_REF
+  # if an explicit SHA is set as INPUT (e.g. for pull request target), prefer that
   if [ -n "${INPUT_SHA}" ]
   then
     REF=${INPUT_SHA}
     FETCH=${REF}
+  # if GITHUB_SHA is available, prefer that over REF, because the branch GITHUB_REF
+  # refers to may have been pushed to again to since we have been invoked.
+  elif [ -n "${GITHUB_SHA}" ]
+  then
+    REF=${GITHUB_SHA}
+    FETCH=${REF}
+  # if nothing better is available, use GITHUB_REF
   else
     REF=${GITHUB_REF}
     FETCH=${REF}:${REF}

@@ -9,3 +9,6 @@ manifest-deploy/steps.sh
 
 # uses bash nullglob, which we also do want:
 aws-proofs/vm-steps.sh
+
+# uses bash arrays
+thylint/steps.sh

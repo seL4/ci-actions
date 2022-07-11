@@ -38,6 +38,7 @@ $REPO init ${DEPTH} -m ${REPO_MANIFEST} -b ${REPO_BRANCH} -u "${MANIFEST_URL}"
 # if explicit manifest is provided via input XML, switch to that instead
 if [ -n "${INPUT_XML}" ]
 then
+  echo "Using supplied manifest XML"
   TEST_XML="the-test.xml"
   echo "${INPUT_XML}" > ".repo/manifests/${TEST_XML}"
   $REPO init ${DEPTH} -m "${TEST_XML}"

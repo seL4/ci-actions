@@ -91,8 +91,14 @@ do_run_tests || FAIL=1
 echo
 echo "Stats:"
 ~/ci-actions/aws-proofs/kernel-sloc.sh
-echo ""
-cd l4v; ~/ci-actions/aws-proofs/sorry-count.sh; cd ..
+
+# sorry-count script lives in l4v repo; guard against branches where it might be gone
+SORRY_COUNT=misc/stats/sorry-count.sh
+if [ -x "l4v/${SORRY_COUNT}" ]
+then
+  echo ""
+  cd l4v; "./${SORRY_COUNT}"; cd ..
+fi
 
 echo "::group::Cache"
 if [ -n "${INPUT_CACHE_WRITE}" ]

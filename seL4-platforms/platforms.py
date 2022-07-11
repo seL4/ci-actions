@@ -23,7 +23,7 @@ import os
 # exported names:
 __all__ = [
     "Platform", "ValidationException", "load_yaml",
-    "all_architectures", "all_modes", "platforms", "unsupported", "machines"
+    "all_architectures", "all_modes", "platforms", "unsupported"
 ]
 
 
@@ -212,8 +212,6 @@ for p in mcs_unsupported:
     if not platforms.get(p):
         print(f"Warning: unknown platform '{p}' in mcs_unsupported list")
 
-machines = _yaml_platforms["machines"]
-
 # if called as main, dump info:
 if __name__ == '__main__':
     print("\n# Architectures:")
@@ -227,9 +225,6 @@ if __name__ == '__main__':
 
     print("\n# Unsupported:")
     pprint(mcs_unsupported)
-
-    print("\n# Machines:")
-    pprint(machines)
 
     def sup(p: Platform) -> str:
         return p.name + (" (unsupported)" if p.name in mcs_unsupported else "")

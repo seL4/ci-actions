@@ -51,24 +51,30 @@ def build_filter(build: Build) -> bool:
         return False
 
     if plat.arch == 'arm':
-        # Bamboo config says no MCS for arm_hyp 64:
-        if build.is_mcs() and build.is_hyp() and build.get_mode() == 64:
-            return False
         # Bamboo says: don't build release for hikey when in aarch64 arm_hyp mode
         if build.is_hyp() and build.get_mode() == 64 and build.is_release() and \
            plat.name == 'HIKEY':
             return False
+
+        # MCS exclusions:
         # No MCS + SMP for platforms with global timer for now (see seL4/seL4#513)
         if plat.name == 'SABRE' and build.is_smp() and build.is_mcs():
+            return False
+        # SCHED_CONTEXT_0014 fails on TX2: https://github.com/seL4/seL4/issues/928
+        if plat.name == 'TX2' and build.is_mcs() and build.is_smp() and \
+           build.is_hyp() and build.is_clang():
+            return False
+        # CACHEFLUSH0001 fails on ODROID_XU4: https://github.com/seL4/sel4test/issues/80
+        if plat.name == 'ODROID_XU4' and build.is_debug() and build.is_mcs() and \
+           build.is_hyp() and build.is_clang() and build.get_mode() == 32:
+            return False
+        # IMX8MM_EVK is failing multicore tests for MCS + SMP:
+        if plat.name == 'IMX8MM_EVK' and build.is_mcs() and build.is_smp():
             return False
 
     if plat.arch == 'x86':
         # Bamboo config says no VTX for SMP or verification
         if build.is_hyp() and (build.is_smp() or build.is_verification()):
-            return False
-        # Bamboo config says no MCS for debug+SMP on x86_64
-        if build.is_mcs() and build.get_mode() == 64 and build.is_smp() and \
-           not build.is_release():
             return False
 
     return True

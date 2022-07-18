@@ -8,6 +8,7 @@ set -e
 
 echo "::group::Setting up"
 echo "Installing python 2.7"
+sudo apt update
 sudo apt-get install -qq python2-dev > /dev/null
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
 python --version

@@ -18,7 +18,7 @@ architectures: [x86, arm, riscv]
 #     image_platform: name; optional
 #     simulation_binary: string; optional
 #     march: string; optional
-#     req: list of string; optional
+#     req: list of string; optional; names of test boards in machine queue
 #     disabled: optional; (null = false); no hw test on this platform
 #     no_hw_build: optional; (null = false); no hw build for this platform
 

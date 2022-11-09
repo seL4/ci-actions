@@ -16,7 +16,7 @@ import json
 import os
 import sys
 
-from platforms import load_yaml
+from platforms import load_yaml, gh_output
 
 # See also builds.yml for how builds are split up in this test. We use the build
 # matrix and filtering for the hardware builds, and an explicit list for the
@@ -113,11 +113,11 @@ def sim_build_filter(build: SimBuild):
     return (not name or build.name == name) and (not plat or plat == 'sim')
 
 
-def to_json(builds: List[Build]) -> dict:
-    """Return a GitHub build matrix as GitHub set-output."""
+def to_json(builds: List[Build]) -> str:
+    """Return a GitHub build matrix as GitHub output assignment."""
 
     matrix = {"include": [{"name": b.name, "platform": b.get_platform().name} for b in builds]}
-    return "::set-output name=matrix::" + json.dumps(matrix)
+    return "matrix=" + json.dumps(matrix)
 
 
 # If called as main, run all builds from builds.yml
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         pprint(builds)
         sys.exit(0)
     elif len(sys.argv) > 1 and sys.argv[1] == '--matrix':
-        print(to_json(builds))
+        gh_output(to_json(builds))
         sys.exit(0)
     elif len(sys.argv) > 1 and sys.argv[1] == '--hw':
         sys.exit(run_builds(builds, hw_run))

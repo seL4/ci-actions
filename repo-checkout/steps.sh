@@ -29,4 +29,9 @@ fetch-branches.sh
 echo "::endgroup::"
 
 XML="$(repo manifest -r --suppress-upstream-revision | nl-escape.sh)"
-echo "::set-output name=xml::${XML}"
+
+if [ -z "${GITHUB_OUTPUT}" ]; then
+  echo "Warning: GITHUB_OUTPUT not set"
+  GITHUB_OUTPUT="github.output"
+fi
+echo "xml=${XML}" >> ${GITHUB_OUTPUT}

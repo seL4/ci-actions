@@ -21,7 +21,7 @@ builds:
     l4v_arch: ARM # only word size relevant for this test
 
 - RISCV64:
-    platform: SPIKE64
+    platform: RISCVVIRT64
     l4v_arch: RISCV64
 
 - AARCH32:

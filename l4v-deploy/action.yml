@@ -22,5 +22,5 @@ inputs:
     default: 'l4v-deploy'
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: '../js/index.js'

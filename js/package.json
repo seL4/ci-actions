@@ -1,15 +1,15 @@
 {
-  "name": "license-check",
-  "version": "1.0.0",
-  "description": "Runs the FSFE reuse license tool",
+  "name": "github_action_wrapper",
+  "version": "1.0.1",
+  "description": "Wraps a shell script up as a JS action",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Gerwin Klein <gerwin.klein@data61.csiro.au>",
+  "author": "Gerwin Klein <gerwin.klein@proofcraft.systems>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "@actions/core": "^1.9.1",
-    "@actions/exec": "^1.0.4"
+    "@actions/core": "^1.10.0",
+    "@actions/exec": "^1.1.1"
   }
 }

@@ -16,5 +16,5 @@ inputs:
     default: 'license-check'
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: '../js/index.js'

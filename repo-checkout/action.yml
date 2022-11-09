@@ -30,5 +30,5 @@ outputs:
     description: repo manifest as xml, target repo advanced to PR/branch
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: '../js/index.js'

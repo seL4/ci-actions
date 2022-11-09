@@ -13,5 +13,5 @@ inputs:
     default: 'sel4test-hw-matrix'
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: '../js/index.js'

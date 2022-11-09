@@ -37,6 +37,6 @@ inputs:
     default: 'sel4test-hw-run'
 
 runs:
-  using: 'node12'
+  using: 'node16'
   main: '../js/index.js'
   post: '../js/post.js'

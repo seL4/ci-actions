@@ -9,7 +9,7 @@ Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
 from builds import Build, load_builds, run_build_script, run_builds, load_builds, junit_results
-from platforms import load_yaml
+from platforms import load_yaml, gh_output
 from pprint import pprint
 
 import json
@@ -33,14 +33,14 @@ def build_filter(build: Build) -> bool:
     return not build.app in disable_app_for.get(build.get_platform().name, [])
 
 
-def to_json(builds: list) -> dict:
-    """Return a GitHub build matrix as GitHub set-output.
+def to_json(builds: list) -> str:
+    """Return a GitHub build matrix as GitHub output assignment.
 
     Basically just returns a list of build names that we can then
     filter on."""
 
     matrix = {"include": [{"name": b.name} for b in builds]}
-    return "::set-output name=matrix::" + json.dumps(matrix)
+    return "matrix=" + json.dumps(matrix)
 
 
 # If called as main, run all builds from builds.yml
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         pprint(builds)
         sys.exit(0)
     elif len(sys.argv) > 1 and sys.argv[1] == '--matrix':
-        print(to_json(builds))
+        gh_output(to_json(builds))
         sys.exit(0)
 
     sys.exit(run_builds(builds, run_simulation))

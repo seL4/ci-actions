@@ -22,7 +22,7 @@ import os
 
 # exported names:
 __all__ = [
-    "Platform", "ValidationException", "load_yaml",
+    "Platform", "ValidationException", "load_yaml", "gh_output",
     "all_architectures", "all_modes", "platforms", "unsupported"
 ]
 
@@ -196,6 +196,16 @@ def load_yaml(file_name):
     """Load a yaml file"""
     with open(file_name, 'r') as file:
         return yaml.safe_load(file)
+
+
+def gh_output(assgn: str):
+    """Set a GitHub action output variable"""
+    fname = os.environ.get("GITHUB_OUTPUT")
+    if not fname:
+        print("Warning: GITHUB_OUTPUT not set")
+        fname = "github.output"
+    with open(fname, "a") as file:
+        print(assgn, file=file)
 
 
 # module init:

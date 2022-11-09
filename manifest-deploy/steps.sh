@@ -42,4 +42,8 @@ releaseit nightly --release
 echo "::endgroup::"
 
 SHA=$(git -C .repo/manifests rev-parse HEAD)
-echo "::set-output name=manifest_sha::${SHA}"
+if [ -z "${GITHUB_OUTPUT}" ]; then
+  echo "Warning: GITHUB_OUTPUT not set"
+  GITHUB_OUTPUT="github.output"
+fi
+echo "manifest_sha=${SHA}" >> ${GITHUB_OUTPUT}

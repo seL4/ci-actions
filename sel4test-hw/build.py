@@ -10,7 +10,7 @@ Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 
 from builds import Build, run_build_script, run_builds, load_builds, junit_results
 from builds import release_mq_locks, SKIP
-from platforms import Platform
+from platforms import Platform, gh_output
 
 from pprint import pprint
 from typing import List
@@ -80,8 +80,8 @@ def build_filter(build: Build) -> bool:
     return True
 
 
-def to_json(builds: List[Build]) -> dict:
-    """Return a GitHub build matrix per enabled hardware platform as GitHub set-output."""
+def to_json(builds: List[Build]) -> str:
+    """Return a GitHub build matrix per enabled hardware platform as GitHub output assignment."""
 
     def run_for_plat(plat: Platform) -> List[dict]:
         if plat.disabled or plat.no_hw_build:
@@ -112,7 +112,7 @@ def to_json(builds: List[Build]) -> dict:
     platforms = set([b.get_platform() for b in builds])
     matrix = {"include": [run for plat in platforms for run in run_for_plat(plat)]}
 
-    return "::set-output name=matrix::" + json.dumps(matrix)
+    return "matrix=" + json.dumps(matrix)
 
 
 # If called as main, run all builds from builds.yml
@@ -124,7 +124,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--matrix':
-        print(to_json(builds))
+        gh_output(to_json(builds))
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--hw':

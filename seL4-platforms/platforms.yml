@@ -41,6 +41,15 @@ platforms:
     disabled: true
     no_hw_build: true
 
+  RISCVVIRT64:
+    arch: riscv
+    modes: [64]
+    platform: qemu-riscv-virt
+    simulation_binary: qemu-riscv-virt64
+    march: rv64imac
+    disabled: true
+    no_hw_build: true
+
   HIFIVE:
     arch: riscv
     modes: [64]

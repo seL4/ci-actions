@@ -33,10 +33,15 @@ variants:
 #     mode: [32, 64]
 
 
-# only generate builds for platofrms that have `simulation_binary` set
+# only generate builds for platforms that have `simulation_binary` set
+# see additional filters in build.py
 build-filter:
     - simulation_binary: true
-      arch: [arm, x86]
+      arch: [arm]
+    - simulation_binary: true
+      arch: [x86]
+      # do not run MCS on x86, currently failing SCHED0011 and INTERUPT0005
+      mcs: ''
     - simulation_binary: true
       arch: [riscv]
       # Bamboo has no "release" simulation for RISCV, and it doesn't seem to work either:

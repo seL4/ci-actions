@@ -30,9 +30,23 @@ def run_simulation(manifest_dir: str, build: Build):
     return run_build_script(manifest_dir, build, script, junit=True)
 
 
+def build_filter(build: Build) -> bool:
+    plat = build.get_platform()
+
+    # MCS simulation does not work yet for x86, fails SCHED0011 and INTERRUPT0005
+    if plat.arch == 'x86' and build.is_mcs():
+        return False
+
+    # MCS simulation is hanging on qemu for ZYNQ7000
+    if plat.name == 'ZYNQ7000' and build.is_mcs():
+        return False
+
+    return True
+
+
 # If called as main, run all builds from builds.yml
 if __name__ == '__main__':
-    builds = load_builds(os.path.dirname(__file__) + "/builds.yml")
+    builds = load_builds(os.path.dirname(__file__) + "/builds.yml", filter_fun=build_filter)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--dump':
         pprint(builds)

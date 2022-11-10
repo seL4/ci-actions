@@ -40,7 +40,7 @@ if [ -n "${INPUT_XML}" ]
 then
   echo "Using supplied manifest XML"
   TEST_XML="the-test.xml"
-  echo "${INPUT_XML}" > ".repo/manifests/${TEST_XML}"
+  echo "${INPUT_XML}" | nl-unescape.sh > ".repo/manifests/${TEST_XML}"
   $REPO init ${DEPTH} -m "${TEST_XML}"
 fi
 

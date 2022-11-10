@@ -20,6 +20,7 @@ default:
 variants:
     debug: [debug, release]
     compiler: [gcc, clang]
+    mcs: ['', MCS]
     mode: [32, 64]
 
 # full variant scheme:

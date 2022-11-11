@@ -73,6 +73,7 @@ platforms:
     platform: quartz64
     march: armv8a
     disabled: true
+    no_hw_build: true
 
   ARMVIRT:
     arch: arm

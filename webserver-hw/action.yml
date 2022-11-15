@@ -1,0 +1,24 @@
+# Copyright 2022, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4 Webserver Hardware Tests'
+description: CI hardware runs for the seL4 webserver demo app.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  platform:
+    description: 'Comma-separated list of platforms to filter on (for matrix builds)'
+    required: false
+  index:
+    description: job index in matrix build
+    required: true
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'webserver-hw'
+
+runs:
+  using: 'node16'
+  main: '../js/index.js'
+  post: '../js/post.js'

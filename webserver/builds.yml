@@ -1,0 +1,13 @@
+# Copyright 2022, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+---
+
+default:
+  success: 'buildroot login:'
+
+builds:
+- odroid_xu4:
+    platform: ODROID_XU4
+    mode: 32

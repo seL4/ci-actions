@@ -1,0 +1,19 @@
+# Copyright 2022, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'seL4 Webserver Tests'
+description: CI tests for the seL4 webserver demo app.
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  platform:
+    description: 'Comma-separated list of platforms to filter on (for matrix builds)'
+    required: false
+  xml:
+    description: xml manifest to test
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'docker://sel4/webserver:latest'

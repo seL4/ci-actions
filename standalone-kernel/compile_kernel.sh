@@ -10,9 +10,6 @@ echo "Comp: $INPUT_COMPILER"
 
 set -e
 
-mkdir build
-cd build
-
 extra_config=""
 
 case $INPUT_ARCH in
@@ -54,12 +51,30 @@ case $INPUT_ARCH in
 esac
 
 echo "::group::Run CMake"
+mkdir build
+cd build
 set -x
 cmake -DCMAKE_TOOLCHAIN_FILE="$INPUT_COMPILER".cmake -G Ninja -C ../configs/"$INPUT_ARCH"_verified.cmake $extra_config ../
 set +x
 echo "::endgroup::"
 
 echo "::group::Run Ninja"
+set -x
+ninja kernel.elf
+set +x
+echo "::endgroup::"
+
+echo "::group::Run CMake (MCS)"
+cd ..
+rm -rf build
+mkdir build
+cd build
+set -x
+cmake -DCMAKE_TOOLCHAIN_FILE="$INPUT_COMPILER".cmake -G Ninja -C ../configs/"$INPUT_ARCH"_verified.cmake $extra_config -DKernelIsMCS=TRUE ../
+set +x
+echo "::endgroup::"
+
+echo "::group::Run Ninja (MCS)"
 set -x
 ninja kernel.elf
 set +x

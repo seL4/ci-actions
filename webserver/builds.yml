@@ -8,6 +8,15 @@ default:
   success: 'buildroot login:'
 
 builds:
+
 - odroid_xu4:
     platform: ODROID_XU4
-    mode: 32
+
+- qemu-arm-virt:
+    platform: ARMVIRT
+
+- odroid_c2:
+    platform: ODROID_C2
+
+- tx2:
+    platform: TX2

@@ -61,7 +61,7 @@ elif [ ! -d "$IM_LOCAL_DIR" ]; then
   mkdir -p "$IM_REPOS_DIR"
   (
     cd "$IM_REPOS_DIR"
-    hg-system clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
+    hg clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
   )
 
 else

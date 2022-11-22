@@ -61,7 +61,13 @@ elif [ ! -d "$IM_LOCAL_DIR" ]; then
   mkdir -p "$IM_REPOS_DIR"
   (
     cd "$IM_REPOS_DIR"
-    hg clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
+    # We use hg-system here, because the SSL version hg 3.x compiles against does
+    # not work with the upstream Isabelle repository. We need to switch off the
+    # share-safe feature of hg >= 6.2.x in hg-system, because hg 3.x does not
+    # support the share-safe repo requirement. Passing format.use-share-safe=False
+    # should be safe for hg-system with versions < 6.2, because unknown format
+    # options are ignored.
+    hg-system --config format.use-share-safe=False clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
   )
 
 else

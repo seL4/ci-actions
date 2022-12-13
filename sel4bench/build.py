@@ -102,6 +102,10 @@ def build_filter(build: Build) -> bool:
     if plat.no_hw_build:
         return False
 
+    # temporarily remove QUARTZ64 until build failure is resolved
+    if build.platform.name == 'QUARTZ64':
+        return False
+
     # sel4bench not yet set up for MCS+SMP
     if build.is_mcs() and build.is_smp():
         return False

@@ -19,10 +19,10 @@ echo "ControlPersist 15" >> ~/.ssh/config
 echo >> ~/.ssh/config
 echo "Host ts" >> ~/.ssh/config
 echo "Hostname login.trustworthy.systems" >> ~/.ssh/config
-echo "User kleing" >> ~/.ssh/config
+echo "User sel4_ci" >> ~/.ssh/config
 echo >> ~/.ssh/config
 echo "Host tftp.keg.cse.unsw.edu.au" >> ~/.ssh/config
-echo "User kleing" >> ~/.ssh/config
+echo "User sel4_ci" >> ~/.ssh/config
 echo "ProxyJump ts" >> ~/.ssh/config
 echo >> ~/.ssh/config
 

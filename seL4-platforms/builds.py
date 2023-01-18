@@ -178,13 +178,24 @@ class Build:
     def can_smp(self) -> bool:
         return self.get_mode() in self.get_platform().smp
 
-    def set_smp(self) -> bool:
+    def set_smp(self):
         if not self.can_smp():
             raise ValidationException("not Build.can_smp()")
         self.settings['SMP'] = "TRUE"
 
     def is_smp(self) -> bool:
         return self.settings.get('SMP') != None
+
+    def can_domains(self) -> bool:
+        return not self.is_smp()
+
+    def set_domains(self):
+        if not self.can_domains():
+            raise ValidationException("not Build.can_domains()")
+        self.settings['DOMAINS'] = "TRUE"
+
+    def is_domains(self) -> bool:
+        return self.settings.get('DOMAINS') != None
 
     def validate(self):
         if not self.get_mode():
@@ -201,6 +212,8 @@ class Build:
             raise ValidationException("not Build.can_release()")
         if self.is_hyp() and not self.can_hyp():
             raise ValidationException("not Build.can_hyp()")
+        if self.is_domains() and not self.can_domains():
+            raise ValidationException("not Build.can_domains()")
 
     def __repr__(self) -> str:
         return \
@@ -731,6 +744,8 @@ def build_for_variant(base_build: Build, variant, filter_fun=lambda x: True) -> 
                 build.set_smp()
             elif feature == 'hyp' and val != '':
                 build.set_hyp()
+            elif feature == 'domains' and val != '':
+                build.set_domains()
             elif feature == 'debug' and val == 'release':
                 build.set_release()
             elif feature == 'debug' and val == 'verification':
@@ -812,6 +827,9 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                     return False
             elif k == 'hyp':
                 if v != '' and not build.is_hyp():
+                    return False
+            elif k == 'domains':
+                if v != '' and not build.is_domains():
                     return False
             elif k == 'req':
                 for req in v:

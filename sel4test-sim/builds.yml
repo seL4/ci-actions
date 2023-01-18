@@ -19,6 +19,7 @@ default:
 # generating build variants from all platforms, filtered by the build filter
 variants:
     debug: [debug, release]
+    domains: ['', DOM]
     compiler: [gcc, clang]
     mode: [32, 64]
 
@@ -28,13 +29,20 @@ variants:
 #     smp: ['', SMP]
 #     hyp: ['', hyp]
 #     mcs: ['', MCS]
+#     domains: ['', DOM]
 #     compiler: [gcc, clang]
 #     mode: [32, 64]
 
 
 # only generate builds for platofrms that have `simulation_binary` set
+# only generate builds with DOM set if debug is also set
 build-filter:
     - simulation_binary: true
+      domains: ''
+      arch: [arm, x86]
+    - simulation_binary: true
+      domains: DOM
+      debug: [debug]
       arch: [arm, x86]
     - simulation_binary: true
       arch: [riscv]

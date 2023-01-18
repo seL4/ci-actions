@@ -77,6 +77,10 @@ def build_filter(build: Build) -> bool:
         if build.is_hyp() and (build.is_smp() or build.is_verification()):
             return False
 
+    # run NUM_DOMAINS > 1 tests only on release builds
+    if build.is_domains() and not build.is_release():
+        return False
+
     return True
 
 

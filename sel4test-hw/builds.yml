@@ -14,5 +14,6 @@ variants:
     smp: ['', SMP]
     hyp: ['', hyp]
     mcs: ['', MCS]
+    domains: ['', DOM]
     compiler: [gcc, clang]
     mode: [32, 64]

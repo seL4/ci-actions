@@ -147,6 +147,7 @@ platforms:
     platform: odroidc2
     req: [odroidc2]
     march: armv8a
+    disabled: true
 
   ODROID_C4:
     arch: arm

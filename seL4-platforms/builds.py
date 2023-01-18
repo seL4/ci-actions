@@ -820,16 +820,16 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                 if build.get_mode() not in v:
                     return False
             elif k == 'mcs':
-                if v != '' and not build.is_mcs():
+                if (v == '') == build.is_mcs():
                     return False
             elif k == 'smp':
-                if v != '' and not build.is_smp():
+                if (v == '') == build.is_smp():
                     return False
             elif k == 'hyp':
-                if v != '' and not build.is_hyp():
+                if (v == '') == build.is_hyp():
                     return False
             elif k == 'domains':
-                if v != '' and not build.is_domains():
+                if (v == '') == build.is_domains():
                     return False
             elif k == 'req':
                 for req in v:

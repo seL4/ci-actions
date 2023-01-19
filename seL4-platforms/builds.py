@@ -59,7 +59,7 @@ class Build:
         self.success = None
         self.error = None
         self.settings = {}
-        self.timeout = 600
+        self.timeout = 900
         self.disabled = False
         self.image_base_name = "sel4test-driver"
         [self.name] = entries.keys()

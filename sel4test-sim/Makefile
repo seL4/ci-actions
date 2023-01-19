@@ -4,7 +4,7 @@
 
 default: build
 
-IMG=sel4/sel4test-sim:latest
+IMG=sel4/sel4test-sim:mcs-sim-testing
 
 build:
 	docker build -t $(IMG) -f Dockerfile ..

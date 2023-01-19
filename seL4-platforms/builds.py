@@ -108,7 +108,7 @@ class Build:
         self.settings["VERIFICATION"] = "TRUE"
 
     def is_verification(self) -> bool:
-        return self.settings.get("VERIFICATION") != None
+        return self.settings.get("VERIFICATION") is not None
 
     def can_release(self):
         # Bamboo excludes RELEASE for RPI3:
@@ -120,7 +120,7 @@ class Build:
         self.settings["RELEASE"] = "TRUE"
 
     def is_release(self) -> bool:
-        return self.settings.get("RELEASE") != None
+        return self.settings.get("RELEASE") is not None
 
     def is_debug(self) -> bool:
         return not self.is_release() and not self.is_verification()
@@ -144,7 +144,8 @@ class Build:
             raise ValidationException
 
     def is_hyp(self) -> bool:
-        return self.settings.get("ARM_HYP") != None or self.settings.get("KernelVTX") != None
+        return self.settings.get("ARM_HYP") is not None or \
+            self.settings.get("KernelVTX") is not None
 
     def can_clang(self) -> bool:
         # clang 8 does not support riscv, and Bamboo has no clang for TX1 64:
@@ -159,7 +160,7 @@ class Build:
         self.settings["TRIPLE"] = self.get_platform().get_triple(self.get_mode())
 
     def is_clang(self) -> bool:
-        return self.settings.get("TRIPLE") != None
+        return self.settings.get("TRIPLE") is not None
 
     def is_gcc(self) -> bool:
         return not self.is_clang()
@@ -173,7 +174,7 @@ class Build:
         self.settings['MCS'] = "TRUE"
 
     def is_mcs(self) -> bool:
-        return self.settings.get('MCS') != None
+        return self.settings.get('MCS') is not None
 
     def can_smp(self) -> bool:
         return self.get_mode() in self.get_platform().smp
@@ -184,7 +185,7 @@ class Build:
         self.settings['SMP'] = "TRUE"
 
     def is_smp(self) -> bool:
-        return self.settings.get('SMP') != None
+        return self.settings.get('SMP') is not None
 
     def can_domains(self) -> bool:
         return not self.is_smp()
@@ -195,7 +196,7 @@ class Build:
         self.settings['DOMAINS'] = "TRUE"
 
     def is_domains(self) -> bool:
-        return self.settings.get('DOMAINS') != None
+        return self.settings.get('DOMAINS') is not None
 
     def validate(self):
         if not self.get_mode():

@@ -217,7 +217,6 @@ platforms:
     platform: zynqmp
     req: [zcu106]
     march: armv8a
-    disabled: true
 
   HIKEY:
     arch: arm

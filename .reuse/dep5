@@ -20,3 +20,11 @@ License: BSD-2-Clause
 Files: pr-queue/node_modules/*
 Copyright: GitHub
 License: MIT
+
+Files: await-remote-artifacts/package*.json
+Copyright: GitHub
+License: BSD-2-Clause
+
+Files: await-remote-artifacts/node_modules/*
+Copyright: GitHub
+License: MIT

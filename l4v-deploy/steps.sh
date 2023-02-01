@@ -22,6 +22,14 @@ echo "::endgroup::"
 
 if [ -z "${INPUT_PREPROCESS}" ]
 then
+  # As a safeguard, we insist that INPUT_MANIFEST is
+  # only set for preprocess updates.
+  if [ -n "${INPUT_MANIFEST}" ]
+  then
+    echo "Error: INPUT_MANIFEST was set for a non-preprocess deployment" >&2
+    exit 1
+  fi
+
   echo "::group::Repo checkout"
   export REPO_DEPTH=0
   checkout-manifest.sh
@@ -38,12 +46,18 @@ then
   staging-manifest ssh://git@github.com/seL4/verification-manifest.git
   echo "::endgroup::"
 else
+  if [ -n "${INPUT_MANIFEST}" ]; then
+    declare -a MANIFEST_FILE=("--manifest-file" "${INPUT_MANIFEST}")
+  else
+    declare -a MANIFEST_FILE
+  fi
+
   echo "::group::Repo checkout"
   checkout-manifest.sh
   repo-util hashes
   echo "::endgroup::"
 
   echo "::group::Deploy"
-  seL4-pp --verification-path .
+  seL4-pp --verification-path . "${MANIFEST_FILE[@]}"
   echo "::endgroup::"
 fi

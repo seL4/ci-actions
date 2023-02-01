@@ -16,6 +16,9 @@ inputs:
   preprocess:
     description: if set, deploy a prepresses bump instead of proof run.
     required: false
+  manifest:
+    description: manifest file for preprocess updates, e.g. mcs.xml
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

@@ -35,6 +35,9 @@ verification.
 
 - `xml`: the manifest file to update to
 - `preprocess`: if set, deploy for a preprocess bump instead of proof run
+- `manifeset`: The manifest file for deployment of preprocess updates. Must
+  be either `devel.xml` (the default) or `mcs.xml`. Must not be set for
+  non-preprocess updates.
 
 ## Environment
 

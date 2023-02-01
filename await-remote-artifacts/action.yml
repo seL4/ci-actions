@@ -1,0 +1,55 @@
+# Copyright 2023, Kry10 Limited
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: Await workflow artifacts
+
+description: |
+  Wait for artifacts to become available in another workflow run,
+  and optionally download them.
+
+inputs:
+  repo:
+    required: true
+    description: |
+      The GitHub repository containing the artifacts, as `owner/repo-name`.
+
+  run-id:
+    required: true
+    description: |
+      The workflow run ID containing the artifacts.
+
+  artifact-names:
+    required: true
+    description: |
+      A whitespace-separated list of artifact names to wait for.
+      This action cannot be used with artifacts whose names contain
+      whitespace.
+
+  timeout:
+    required: true
+    default: 600
+    description: |
+      The number of seconds to wait for artifacts to become available.
+
+  token:
+    required: true
+    description: |
+      A GitHub authentication token with appropriate access to read
+      the relevant artifacts.
+
+  download-dir:
+    required: false
+    description: |
+      An optional directory name. If provided, artifacts will be
+      downloaded to this directory. Each artifact will be unpacked
+      into a subdirectory named after the artifact.
+
+outputs:
+  artifact-ids:
+    description: |
+      A space-separated list of artifact IDs, in the same order
+      as the artifact-names input.
+
+runs:
+  using: node16
+  main: index.js

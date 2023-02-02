@@ -117,6 +117,7 @@ platforms:
     platform: imx8mm-evk
     req: [imx8mm]
     march: armv8a
+    disabled: true
 
   TQMA8XQP1GB:
     arch: arm

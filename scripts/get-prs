@@ -131,7 +131,7 @@ def main():
     issue_id = int(event['number'])
 
     # get body dynamically so we don't miss updates on test re-run:
-    gh = Github()
+    gh = Github(os.environ.get('GITHUB_TOKEN'))
     repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
     issue = repo.get_issue(number=issue_id)
 

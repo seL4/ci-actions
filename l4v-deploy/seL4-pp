@@ -53,7 +53,7 @@ def main():
 
     # Parse manifest.
     manifest_path = os.path.join(manifest_dir, args.manifest_file)
-    manifest_text = open(manifest_path, 'r').read()
+    manifest_text = open(manifest_path, 'r', encoding='utf-8').read()
     manifest = minidom.parseString(manifest_text)
 
     seL4_proj = None
@@ -96,13 +96,13 @@ def main():
     rev_occurrences = manifest_text.count(old_rev)
     if rev_occurrences == 1:
         # We can do a text replace because old_rev is unambiguous.
-        with open(manifest_path, 'w') as f:
+        with open(manifest_path, 'w', encoding='utf-8') as f:
             # FIXME: text replace may be unsafe
             f.write(manifest_text.replace(old_rev, master_rev))
     else:
         # Write machine-formatted XML.
         seL4_proj.setAttribute('revision', master_rev)
-        with open(manifest_path, 'w') as f:
+        with open(manifest_path, 'wb') as f:
             f.write(manifest.toxml(encoding='UTF-8'))
 
     message = "Update seL4 to cpp-compatible version"

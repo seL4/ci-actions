@@ -159,9 +159,9 @@ def main():
 
             # Commit and push.
             print("Pushing manifest to %s" % output_repo)
-            output_str = etree.tostring(new_manifest, encoding='UTF-8').decode()
+            output_str = etree.tostring(new_manifest, encoding='unicode')
             print(indent(output_str))
-            with open(os.path.join(output_dir, output_path), 'w') as f:
+            with open(os.path.join(output_dir, output_path), 'w', encoding='utf-8') as f:
                 f.writelines([
                     '<?xml version="1.0" encoding="UTF-8"?>\n',
                     '<!--\n',

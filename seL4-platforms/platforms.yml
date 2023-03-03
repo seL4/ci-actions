@@ -151,6 +151,8 @@ platforms:
   ODROID_C4:
     arch: arm
     modes: [64]
+    aarch_hyp: [64]
+    smp: [64]
     platform: odroidc4
     req: [odroidc4_1]
     march: armv8a

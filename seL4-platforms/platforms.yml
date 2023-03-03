@@ -152,10 +152,8 @@ platforms:
     arch: arm
     modes: [64]
     platform: odroidc4
-    req: [odroidc4]
+    req: [odroidc4_1]
     march: armv8a
-    disabled: true
-    no_hw_build: true
 
   ODROID_X:
     arch: arm

@@ -130,8 +130,13 @@ def main():
       event = json.load(f)
     issue_id = int(event['number'])
 
+    # optional auth token; log if none provided
+    token = os.environ.get('INPUT_TOKEN')
+    if not token:
+        print('No token provided')
+
     # get body dynamically so we don't miss updates on test re-run:
-    gh = Github(os.environ.get('INPUT_TOKEN'))
+    gh = Github(login_or_token=token)
     repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
     issue = repo.get_issue(number=issue_id)
 

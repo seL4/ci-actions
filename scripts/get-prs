@@ -133,6 +133,10 @@ def main():
     # optional auth token
     token = os.environ.get('INPUT_TOKEN')
 
+    # if INPUT_TOKEN is set, but the empty string, use None instead
+    if not token:
+        token = None
+
     # get body dynamically so we don't miss updates on test re-run:
     gh = Github(login_or_token=token)
     repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])

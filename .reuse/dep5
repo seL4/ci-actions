@@ -28,3 +28,11 @@ License: BSD-2-Clause
 Files: await-remote-artifacts/node_modules/*
 Copyright: GitHub
 License: MIT
+
+Files: bv-trigger/package*.json
+Copyright: GitHub
+License: BSD-2-Clause
+
+Files: bv-trigger/node_modules/*
+Copyright: GitHub
+License: MIT

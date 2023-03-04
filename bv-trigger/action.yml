@@ -1,0 +1,59 @@
+# Copyright 2023, Kry10 Limited
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: Trigger binary verification
+
+description: |
+  Can be called from an l4v proof workflow run to trigger binary verification.
+
+  This works by issuing a repository-dispatch event on the graph-refine
+  repository, but only if there is kernel-build artifact available. The event
+  starts a graph-refine binary-decompilation workflow run, which retrieves
+  kernel build artifacts from the l4v proof workflow and runs the decompiler.
+
+  The final stage of binary verification, graph refinement, is not directly
+  triggered here, but may triggered by the completion of the graph-refine
+  binary-decompilation workflow. Graph refinement is performed by a custom back
+  end. It is expensive, so policy settings in the back end may be used to limit
+  which decompilation runs actually proceed to graph refinement. The `tag`
+  input be used in that policy decision.
+
+inputs:
+  token:
+    required: true
+    description: |
+      An access token with permissions to issue a repository-dispatch event
+      on the repository given in `trigger-repo`.
+
+  tag:
+    required: true
+    description: |
+      A brief description of the source of the event, e.g. a workflow
+      identifier. This is used when reporting the results of a binary
+      verification run, to help users identify the proof run that triggered the
+      binary verification run.
+
+  repository:
+    required: true
+    default: seL4/graph-refine
+    description: |
+      The GitHub repository that will receive the repository-dispatch event,
+      as `owner/repo`.
+
+  event:
+    required: true
+    default: binary-verification
+    description: |
+      The name of the event to issue on the repository given in `trigger-repo`.
+
+  artifact:
+    required: true
+    default: kernel-builds
+    description: |
+      The name of the artifact to look for. The repository-dispatch event will
+      only be issued if the artifact is present in the workflow that calls this
+      action.
+
+runs:
+  using: node16
+  main: index.js

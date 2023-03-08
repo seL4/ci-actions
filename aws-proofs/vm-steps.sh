@@ -10,6 +10,8 @@
 set -e
 
 echo "::group::Setting up"
+curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.local/bin
+chmod 755 ~/.local/bin/repo
 export PATH=/home/test-runner/ci-actions/scripts:/home/test-runner/.local/bin:/home/test-runner/.bin:$PATH
 mkdir ver
 cd ver

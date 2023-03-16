@@ -97,9 +97,8 @@ platforms:
     modes: [64]
     smp: [64]
     platform: imx8mq-evk
-    req: [imx8mq2]
+    req: [imx8mq]
     march: armv8a
-    disabled: true
 
   MAAXBOARD:
     arch: arm

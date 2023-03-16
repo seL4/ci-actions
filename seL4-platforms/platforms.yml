@@ -96,6 +96,7 @@ platforms:
     arch: arm
     modes: [64]
     smp: [64]
+    aarch_hyp: [64]
     platform: imx8mq-evk
     req: [imx8mq]
     march: armv8a
@@ -318,8 +319,6 @@ platforms:
 # platforms where MCS is wholly unsupported
 # (for platforms with partial support see sel4test-hw/build.py and comments below)
 mcs_unsupported_platforms:
-  # fails SCHED0012
-  - IMX8MQ_EVK
   # unsupported for specific configs: ODROID_X4, TX2
   # unsupported for multicore: SABRE, IMX8MM_EVK
   # see also https://github.com/seL4/ci-actions/blob/master/sel4test-hw/build.py

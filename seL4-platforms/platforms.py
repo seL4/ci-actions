@@ -23,7 +23,7 @@ import os
 # exported names:
 __all__ = [
     "Platform", "ValidationException", "load_yaml", "gh_output",
-    "all_architectures", "all_modes", "platforms", "unsupported"
+    "all_architectures", "all_modes", "platforms", "mcs_unsupported"
 ]
 
 
@@ -69,7 +69,7 @@ class Platform:
             if not isinstance(sub, list):
                 return False
             for x in sub:
-                if not x in container:
+                if x not in container:
                     return False
             return True
 
@@ -77,7 +77,7 @@ class Platform:
             return sublist(modes, all_modes)
 
         def opt_str(name):
-            return name == None or isinstance(name, str)
+            return name is None or isinstance(name, str)
 
         return isinstance(self.name, str) and \
             self.arch in all_architectures and \
@@ -87,7 +87,7 @@ class Platform:
             opt_str(self.image_platform) and \
             opt_str(self.simulation_binary) and \
             opt_str(self.march) and \
-            (self.req == None or isinstance(self.req, str) or isinstance(self.req, list)) and \
+            (self.req is None or isinstance(self.req, str) or isinstance(self.req, list)) and \
             isinstance(self.disabled, bool) and \
             isinstance(self.no_hw_build, bool)
 

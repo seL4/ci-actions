@@ -218,6 +218,9 @@ platforms = {name: Platform(name, plat)
              for (name, plat) in _yaml_platforms["platforms"].items()}
 
 mcs_unsupported = _yaml_platforms["mcs_unsupported_platforms"]
+# If there are no unsupported MCS platforms, this will be None
+mcs_unsupported = mcs_unsupported if mcs_unsupported is not None else []
+
 for p in mcs_unsupported:
     if not platforms.get(p):
         print(f"Warning: unknown platform '{p}' in mcs_unsupported list")

@@ -5,7 +5,6 @@
 #
 # Common utils.
 
-import sys
 import subprocess
 
 
@@ -22,7 +21,7 @@ def loud_command(*args, **kwargs):
 
 def indent(s, indent='    '):
     '''Indent all lines in a string'''
-    return '\n'.join(indent + l for l in s.splitlines())
+    return '\n'.join(indent + line for line in s.splitlines())
 
 
 def format_commit_message(msg):
@@ -30,9 +29,8 @@ def format_commit_message(msg):
     msg = "[CI] " + msg
     return msg
 
+
 # Common settings.
-
-
 git_commit_user = 'seL4 CI'
 git_commit_email = 'ci@sel4.systems'
 

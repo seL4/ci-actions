@@ -8,7 +8,7 @@ Parse builds.yml and run sel4test build + simulation on each of the build defini
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, load_builds, run_build_script, run_builds, load_builds, junit_results
+from builds import Build, load_builds, run_build_script, run_builds, junit_results
 from platforms import load_yaml, gh_output
 from pprint import pprint
 
@@ -30,7 +30,7 @@ def run_simulation(manifest_dir: str, build: Build):
 
 
 def build_filter(build: Build) -> bool:
-    return not build.app in disable_app_for.get(build.get_platform().name, [])
+    return build.app not in disable_app_for.get(build.get_platform().name, [])
 
 
 def to_json(builds: list) -> str:

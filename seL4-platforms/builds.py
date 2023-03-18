@@ -70,7 +70,7 @@ class Build:
 
         if 'settings' in default:
             for k, v in default['settings'].items():
-                if not k in self.settings:
+                if k not in self.settings:
                     self.settings[k] = v
 
         if self.get_mode():
@@ -166,7 +166,7 @@ class Build:
         return not self.is_clang()
 
     def can_mcs(self) -> bool:
-        return not self.get_platform().name in mcs_unsupported
+        return self.get_platform().name not in mcs_unsupported
 
     def set_mcs(self):
         if not self.can_mcs():
@@ -389,7 +389,7 @@ def release_mq_locks(runs: List[Union[Run, Build]]):
     reqs = [r.get_req() for r in runs]
     req_set = []
     for req in reqs:
-        if req and not req in req_set:
+        if req and req not in req_set:
             req_set.append(req)
 
     for req in req_set:
@@ -795,27 +795,27 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
         """Return true if all criteria in the filter are true for this build."""
         for k, v in f.items():
             if k == 'arch':
-                if not build.get_platform().arch in v:
+                if build.get_platform().arch not in v:
                     return False
             elif k == 'march':
-                if not build.get_platform().march in v:
+                if build.get_platform().march not in v:
                     return False
             elif k == 'platform':
-                if not build.get_platform().name in [x.upper() for x in v]:
+                if build.get_platform().name not in [x.upper() for x in v]:
                     return False
             elif k == 'debug':
-                if build.is_debug() and not 'debug' in v:
+                if build.is_debug() and 'debug' not in v:
                     return False
-                if build.is_release() and not 'release' in v:
+                if build.is_release() and 'release' not in v:
                     return False
-                if build.is_verification() and not 'verification' in v:
+                if build.is_verification() and 'verification' not in v:
                     return False
             elif k == 'compiler':
                 if build.is_clang():
-                    if not 'clang' in v:
+                    if 'clang' not in v:
                         return False
                 else:
-                    if not 'gcc' in v:
+                    if 'gcc' not in v:
                         return False
             elif k == 'mode':
                 if build.get_mode() not in v:
@@ -834,10 +834,10 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                     return False
             elif k == 'req':
                 for req in v:
-                    if not req in build.get_req():
+                    if req not in build.get_req():
                         return False
             elif k in ['name', 'app']:
-                if not vars(build).get(k) in v:
+                if vars(build).get(k) not in v:
                     return False
             elif not vars(build.get_platform()).get(k):
                 return False

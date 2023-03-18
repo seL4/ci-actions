@@ -46,7 +46,6 @@ def run_build(manifest_dir: str, build: Union[Build, SimBuild]):
 
     if isinstance(build, Build):
         app = apps[build.app]
-        expect = f"\"{app['success']}\""
         build.files = build.get_platform().image_names(build.get_mode(), "capdl-loader")
         build.settings['CAMKES_APP'] = build.app
         del build.settings['BAMBOO']  # not used in this test, avoid warning

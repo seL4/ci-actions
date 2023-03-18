@@ -8,7 +8,7 @@ Parse builds.yml and run sel4test build + simulation on each of the build defini
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds, junit_results, sanitise_junit
+from builds import Build, run_build_script, run_builds, load_builds, junit_results
 from pprint import pprint
 
 import os

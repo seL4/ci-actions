@@ -92,3 +92,10 @@ builds:
 - vm_cross_connector:
     platform: ODROID_XU4
     success: 'Finished crossvm test script'
+- vm_introspect_xu4:
+    app: vm_introspect
+    platform: ODROID_XU4
+- vm_introspect_sim:
+    app: vm_introspect
+    platform: ARMVIRT
+    sim: true

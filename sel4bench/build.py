@@ -322,7 +322,7 @@ def gen_web(runs: List[Run], yml, file_name: str):
                     f.write(f"    <td>{board['soc']}/{board_name}</td>\n")
                 f.write(f"    <td class=\"data-table-right\">{board['clock']}</td>\n")
                 f.write(f"    <td>{board['compiler']}</td>\n")
-                f.write(f'    <td>{build_command}</td>\n')
+                f.write(f'    <td class=\"monospace\">{build_command}</td>\n')
                 f.write(f'  </tr>')
 
             f.write(f'</table>\n\n')

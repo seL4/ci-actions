@@ -85,6 +85,8 @@ results:
           run: SABRE_MCS_32
         - board: Haswell
           run: PC99_MCS_64_haswell3
+        - board: Skylake
+          run: PC99_64_noksw_skylake
         - board: Jetson
           run: TX1_MCS_64
         - board: Hifive

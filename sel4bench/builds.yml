@@ -39,6 +39,12 @@ more_builds:
         settings:
             KernelSkimWindow: "FALSE"
 
+    - PC99_MCS_64_noksw:
+        platform: PC99
+        mode: 64
+        mcs: MCS
+        settings:
+            KernelSkimWindow: "FALSE"
 
 # for generating the results page:
 
@@ -86,7 +92,7 @@ results:
         - board: Haswell
           run: PC99_MCS_64_haswell3
         - board: Skylake
-          run: PC99_64_noksw_skylake
+          run: PC99_MCS_64_noksw_skylake
         - board: Jetson
           run: TX1_MCS_64
         - board: Hifive

@@ -57,7 +57,7 @@ boards:
     Haswell:
         soc: i7-4770
         clock: 3.4 GHz
-        compiler: gcc GNU 8.4.0
+        compiler: gcc GNU 10.2.1
     Skylake:
         soc: i7-6700
         note: (without meltdown mitigation)

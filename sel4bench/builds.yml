@@ -42,9 +42,9 @@ more_builds:
     - PC99_MCS_64_noksw:
         platform: PC99
         mode: 64
-        mcs: MCS
         settings:
             KernelSkimWindow: "FALSE"
+            MCS: "TRUE"
 
 # for generating the results page:
 

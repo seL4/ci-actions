@@ -207,7 +207,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: zynqmp
-    req: [zcu102, zcu102_2]
+    req: [zcu102] # , zcu102_2]
     march: armv8a
 
   ZYNQMP106:

@@ -33,8 +33,6 @@ capdl:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-cogent:
-- camkes-tool
 global-components:
 - camkes-tool
 - camkes-vm-examples

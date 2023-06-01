@@ -7,7 +7,7 @@ description: |
   Runs the preprocess check on pull requests for the seL4 repository.
   The prepocess check succeeds if the preprocessed C source did not
   change for any of the verified seL4 configurations.
-author: Gerwin Klein <kleing@unsw.edu.au>
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   L4V_ARCH:
@@ -16,6 +16,10 @@ inputs:
 
   L4V_FEATURES:
     description: 'Additional features to include. Empty ("") or "MCS".'
+    required: false
+
+  L4V_PLAT:
+    description: 'Platform variant to test (optional). Either a platform name or unset.'
     required: false
 
   action_name:

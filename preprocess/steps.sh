@@ -12,6 +12,7 @@ set -e
 # required parameters:
 export L4V_ARCH="${INPUT_L4V_ARCH}"
 export L4V_FEATURES="${INPUT_L4V_FEATURES}"
+export L4V_PLAT="${INPUT_L4V_PLAT}"
 
 # actions:
 echo "::group::Setting up"

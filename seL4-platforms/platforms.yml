@@ -251,7 +251,6 @@ platforms:
     req: [pi4B]
     image_platform: bcm2711
     march: armv8a
-    disabled: true
 
   TX1:
     arch: arm

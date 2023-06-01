@@ -14,6 +14,9 @@ inputs:
   L4V_FEATURES:
     description: 'Kernel features to test (optional). Either MCS or unset.'
     required: false
+  L4V_PLAT:
+    description: 'Platform variant to test (optional). Either a platform name or unset.'
+    required: false
   session:
     description: 'Which proof session to run (space-separated string)'
     required: false

@@ -16,6 +16,8 @@ automatically spins up and terminates the corresponding AWS instance.
 - `L4V_ARCH` (required): which architecture to run the proofs for. One of `ARM`,
                  `ARM_HYP`, `RISCV64`, `X64`
 - `L4V_FEATURES`: Optional kernel features to test. Either `MCS` or empty.
+- `L4V_PLAT`:    Platform variant to test (optional). Either a platform name or
+                 unset.
 - `session`:     which session to run (e.g. `CRefine` or `ASpec`, or `ASpec
                  CRefine`, i.e. a space-separated string). Runs all sessions if
                  unset.
@@ -31,7 +33,7 @@ automatically spins up and terminates the corresponding AWS instance.
 - `cache_name`:  optional custom name for image cache. Should at least contain
                  `L4V_ARCH`. The default results in separate caches for distinct
                  combinations of `isa-branch`, `manifest`, `L4V_ARCH`,
-                 and `L4V_FEATURES`.
+                 `L4V_FEATURES`, `L4V_PLAT`.
 - `skip_dups`:   skip duplicated proofs (default true).
                  Set to empty string to also run proofs that are already checked
                  in other proof sessions.

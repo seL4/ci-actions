@@ -78,6 +78,12 @@ def build_filter(build: Build) -> bool:
         if plat.name == 'IMX8MM_EVK' and build.is_mcs() and build.is_smp():
             return False
 
+        # HYP/SMP exclusions:
+        # IMX8MQ_EVK is failing multicore tests for SMP + HYP + clang
+        # see also https://github.com/seL4/sel4test/issues/44
+        if plat.name == 'IMX8MQ_EVK' and build.is_hyp() and build.is_smp() and build.is_clang():
+            return False
+
     if plat.arch == 'x86':
         # Bamboo config says no VTX for SMP or verification
         if build.is_hyp() and (build.is_smp() or build.is_verification()):

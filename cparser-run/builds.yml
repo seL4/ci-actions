@@ -24,16 +24,33 @@ builds:
     platform: RISCVVIRT64
     l4v_arch: RISCV64
 
-- AARCH32:
+- AARCH32-SABRE:
     platform: SABRE
     l4v_arch: ARM
+
+- AARCH32-IMX8MM_EVK:
+    platform: IMX8MM_EVK
+    mode: 32
+    l4v_arch: ARM
+    settings:
+        KernelAArch32FPUEnableContextSwitch: "TRUE"
 
 - AARCH64:
     platform: TX2
     l4v_arch: AARCH64
 
-- AARCH32HYP:
+- AARCH64-ZYNQMP:
+    platform: ZYNQMP
+    l4v_arch: AARCH64
+
+- AARCH32HYP-TK1:
     platform: TK1
+    l4v_arch: ARM_HYP
+    settings:
+      ARM_HYP: "TRUE"
+
+- AARCH32HYP-ODROID_XU4: # exynos5
+    platform: ODROID_XU4
     l4v_arch: ARM_HYP
     settings:
       ARM_HYP: "TRUE"

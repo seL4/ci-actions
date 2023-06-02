@@ -130,8 +130,9 @@ mkdir -p "${MANIFEST_DIR}"
 repo manifest -r --suppress-upstream-revision > "${MANIFEST_DIR}/manifest.xml"
 
 # Export kernel build artifacts and C graph-lang for use in binary verification.
-# The script saves artifacts under subdirectories named after L4V_ARCH_FEATURES,
-# so it is safe for multiple matrix jobs to upload to the same artifact.
+# The script saves artifacts under subdirectories whose names incorporate
+# L4V_ARCH, L4V_FEATURES and L4_PLAT, so it is safe for multiple matrix jobs to
+# upload to the same artifact.
 KERNEL_EXPORT_ROOT="${ARTIFACT_DIR}/kernel-builds"
 KERNEL_EXPORT_SCRIPT="${L4V_DIR}/spec/cspec/c/export-kernel-builds.py"
 # Some branches might not have the script.

@@ -163,6 +163,13 @@ def get_results(run: Run) -> List[float]:
                         result['Direction'] == 'server->client' and result['IPC length'] == 0:
                     ipc_reply = round(result['Mean'])
                     ipc_reply_s = round(result['Stddev'])
+        if bench['Benchmark'].startswith('Signal to process of higher prio'):
+            results = bench['Results']
+            for result in results:
+                if result['Prio'] == 225:
+                    notify = round(result['Mean'])
+                    notify_s = round(result['Stddev'])
+
         if bench['Benchmark'].startswith('IRQ path cycle count'):
             results = bench['Results']
             for result in results:
@@ -170,10 +177,10 @@ def get_results(run: Run) -> List[float]:
                     irq_invoke = round(result['Mean'])
                     irq_invoke_s = round(result['Stddev'])
 
-        if ipc_call > 0 and ipc_reply > 0 and irq_invoke > 0:
+        if ipc_call > 0 and ipc_reply > 0 and irq_invoke > 0 and notify > 0:
             break
 
-    return [irq_invoke, irq_invoke_s, ipc_call, ipc_call_s, ipc_reply, ipc_reply_s]
+    return [irq_invoke, irq_invoke_s, ipc_call, ipc_call_s, ipc_reply, ipc_reply_s, notify, notify_s]
 
 
 def get_run(runs: List[Run], name: str) -> Optional[Run]:
@@ -210,6 +217,7 @@ def gen_web(runs: List[Run], yml, file_name: str):
         ('IRQ Invoke', 1, 2, ""),
         ('IPC call', 1, 2, ""),
         ('IPC reply', 1, 2, "")
+        ('Notify', 1, 2, "")
     ]
 
     with open(file_name, 'w') as f:
@@ -237,6 +245,10 @@ def gen_web(runs: List[Run], yml, file_name: str):
         f.write('Time in cycles for a server replying to a client in a different address space on\n')
         f.write('the same core.</li>\n')
         f.write('</ul>')
+
+        f.write('<li><strong>Notify</strong>: ')
+        f.write('Time in cycles to send a signal from a process with priority 225 to a higher\n')
+        f.write('priority (255) process in a different address space</li>\n')
 
         # Results
         for section_name in sections:
@@ -279,6 +291,8 @@ def gen_web(runs: List[Run], yml, file_name: str):
                 f.write(f'    <td class="data-stddev">({results[3]})</td>\n')
                 f.write(f'    <td class="data-mean">{results[4]}</td>\n')
                 f.write(f'    <td class="data-stddev">({results[5]})</td>\n')
+                f.write(f'    <td class="data-mean">{results[6]}</td>\n')
+                f.write(f'    <td class="data-stddev">({results[7]})</td>\n')
                 f.write(f'  </tr>')
 
             f.write(f'</table>\n\n')

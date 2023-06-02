@@ -23,14 +23,13 @@ import sys
 def hw_build(manifest_dir: str, build: Build):
     """Run one hardware build."""
 
-    settings = build.settings_args()
-    if build.name == "RPI4":
+    if build.get_platform().name == "RPI4":
         # The Raspberry Pi 4B model that is used for hardware testing has 4GB
         # of RAM, which we must specify when building the kernel.
-        settings += " -DRPI4_MEMORY=4096"
+        build.settings["RPI4_MEMORY"] = "4096"
 
     script = [
-        ["../init-build.sh"] + settings,
+        ["../init-build.sh"] + build.settings_args(),
         ["ninja"],
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"]
     ]

@@ -150,6 +150,7 @@ def get_results(run: Run) -> List[float]:
     ipc_call = 0
     ipc_reply = 0
     irq_invoke = 0
+    notify = 0
 
     for bench in data:
         if bench['Benchmark'].startswith('One way IPC microbenchmarks'):

@@ -216,7 +216,7 @@ def gen_web(runs: List[Run], yml, file_name: str):
         ('Clock', 1, 1, "8ex"),
         ('IRQ Invoke', 1, 2, ""),
         ('IPC call', 1, 2, ""),
-        ('IPC reply', 1, 2, "")
+        ('IPC reply', 1, 2, ""),
         ('Notify', 1, 2, "")
     ]
 

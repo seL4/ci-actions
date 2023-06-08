@@ -150,7 +150,7 @@ def get_results(run: Run) -> List[float]:
     ipc_call = 0
     ipc_reply = 0
     irq_invoke = 0
-    notify = '?'
+    notify = 0
     notify_s = '?'
 
     for bench in data:

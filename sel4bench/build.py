@@ -150,7 +150,8 @@ def get_results(run: Run) -> List[float]:
     ipc_call = 0
     ipc_reply = 0
     irq_invoke = 0
-    notify = 0
+    notify = '?'
+    notify_s = '?'
 
     for bench in data:
         if bench['Benchmark'].startswith('One way IPC microbenchmarks'):
@@ -167,7 +168,7 @@ def get_results(run: Run) -> List[float]:
         if bench['Benchmark'].startswith('Signal to process of higher prio'):
             results = bench['Results']
             for result in results:
-                if result['Prio'] == 225:
+                if result['Prio'] == 1:
                     notify = round(result['Mean'])
                     notify_s = round(result['Stddev'])
 
@@ -248,7 +249,7 @@ def gen_web(runs: List[Run], yml, file_name: str):
         f.write('</ul>')
 
         f.write('<li><strong>Notify</strong>: ')
-        f.write('Time in cycles to send a signal from a process with priority 225 to a higher\n')
+        f.write('Time in cycles to send a signal from a process with priority 1 to a higher\n')
         f.write('priority (255) process in a different address space</li>\n')
 
         # Results

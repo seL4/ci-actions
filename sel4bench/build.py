@@ -246,11 +246,11 @@ def gen_web(runs: List[Run], yml, file_name: str):
         f.write('<li><strong>IPC reply</strong>: ')
         f.write('Time in cycles for a server replying to a client in a different address space on\n')
         f.write('the same core.</li>\n')
-        f.write('</ul>')
 
         f.write('<li><strong>Notify</strong>: ')
         f.write('Time in cycles to send a signal from a process with priority 1 to a higher\n')
         f.write('priority (255) process in a different address space</li>\n')
+        f.write('</ul>')
 
         # Results
         for section_name in sections:

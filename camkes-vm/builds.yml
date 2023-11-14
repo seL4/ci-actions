@@ -18,6 +18,9 @@ builds:
 - minimal:
     mode: 32
     req: haswell3
+- minimal_64:
+    mode: 64
+    req: haswell3
 - zmq_samples:
     mode: 64
     req: haswell3

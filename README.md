@@ -3,7 +3,7 @@
   SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-![CI](https://github.com/seL4/ci-actions/workflows/CI/badge.svg)
+[![CI](https://github.com/seL4/ci-actions/actions/workflows/push.yml/badge.svg)](https://github.com/seL4/ci-actions/actions/workflows/push.yml)
 
 # CI actions for seL4 repositories
 

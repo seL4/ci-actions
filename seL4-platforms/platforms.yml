@@ -132,8 +132,8 @@ platforms:
     modes: [64]
     smp: [64]
     platform: tqma8xqp1gb
+    req: [tqma]
     march: armv8a
-    disabled: true
 
   OMAP3:
     arch: arm

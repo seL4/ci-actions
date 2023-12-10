@@ -67,6 +67,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_L4V_ARCH \
     -o SendEnv=INPUT_L4V_FEATURES \
     -o SendEnv=INPUT_L4V_PLAT \
+    -o SendEnv=INPUT_NUM_DOMAINS \
     -o SendEnv=INPUT_MANIFEST \
     -o SendEnv=INPUT_ISA_BRANCH \
     -o SendEnv=INPUT_SESSION \

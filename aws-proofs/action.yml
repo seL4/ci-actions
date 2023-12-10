@@ -17,6 +17,9 @@ inputs:
   L4V_PLAT:
     description: 'Platform variant to test (optional). Either a platform name or unset.'
     required: false
+  NUM_DOMAINS:
+    description: 'Optional override for KernelNumDomains config setting.'
+    required: false
   session:
     description: 'Which proof session to run (space-separated string)'
     required: false

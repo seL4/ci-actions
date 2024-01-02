@@ -31,7 +31,8 @@ def hw_build(manifest_dir: str, build: Build):
     script = [
         ["../init-build.sh"] + build.settings_args(),
         ["ninja"],
-        ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"]
+        ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"],
+        ["cp", "kernel/kernel.elf", f"../{build.name}-kernel.elf"]
     ]
 
     return run_build_script(manifest_dir, build, script)

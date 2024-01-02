@@ -18,6 +18,7 @@ automatically spins up and terminates the corresponding AWS instance.
 - `L4V_FEATURES`: Optional kernel features to test. Either `MCS` or empty.
 - `L4V_PLAT`:    Platform variant to test (optional). Either a platform name or
                  unset.
+- `NUM_DOMAINS`: Optional override for the `KenrelNumDomains` config setting.
 - `session`:     which session to run (e.g. `CRefine` or `ASpec`, or `ASpec
                  CRefine`, i.e. a space-separated string). Runs all sessions if
                  unset.

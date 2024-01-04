@@ -21,11 +21,16 @@ case "${INPUT_ARCH}" in
         gcc_cfg="AARCH64"
         llvm_triple="aarch64-linux-gnu"
         ;;
+    RISCV32)
+        gcc_cfg="RISCV32"
+        # the 64-bit toolchain can build for 32-bit also.
+        llvm_triple="riscv64-unknown-elf"
+        ;;
     RISCV64)
         gcc_cfg="RISCV64"
         llvm_triple="riscv64-unknown-elf"
         ;;
-    X64)
+    IA32|X64)
         # just use the standard host compiler
         ;;
     *)

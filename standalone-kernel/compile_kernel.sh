@@ -72,7 +72,14 @@ do_compile_kernel()
             MCS)
                 build_folder="${build_folder}-${variant}"
                 variant_info=" (${variant})"
-                extra_params="${extra_params} -DKernelIsMCS=TRUE"
+                # Use a dedicated config file if available, otherwise just use
+                # the default config and enable MCS.
+                try_config_file="configs/${INPUT_ARCH}_MCS_verified.cmake"
+                if [ -f "${try_config_file}" ]; then
+                    config_file=${try_config_file}
+                else
+                    extra_params="${extra_params} -DKernelIsMCS=TRUE"
+                fi
                 ;;
             *)
                 echo "Unknown variant '${variant}'"

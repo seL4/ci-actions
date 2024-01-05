@@ -40,7 +40,17 @@ case $INPUT_ARCH in
         esac
         ;;
     RISCV64)
-        extra_config="${extra_config} -DRISCV64=TRUE"
+        case $INPUT_COMPILER in
+            gcc)
+                extra_config="${extra_config} -DRISCV64=TRUE"
+                ;;
+            llvm)
+                extra_config="${extra_config} -DTRIPLE=riscv64-unknown-elf"
+                ;;
+            *)
+                echo "Unknown input compiler"
+                exit 1
+        esac
         ;;
     X64)
         # no config needed

@@ -321,7 +321,7 @@ platforms:
     modes: [32, 64]
     smp: [32, 64]
     platform: x86_64
-    req: [skylake, haswell3, haswell4, skylake2]
+    req: [skylake, haswell3, skylake2] # [skylake, haswell3, haswell4, skylake2]
     simulation_binary: x86
     march: nehalem
 

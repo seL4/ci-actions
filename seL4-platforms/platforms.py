@@ -187,7 +187,7 @@ class Platform:
             return {32: "IA32", 64: "x86_64"}[mode]
 
         if self.arch == "riscv":
-            return {32: "RC32IMAC", 64: "RV64IMAC"}[mode]
+            return {32: "RV32IMAC", 64: "RV64IMAC"}[mode]
 
         return self.march.capitalize()
 

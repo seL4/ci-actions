@@ -147,16 +147,7 @@ class Build:
         return self.settings.get("ARM_HYP") is not None or \
             self.settings.get("KernelVTX") is not None
 
-    def can_clang(self) -> bool:
-        # clang 8 does not support riscv, and Bamboo has no clang for TX1 64:
-        return not (
-            self.get_platform().arch == 'riscv' or
-            self.get_platform().name == 'TX1' and self.get_mode() == 64
-        )
-
     def set_clang(self):
-        if not self.can_clang():
-            raise ValidationException("not Build.can_clang()")
         self.settings["TRIPLE"] = self.get_platform().get_triple(self.get_mode())
 
     def is_clang(self) -> bool:
@@ -203,8 +194,6 @@ class Build:
             raise ValidationException("Build: no unique mode")
         if not self.get_platform():
             raise ValidationException("Build: no platform")
-        if self.is_clang() and not self.can_clang():
-            raise ValidationException("not Build.can_clang()")
         if self.is_mcs() and not self.can_mcs():
             raise ValidationException("not Build.can_mcs()")
         if self.is_smp() and not self.can_smp():

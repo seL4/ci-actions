@@ -167,8 +167,8 @@ class Platform:
                           64: "x86_64-linux-gnu"},
                 "arm":   {32: "arm-linux-gnueabi",
                           64: "aarch64-linux-gnu"},
-                "riscv": {32: "riscv32-linux-gnu",
-                          64: "riscv64-linux-gnu"}}[self.arch][mode]
+                "riscv": {32: "riscv64-unknown-elf",
+                          64: "riscv64-unknown-elf"}}[self.arch][mode]
 
     def image_names(self, mode: int, root_task: str) -> list:
         """Return generated image name"""
@@ -187,7 +187,7 @@ class Platform:
             return {32: "IA32", 64: "x86_64"}[mode]
 
         if self.arch == "riscv":
-            return {32: "RC32IMAC", 64: "RV64IMAC"}[mode]
+            return {32: "RV32IMAC", 64: "RV64IMAC"}[mode]
 
         return self.march.capitalize()
 

@@ -66,8 +66,8 @@ def build_filter(build: Build) -> bool:
         # No MCS + SMP for platforms with global timer for now (see seL4/seL4#513)
         if plat.name == 'SABRE' and build.is_smp() and build.is_mcs():
             return False
-        # SCHED_CONTEXT_0014 fails on TX2 and ODROID_C4: https://github.com/seL4/seL4/issues/928
-        if (plat.name == 'TX2' or plat.name == 'ODROID_C4') and \
+        # SCHED_CONTEXT_0014 fails on TX1, TX2 and ODROID_C4: https://github.com/seL4/seL4/issues/928
+        if plat.name in ['TX1', 'TX2', 'ODROID_C4'] and \
            build.is_mcs() and build.is_smp() and build.is_hyp() and build.is_clang():
             return False
         # CACHEFLUSH0001 fails on ODROID_XU4: https://github.com/seL4/sel4test/issues/80
@@ -110,10 +110,10 @@ def to_json(builds: List[Build]) -> str:
                 {"platform": plat.name, "march": plat.march, "compiler": "clang"},
             ]
 
-        # no clang for RISC-V yet
         if plat.arch == 'riscv':
             return [
                 {"platform": plat.name, "march": plat.march, "compiler": "gcc"},
+                {"platform": plat.name, "march": plat.march, "compiler": "clang"},
             ]
 
         # separate runs for each compiler + mode on x86, because we have more machines available

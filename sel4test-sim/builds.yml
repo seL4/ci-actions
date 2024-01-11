@@ -34,7 +34,7 @@ variants:
 #     mode: [32, 64]
 
 
-# only generate builds for platofrms that have `simulation_binary` set
+# only generate builds for platforms that have `simulation_binary` set
 # only generate builds with DOM set if debug is also set
 build-filter:
     - simulation_binary: true

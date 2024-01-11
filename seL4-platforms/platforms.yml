@@ -16,47 +16,47 @@ architectures: [x86, arm, riscv]
 #     aarch_hyp: list of modes; optional (null = empty)
 #     platform: name; required
 #     image_platform: name; optional
-#     simulation_binary: string; optional
+#     has_simulation: boolean; optional; (null = false); platform has a simulation
 #     march: string; optional
 #     req: list of string; optional; names of test boards in machine queue
-#     disabled: optional; (null = false); no hw test on this platform
-#     no_hw_build: optional; (null = false); no hw build for this platform
+#     no_hw_test: optional; (null = false); no hw test on this platform
+#     no_hw_build: optional; (null = false); no hw build for this platform (implies no_hw_test)
 
 platforms:
   SPIKE32:
     arch: riscv
     modes: [32]
     platform: spike
-    simulation_binary: riscv32
+    has_simulation: true
     march: rv32imac
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   SPIKE64:
     arch: riscv
     modes: [64]
     platform: spike
-    simulation_binary: riscv64
+    has_simulation: true
     march: rv64imac
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   RISCVVIRT64:
     arch: riscv
     modes: [64]
     platform: qemu-riscv-virt
-    simulation_binary: qemu-riscv-virt64
+    has_simulation: true
     march: rv64imac
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   RISCVVIRT32:
     arch: riscv
     modes: [32]
     platform: qemu-riscv-virt
-    simulation_binary: qemu-riscv-virt32
+    has_simulation: true
     march: rv32imac
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   HIFIVE:
@@ -74,7 +74,7 @@ platforms:
     platform: sabre
     image_platform: imx6
     req: [sabre, sabre4, sabre2]
-    simulation_binary: sabre
+    has_simulation: true
     march: armv7a
 
   ROCKPRO64:
@@ -83,22 +83,22 @@ platforms:
     platform: rockpro64
     req: [rockpro64a]
     march: armv8a
-    disabled: true
+    no_hw_test: true
 
   QUARTZ64:
     arch: arm
     modes: [64]
     platform: quartz64
     march: armv8a
-    disabled: true
+    no_hw_test: true
 
   ARMVIRT:
     arch: arm
     modes: [64]
     platform: qemu-arm-virt
-    simulation_binary: qemu-arm-virt
+    has_simulation: true
     march: armv8a # Cortex-A53 is emulated by default
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   IMX8MQ_EVK:
@@ -127,7 +127,7 @@ platforms:
     platform: imx8mm-evk
     req: [imx8mm]
     march: armv8a
-    disabled: true # temporarily disabled for CI for benchmarking
+    no_hw_test: true # temporarily disabled for CI for benchmarking
 
   TQMA8XQP1GB:
     arch: arm
@@ -174,7 +174,7 @@ platforms:
     platform: exynos4
     req: [odroid]
     march: armv7a
-    disabled: true
+    no_hw_test: true
 
   ODROID_XU:
     arch: arm
@@ -184,7 +184,7 @@ platforms:
     req: [odroid-xu]
     image_platform: exynos5
     march: armv7a
-    disabled: true
+    no_hw_test: true
 
   ARNDALE:
     arch: arm
@@ -209,9 +209,9 @@ platforms:
     modes: [32]
     platform: zynq7000
     req: [zc706]
-    simulation_binary: zc706
+    has_simulation: true
     march: armv7a
-    disabled: true
+    no_hw_test: true
 
   ZYNQMP:
     arch: arm
@@ -236,7 +236,7 @@ platforms:
     platform: hikey
     req: [hikey]
     march: armv8a
-    disabled: true
+    no_hw_test: true
 
   TK1:
     arch: arm
@@ -253,7 +253,7 @@ platforms:
     req: [rpi3]
     image_platform: bcm2837
     march: armv8a # ARMv8 platform currently used in AARCH32 mode only.
-    disabled: true
+    no_hw_test: true
 
   RPI4:
     arch: arm
@@ -262,7 +262,7 @@ platforms:
     req: [pi4B]
     image_platform: bcm2711
     march: armv8a
-    disabled: true
+    no_hw_test: true
 
   TX1:
     arch: arm
@@ -297,7 +297,7 @@ platforms:
     platform: wandq
     image_platform: imx6
     # march: ?
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   ALLWINNER20:
@@ -305,7 +305,7 @@ platforms:
     modes: [32]
     platform: allwinner20
     march: armv7a
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   IMX7SABRE:
@@ -315,7 +315,7 @@ platforms:
     req: [imx7]
     image_platform: imx7
     # march: ?
-    disabled: true
+    no_hw_test: true
     no_hw_build: true
 
   PC99:
@@ -324,7 +324,7 @@ platforms:
     smp: [32, 64]
     platform: x86_64
     req: [skylake, haswell3, haswell4, skylake2]
-    simulation_binary: x86
+    has_simulation: true
     march: nehalem
 
 # platforms where MCS is wholly unsupported

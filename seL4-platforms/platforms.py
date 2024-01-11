@@ -52,10 +52,10 @@ class Platform:
         self.smp = []
         self.aarch_hyp = []
         self.image_platform = None
-        self.simulation_binary = None
+        self.has_simulation = False
         self.march = None
         self.req = None
-        self.disabled = False
+        self.no_hw_test = False
         self.no_hw_build = False
         self.__dict__.update(**entries)
         if not self.validate():
@@ -85,10 +85,10 @@ class Platform:
             mode_list(self.smp) and \
             mode_list(self.aarch_hyp) and \
             opt_str(self.image_platform) and \
-            opt_str(self.simulation_binary) and \
+            isinstance(self.has_simulation, bool) and \
             opt_str(self.march) and \
             (self.req is None or isinstance(self.req, str) or isinstance(self.req, list)) and \
-            isinstance(self.disabled, bool) and \
+            isinstance(self.no_hw_test, bool) and \
             isinstance(self.no_hw_build, bool)
 
     def __repr__(self):
@@ -104,10 +104,10 @@ class Platform:
             f"    smp: {self.smp}",
             f"    aarch_hyp: {self.aarch_hyp}",
             f"    image_platform: {self.image_platform}",
-            f"    simulation_binary: {self.simulation_binary}",
+            f"    has_simulation: {self.has_simulation}",
             f"    march: {self.march}",
             f"    req: {self.req}",
-            f"    disabled: {self.disabled}",
+            f"    no_hw_test: {self.no_hw_test}",
             f"    no_hw_build: {self.no_hw_build}",
             "  }"
         ]])
@@ -247,4 +247,4 @@ if __name__ == '__main__':
         pprint([sup(p) for p in platforms.values() if p.arch == arch])
 
     print("\n# all sim:")
-    pprint([p.name for p in platforms.values() if p.simulation_binary])
+    pprint([p.name for p in platforms.values() if p.has_simulation])

@@ -105,7 +105,7 @@ def to_json(builds: List[Build]) -> str:
     """Return a GitHub build matrix per enabled hardware platform as GitHub output assignment."""
 
     def run_for_plat(plat: Platform) -> List[dict]:
-        if plat.disabled or plat.no_hw_build:
+        if plat.no_hw_test or plat.no_hw_build:
             return []
 
         # separate runs for each compiler on arm

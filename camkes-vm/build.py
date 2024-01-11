@@ -43,7 +43,7 @@ def run_build(manifest_dir: str, build: Build):
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"],
     ]
 
-    if plat.simulation_binary and plat.name != 'PC99':
+    if plat.has_simulation and plat.name != 'PC99':
         script.append(
             ["bash", "-c",
              f"expect -c 'spawn ./simulate; set timeout 3000; expect \"{build.success}\"'"]

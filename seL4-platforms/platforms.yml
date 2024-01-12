@@ -126,6 +126,7 @@ platforms:
     platform: imx8mm-evk
     req: [imx8mm]
     march: armv8a
+    disabled: true # temporarily disabled for CI for benchmarking
 
   TQMA8XQP1GB:
     arch: arm

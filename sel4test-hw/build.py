@@ -89,6 +89,11 @@ def build_filter(build: Build) -> bool:
         if build.is_hyp() and (build.is_smp() or build.is_verification()):
             return False
 
+    if plat.arch == 'riscv':
+        # see also https://github.com/seL4/seL4/issues/1160
+        if plat.name == 'HIFIVE' and build.is_clang() and build.is_smp() and build.is_release():
+            return False
+
     # run NUM_DOMAINS > 1 tests only on release builds
     if build.is_domains() and not build.is_release():
         return False

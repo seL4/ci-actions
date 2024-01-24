@@ -38,4 +38,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://sel4/sel4test-hw:latest'
+  image: 'Dockerfile'

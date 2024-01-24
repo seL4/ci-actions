@@ -57,6 +57,12 @@ builds:
     platform: TX2
     setttings:
         NUM_NODES: 4
+- vm_minimal_zcu102:
+    app: vm_minimal
+    platform: ZCU102
+    setttings:
+        NUM_NODES: 4
+    success: 'root@xilinx-zcu102-2021_1:~#'
 - vm_serial_server:
     platform: ODROID_XU4
 - vm_virtio_net_arping_xu4:

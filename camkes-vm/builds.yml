@@ -33,7 +33,7 @@ builds:
     platform: TK1
 - odroid_vm:
     platform: ODROID_XU
-    succes: 'root@NICTAcopter:'
+    success: 'root@NICTAcopter:'
 - vm_minimal_tx1:
     app: vm_minimal
     platform: TX1
@@ -62,21 +62,21 @@ builds:
 - vm_virtio_net_arping_xu4:
     app: vm_virtio_net
     platform: ODROID_XU4
-    succes: 'arping test was successful'
+    success: 'arping test was successful'
 - vm_virtio_net_ping_xu4:
     app: vm_virtio_net
     platform: ODROID_XU4
-    succes: 'Ping test was successful'
+    success: 'Ping test was successful'
     setttings:
         VIRTIO_NET_PING: '1'
 - vm_virtio_net_arping_tx2:
     app: vm_virtio_net
     platform: TX2
-    succes: 'arping test was successful'
+    success: 'arping test was successful'
 - vm_virtio_net_ping_tx2:
     app: vm_virtio_net
     platform: TX2
-    succes: 'Ping test was successful'
+    success: 'Ping test was successful'
     setttings:
         VIRTIO_NET_PING: '1'
 - vm_multi:
@@ -84,4 +84,4 @@ builds:
     success: 'buildroot login:.*buildroot login:.*buildroot login:'
 - vm_cross_connector:
     platform: ODROID_XU4
-    succes: 'Finished crossvm test script'
+    success: 'Finished crossvm test script'

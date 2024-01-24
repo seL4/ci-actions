@@ -33,6 +33,10 @@ def run_build(manifest_dir: str, build: Build):
     if plat.arch == 'x86':
         del build.settings['PLATFORM']  # not used for x86 in this test, avoid warning
 
+    # if vm_platform is set, the init-build.sh script expects a different platform name.
+    if build.vm_platform:
+        build.settings['PLATFORM'] = build.vm_platform
+
     script = [
         ["../init-build.sh"] + build.settings_args(),
         ["ninja"],

@@ -9,6 +9,8 @@ default:
   error: 'Halting...'
   debug: release
   platform: PC99
+  # use if -DPLATFORM for init script is different from PLATFORM name:
+  vm_platform:
 
 builds:
 # PC99:
@@ -40,6 +42,11 @@ builds:
 - vm_minimal_tx2:
     app: vm_minimal
     platform: TX2
+- vm_minimal_zcu102:
+    app: vm_minimal
+    platform: ZYNQMP
+    vm_platform: zcu102
+    success: "@xilinx-zcu102"
 - vm_minimal_sim:
     app: vm_minimal
     platform: ARMVIRT

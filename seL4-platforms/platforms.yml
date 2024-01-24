@@ -213,6 +213,14 @@ platforms:
     march: armv7a
     disabled: true
 
+  ZCU102:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: zcu102
+    req: [zcu102_2]
+    march: armv8a
+
   ZYNQMP:
     arch: arm
     modes: [64]

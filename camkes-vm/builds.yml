@@ -30,72 +30,76 @@ builds:
     error: 'Exited with error'
 
 # Arm:
-- vm_minimal_tk1:
+- vm_minimal_TK1:
     app: vm_minimal
     platform: TK1
-- odroid_vm:
+- odroid_vm_ODROID_XU:
+    app: odroid_vm
     platform: ODROID_XU
     success: 'root@NICTAcopter:'
-- vm_minimal_tx1:
+- vm_minimal_TX1:
     app: vm_minimal
     platform: TX1
-- vm_minimal_tx2:
+- vm_minimal_TX2:
     app: vm_minimal
     platform: TX2
-- vm_minimal_zcu102:
+- vm_minimal_ZCU102:
     app: vm_minimal
     platform: ZYNQMP
     vm_platform: zcu102
     success: "@xilinx-zcu102"
-- vm_minimal_sim:
+- vm_minimal_ARMVIRT:
     app: vm_minimal
     platform: ARMVIRT
     sim: true
-- vm_minimal_xu4:
+- vm_minimal_ODROID_XU4:
     app: vm_minimal
     platform: ODROID_XU4
-- vm_minimal_smp_tx1:
+- vm_minimal_smp_TX1:
     app: vm_minimal
     platform: TX1
     settings:
         NUM_NODES: 4
-- vm_minimal_smp_tx2:
+- vm_minimal_smp_TX2:
     app: vm_minimal
     platform: TX2
     settings:
         NUM_NODES: 4
-- vm_serial_server:
+- vm_serial_server_ODROID_XU4:
+    app: vm_serial_server
     platform: ODROID_XU4
-- vm_virtio_net_arping_xu4:
+- vm_virtio_net_arping_ODROID_XU4:
     app: vm_virtio_net
     platform: ODROID_XU4
     success: 'arping test was successful'
-- vm_virtio_net_ping_xu4:
+- vm_virtio_net_ping_ODROID_XU4:
     app: vm_virtio_net
     platform: ODROID_XU4
     success: 'Ping test was successful'
     settings:
         VIRTIO_NET_PING: '1'
-- vm_virtio_net_arping_tx2:
+- vm_virtio_net_arping_TX2:
     app: vm_virtio_net
     platform: TX2
     success: 'arping test was successful'
-- vm_virtio_net_ping_tx2:
+- vm_virtio_net_ping_TX2:
     app: vm_virtio_net
     platform: TX2
     success: 'Ping test was successful'
     settings:
         VIRTIO_NET_PING: '1'
-- vm_multi:
+- vm_multi_ODROID_XU4:
+    app: vm_multi
     platform: ODROID_XU4
     success: 'buildroot login:.*buildroot login:.*buildroot login:'
-- vm_cross_connector:
+- vm_cross_connector_ODROID_XU4:
+    app: vm_cross_connector
     platform: ODROID_XU4
     success: 'Finished crossvm test script'
-- vm_introspect_xu4:
+- vm_introspect_ODROID_XU4:
     app: vm_introspect
     platform: ODROID_XU4
-- vm_introspect_sim:
+- vm_introspect_ARMVIRT:
     app: vm_introspect
     platform: ARMVIRT
     sim: true

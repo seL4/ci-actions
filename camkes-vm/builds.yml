@@ -57,12 +57,12 @@ builds:
 - vm_minimal_smp_tx1:
     app: vm_minimal
     platform: TX1
-    setttings:
+    settings:
         NUM_NODES: 4
 - vm_minimal_smp_tx2:
     app: vm_minimal
     platform: TX2
-    setttings:
+    settings:
         NUM_NODES: 4
 - vm_serial_server:
     platform: ODROID_XU4
@@ -74,7 +74,7 @@ builds:
     app: vm_virtio_net
     platform: ODROID_XU4
     success: 'Ping test was successful'
-    setttings:
+    settings:
         VIRTIO_NET_PING: '1'
 - vm_virtio_net_arping_tx2:
     app: vm_virtio_net
@@ -84,7 +84,7 @@ builds:
     app: vm_virtio_net
     platform: TX2
     success: 'Ping test was successful'
-    setttings:
+    settings:
         VIRTIO_NET_PING: '1'
 - vm_multi:
     platform: ODROID_XU4

@@ -67,6 +67,14 @@ platforms:
     req: [hifive] # , hifive1]
     march: rv64imac
 
+  STAR64:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: star64
+    req: [star64]
+    march: rv64imac
+
   SABRE:
     arch: arm
     modes: [32]

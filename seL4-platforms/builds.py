@@ -60,7 +60,7 @@ class Build:
         self.error = None
         self.settings = {}
         self.timeout = 900
-        self.disabled = False
+        self.no_hw_test = False
         self.image_base_name = "sel4test-driver"
         [self.name] = entries.keys()
         attribs = copy.deepcopy(default)
@@ -213,7 +213,7 @@ class Build:
             f"'success': {self.success}, 'base': {self.image_base_name}" '})'
 
     def is_disabled(self) -> bool:
-        return self.disabled or self.get_platform().disabled
+        return self.no_hw_test or self.get_platform().no_hw_test
 
     def get_req(self) -> List[str]:
         req = self.req or self.get_platform().req

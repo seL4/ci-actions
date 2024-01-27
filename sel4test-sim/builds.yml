@@ -34,17 +34,17 @@ variants:
 #     mode: [32, 64]
 
 
-# only generate builds for platforms that have `simulation_binary` set
+# only generate builds for platforms that have `has_simulation` set
 # only generate builds with DOM set if debug is also set
 build-filter:
-    - simulation_binary: true
+    - has_simulation: true
       domains: ''
       arch: [arm, x86]
-    - simulation_binary: true
+    - has_simulation: true
       domains: DOM
       debug: [debug]
       arch: [arm, x86]
-    - simulation_binary: true
+    - has_simulation: true
       arch: [riscv]
       # Bamboo has no "release" simulation for RISCV, and it doesn't seem to work either:
       debug: [debug]
@@ -65,7 +65,7 @@ build-filter:
 #      - arch: [x86, riscv]
 #        compiler: [gcc]
 #        mode: [32]
-#        simulation_binary:
+#        has_simulation: true
 
 # This will select all 64-bit armv7a builds with gcc or clang and all 32-bit x86
-# and riscv builds on gcc with simulation_binary set.
+# and riscv builds on gcc with has_simulation set.

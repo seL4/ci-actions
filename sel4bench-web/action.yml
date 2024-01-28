@@ -18,5 +18,5 @@ inputs:
     default: 'sel4bench-web'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: '../js/index.js'

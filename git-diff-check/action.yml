@@ -18,5 +18,5 @@ inputs:
     default: 'git-diff-check'
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: '../js/index.js'

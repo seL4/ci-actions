@@ -101,7 +101,8 @@ class Build:
 
     def settings_args(self):
         """Return the build settings as an argument list [-Dkey=val]"""
-        return [f"-D{key}={val}" for (key, val) in self.settings.items()]
+        all_settings = {**self.settings, **self.get_platform().settings}
+        return [f"-D{key}={val}" for (key, val) in all_settings.items()]
 
     def set_verification(self):
         """Make this a verification build"""

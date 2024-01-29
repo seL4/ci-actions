@@ -57,6 +57,7 @@ class Platform:
         self.req = None
         self.no_hw_test = False
         self.no_hw_build = False
+        self.settings = {}
         self.__dict__.update(**entries)
         if not self.validate():
             raise ValidationException(f"Platform {name} validation")
@@ -109,6 +110,7 @@ class Platform:
             f"    req: {self.req}",
             f"    no_hw_test: {self.no_hw_test}",
             f"    no_hw_build: {self.no_hw_build}",
+            f"    settings: {self.settings}",
             "  }"
         ]])
         return result.getvalue()
@@ -157,6 +159,9 @@ class Platform:
 
     def cmake_toolchain_setting(self, mode: int) -> str:
         return self.toolchain_arch_str() + str(mode)
+
+    def settings(self) -> str:
+        return self.settings
 
     def get_image_platform(self, mode: int) -> str:
         return self.image_platform or self.get_platform(mode)

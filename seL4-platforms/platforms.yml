@@ -224,6 +224,10 @@ platforms:
     platform: zynqmp
     req: [zcu102_2]
     march: armv8a
+    # The ZCU102 in machine queue expects a binary image
+    settings:
+        Sel4testAllowSettingsOverride: true
+        ElfloaderImage: "binary"
 
   ZYNQMP106:
     arch: arm

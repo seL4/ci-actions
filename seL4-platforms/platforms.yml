@@ -119,6 +119,10 @@ platforms:
     req: [maaxboard1]
     march: armv8a
     no_hw_build: true
+    # The MaaxBoard in machine queue expects a binary image
+    settings:
+        Sel4testAllowSettingsOverride: true
+        ElfloaderImage: "binary"
 
   IMX8MM_EVK:
     arch: arm

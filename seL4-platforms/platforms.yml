@@ -120,9 +120,9 @@ platforms:
     march: armv8a
     no_hw_build: true
     # The MaaxBoard in machine queue expects a binary image
-    settings:
-        Sel4testAllowSettingsOverride: true
-        ElfloaderImage: "binary"
+    # settings:
+    # Sel4testAllowSettingsOverride: true
+    # ElfloaderImage: "binary"
 
   IMX8MM_EVK:
     arch: arm
@@ -225,9 +225,9 @@ platforms:
     req: [zcu102_2]
     march: armv8a
     # The ZCU102 in machine queue expects a binary image
-    settings:
-        Sel4testAllowSettingsOverride: true
-        ElfloaderImage: "binary"
+    # settings:
+    # Sel4testAllowSettingsOverride: true
+    # ElfloaderImage: "binary"
 
   ZYNQMP106:
     arch: arm

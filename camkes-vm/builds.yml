@@ -48,6 +48,20 @@ builds:
     platform: ZYNQMP
     vm_platform: zcu102
     success: "@xilinx-zcu102"
+- vm_minimal_ZCU102_2021_1:
+    app: vm_minimal
+    platform: ZYNQMP
+    vm_platform: zcu102
+    success: "@xilinx-zcu102"
+    settings:
+        VmZynqmpPetalinuxVersion: '2021_1'
+- vm_minimal_ZCU102_2022_1:
+    app: vm_minimal
+    platform: ZYNQMP
+    vm_platform: zcu102
+    success: "@xilinx-zcu102"
+    settings:
+        VmZynqmpPetalinuxVersion: '2022_1'
 - vm_minimal_ARMVIRT:
     app: vm_minimal
     platform: ARMVIRT

@@ -91,6 +91,18 @@ builds:
     success: 'Ping test was successful'
     settings:
         VIRTIO_NET_PING: '1'
+- vm_virtio_net_arping_ZCU102:
+    app: vm_virtio_net
+    platform: ZYNQMP
+    vm_platform: zcu102
+    success: 'arping test was successful'
+- vm_virtio_net_ping_ZCU102:
+    app: vm_virtio_net
+    platform: ZYNQMP
+    vm_platform: zcu102
+    success: 'Ping test was successful'
+    settings:
+        VIRTIO_NET_PING: '1'
 - vm_multi_ODROID_XU4:
     app: vm_multi
     platform: ODROID_XU4

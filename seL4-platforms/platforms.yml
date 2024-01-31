@@ -204,7 +204,7 @@ platforms:
     modes: [32]
     aarch_hyp: [32]
     platform: exynos5422
-    req: [odroidxu4_1]
+    req: [odroidxu4_2]
     image_platform: exynos5
     march: armv7a
 

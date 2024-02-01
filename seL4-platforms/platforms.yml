@@ -100,6 +100,15 @@ platforms:
     march: armv8a
     no_hw_test: true
 
+  ARMVIRT32:
+    arch: arm
+    modes: [32]
+    platform: qemu-arm-virt
+    has_simulation: true
+    march: armv7a # Cortex-A15 is emulated by default
+    no_hw_test: true
+    no_hw_build: true
+
   ARMVIRT64:
     arch: arm
     modes: [64]

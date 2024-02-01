@@ -62,6 +62,10 @@ builds:
     success: "@xilinx-zcu102"
     settings:
         VmZynqmpPetalinuxVersion: '2022_1'
+- vm_minimal_ARMVIRT32:
+    app: vm_minimal
+    platform: ARMVIRT32
+    sim: true
 - vm_minimal_ARMVIRT64:
     app: vm_minimal
     platform: ARMVIRT64

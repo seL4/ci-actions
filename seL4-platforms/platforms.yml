@@ -100,7 +100,7 @@ platforms:
     march: armv8a
     no_hw_test: true
 
-  ARMVIRT:
+  ARMVIRT64:
     arch: arm
     modes: [64]
     platform: qemu-arm-virt

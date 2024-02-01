@@ -62,9 +62,9 @@ builds:
     success: "@xilinx-zcu102"
     settings:
         VmZynqmpPetalinuxVersion: '2022_1'
-- vm_minimal_ARMVIRT:
+- vm_minimal_ARMVIRT64:
     app: vm_minimal
-    platform: ARMVIRT
+    platform: ARMVIRT64
     sim: true
 - vm_minimal_ODROID_XU4:
     app: vm_minimal
@@ -128,7 +128,7 @@ builds:
 - vm_introspect_ODROID_XU4:
     app: vm_introspect
     platform: ODROID_XU4
-- vm_introspect_ARMVIRT:
+- vm_introspect_ARMVIRT64:
     app: vm_introspect
-    platform: ARMVIRT
+    platform: ARMVIRT64
     sim: true

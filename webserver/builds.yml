@@ -13,7 +13,7 @@ builds:
     platform: ODROID_XU4
 
 - qemu-arm-virt:
-    platform: ARMVIRT
+    platform: ARMVIRT64
 
 - odroid_c2:
     platform: ODROID_C2

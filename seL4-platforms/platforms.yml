@@ -67,6 +67,14 @@ platforms:
     req: [hifive] # , hifive1]
     march: rv64imac
 
+  POLARFIRE:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: polarfire
+    march: rv64imac
+    no_hw_test: true
+
   SABRE:
     arch: arm
     modes: [32]

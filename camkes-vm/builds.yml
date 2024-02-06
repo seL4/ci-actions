@@ -62,6 +62,14 @@ builds:
     success: "@xilinx-zcu102"
     settings:
         VmZynqmpPetalinuxVersion: '2022_1'
+- vm_minimal_smp_ZCU102_2022_1:
+    app: vm_minimal
+    platform: ZYNQMP
+    vm_platform: zcu102
+    success: "@xilinx-zcu102"
+    settings:
+        VmZynqmpPetalinuxVersion: '2022_1'
+        NUM_NODES: 4
 - vm_minimal_ARMVIRT32:
     app: vm_minimal
     platform: ARMVIRT32

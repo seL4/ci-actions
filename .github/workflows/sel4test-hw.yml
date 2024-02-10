@@ -20,19 +20,6 @@ on:
 permissions:
   contents: read
 
-# To reduce the load (especiually on the machine queue) we cancel any older runs
-# of this workflow for the current PR. Such runs exist, if there were new pushes
-# to the PR's branch without waiting for the workflow to finish. As a side
-# effect, pushing new commits now becomes a convenient way to cancel all the
-# older runs, e.g. if they are stuck and would only be stopped by the timeout
-# eventually.
-# Note that we could do the concurrency handling at a finer level, and only wrap
-# the actual run on the hardware. But there seems not much gain in letting the
-# older builds run, as these are usually obsolete with new pushes also.
-concurrency:
-  group: ${{ github.workflow }}-pr-${{ github.event.number }}
-  cancel-in-progress: true
-
 jobs:
   hw-build:
     name: HW Build
@@ -46,6 +33,11 @@ jobs:
               github.event.action == 'labeled' &&
               (github.event.label.name == 'hw-build' ||
                github.event.label.name == 'hw-test') }}
+    # To reduce the load (especiually on the machine queue) we cancel any older
+    # runs of this workflow for the current PR.
+    concurrency:
+      group: ${{ github.workflow }}-sel4test-pr-build-${{ github.event.number }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
@@ -92,6 +84,9 @@ jobs:
              github.event_name == 'pull_request_target' &&
                github.event.action == 'labeled' &&
                github.event.label.name == 'hw-test') }}
+    concurrency:
+      group: ${{ github.workflow }}-sel4test-pr-hw-run-${{ github.event.number }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.the_matrix.outputs.matrix) }}

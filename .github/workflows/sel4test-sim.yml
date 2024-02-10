@@ -12,12 +12,10 @@ on:
   workflow_call:
 
 # To reduce the load we cancel any older runs of this workflow for the current
-# PR. Such runs exist, if there were new pushes to the PR's branch without
-# waiting for the workflow to finish. As a side effect, pushing new commits now
-# becomes a convenient way to cancel all the older runs, e.g. if they are stuck
-# and would only be stopped by the timeout eventually.
+# PR. Ok on the workflow level here, because this workflow does not re-trigger
+# on "labeled" events.
 concurrency:
-  group: ${{ github.workflow }}-pr-${{ github.event.number }}
+  group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:

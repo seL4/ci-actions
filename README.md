@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/seL4/ci-actions/actions/workflows/push.yml/badge.svg)](https://github.com/seL4/ci-actions/actions/workflows/push.yml)
 
-# CI actions for seL4 repositories
+# CI actions and Workflows for seL4 repositories
 
 This repository collects definitions for continuous integration (CI)
 tasks/actions for the repositories of the seL4 foundation. While some of these
@@ -15,10 +15,21 @@ The idea is to concentrate most of the GitHub workflow definitions here in a
 single repository to avoid duplication, share code between actions, and to make
 it easier to replicate a similar CI setup on other platforms.
 
-Currently, everything is fairly GitHub-specific, but that could change over
-time.
-
 Shared JavaScript is in [`js/`](js/), and shared shell scripts are in [`scripts/`](scripts/)
+
+This repository also defines a number of GitHub action workflows that can be
+called from other repositories. These are all files in `.github/workflows` that
+define an `on: workflow_call` trigger. In particular:
+
+- [pr.yml](.github/workflows/pr.yml) for standard pull requests checks (gitlint,
+  whitespace, shell checks, style)
+- [push.yml](.github/workflows/push.yml) for standard push checks (links, licenses)
+- [sel4test-sim.yml](.github/workflows/sel4test-sim.yml) for running the
+  seL4 simulation tests
+- [sel4test-hw.yml](.github/workflows/sel4test-hw.yml) for running the
+  seL4 hardware tests
+- [sel4bench-hw.yml](.github/workflows/sel4bench-hw.yml) for running the
+  seL4 hardware benchmarks
 
 ## Availabe actions
 

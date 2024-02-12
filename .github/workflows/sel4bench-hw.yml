@@ -45,7 +45,7 @@ jobs:
     # To reduce the load on GitHub runner numbers and machine queue we cancel
     # any older runs of this workflow for the current PR.
     concurrency:
-      group: ${{ github.workflow }}-sel4bench-pr-build-${{ github.event.number }}
+      group: ${{ github.workflow }}-sel4bench-build-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     concurrency:
-      group: ${{ github.workflow }}-sel4bench-pr-hw-run-${{ github.event.number }}
+      group: ${{ github.workflow }}-sel4bench-hw-run-pr-${{ github.event.number }}-${{ strategy.job-index }}
       cancel-in-progress: true
     strategy:
       fail-fast: false

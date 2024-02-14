@@ -25,13 +25,14 @@ jobs:
     name: Freeze Code
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request_target' &&
+            (
               github.event.action != 'labeled' &&
               (contains(github.event.pull_request.labels.*.name, 'hw-build') ||
                contains(github.event.pull_request.labels.*.name, 'hw-test')) ||
-            github.event_name == 'pull_request_target' &&
               github.event.action == 'labeled' &&
               (github.event.label.name == 'hw-build' ||
-               github.event.label.name == 'hw-test') }}
+               github.event.label.name == 'hw-test')
+            ) }}
     outputs:
       xml: ${{ steps.repo.outputs.xml }}
     steps:

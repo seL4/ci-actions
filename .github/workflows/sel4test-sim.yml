@@ -11,13 +11,6 @@ name: seL4Test-Sim
 on:
   workflow_call:
 
-# To reduce the load we cancel any older runs of this workflow for the current
-# PR. Ok on the workflow level here, because this workflow does not re-trigger
-# on "labeled" events.
-concurrency:
-  group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}
-  cancel-in-progress: true
-
 jobs:
   sim:
     name: Simulation
@@ -26,6 +19,9 @@ jobs:
       matrix:
         march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
         compiler: [gcc, clang]
+    concurrency:
+      group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      cancel-in-progress: true
     steps:
     - uses: seL4/ci-actions/sel4test-sim@master
       with:

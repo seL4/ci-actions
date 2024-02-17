@@ -68,12 +68,12 @@ jobs:
     - name: Upload images
       uses: actions/upload-artifact@v4
       with:
-        name: images-${{ matrix.march }}-${{ matrix.compiler }}
+        name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}
         path: '*-images.tar.gz'
     - name: Upload kernel.elf files
       uses: actions/upload-artifact@v4
       with:
-        name: kernel.elf-${{ matrix.march }}-${{ matrix.compiler }}
+        name: kernel.elf-sel4test-${{ matrix.march }}-${{ matrix.compiler }}
         path: '*-kernel.elf'
 
   the_matrix:
@@ -113,7 +113,7 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v4
         with:
-          name: images-${{ matrix.march }}-${{ matrix.compiler }}
+          name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}
       - name: Run
         uses: seL4/ci-actions/sel4test-hw-run@master
         with:

@@ -60,7 +60,7 @@ jobs:
     - name: Upload images
       uses: actions/upload-artifact@v4
       with:
-        name: images-${{ matrix.march }}
+        name: images-sel4bench-${{ matrix.march }}
         path: '*-images.tar.gz'
 
   hw-run:
@@ -102,7 +102,7 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v4
         with:
-          name: images-${{ steps.plat.outputs.march }}
+          name: images-sel4bench-${{ steps.plat.outputs.march }}
       - name: Run
         uses: seL4/ci-actions/sel4bench-hw@master
         with:

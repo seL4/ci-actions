@@ -451,8 +451,8 @@ def mq_run(success_str: str,
 
 
 def mq_lock(machine: str) -> List[str]:
-    """Get lock for a machine."""
-    return ['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key()]
+    """Get lock for a machine. Allow lock to be reclaimed after 30min."""
+    return ['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800']
 
 
 def mq_release(machine: str) -> List[str]:

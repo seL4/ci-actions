@@ -32,18 +32,21 @@ exlude_workflows = {
     "util_libs": ["sel4test-hw.yml"],
     "seL4_tools": ["sel4test-hw.yml"],
     "graph-refine": ["decompiler.yml", "graph-refine.yml"],
-    "seL4-CAmkES-L4v-dockerfiles": ["linter.yml"],
+    "seL4-CAmkES-L4v-dockerfiles": ["linter.yml", "docker-build.yml"],
     "rumprun-sel4-demoapps": ["test.yml"],
     "docs": ["pages-build-deployment"],
-    "ci-actions": ["test.yml"],
+    "ci-actions": ["test.yml", "sel4bench-hw.yml", "sel4test-hw.yml", "sel4test-sim.yml"],
     "camkes-vm": ["test.yml"],
-    "camkes-vm-examples": ["test.yml"],
+    "camkes-vm-examples": ["test.yml", "test-hw.yml"],
     "camkes-tool": ["cli.yml", "vm-test.yml", "test.yml"],
     "camkes": ["test.yml", "vm-test.yml"],
-    "l4v": ["aarch64.yml"],
+    "l4v": ["aarch64.yml", "proof.yml"],
     "sel4bench": ["sel4bench-pr.yml"],
+    "sel4bench-manifest": ["sel4bench-pr.yml"],
     "seL4": ["kernel-compile.yml", "syscall_xml_lint.yml", "sel4test-sim.yml",
-             "sel4test-hw.yml", "proof.yml"],
+             "sel4test-hw.yml", "proof.yml", "sel4bench-pr.yml"],
+    "sel4test": ["sel4test-hw.yml"],
+    "sel4webserver": ["test.yml"],
 }
 
 # Repos that should be listed first:
@@ -55,6 +58,8 @@ main_repos = [
     "camkes-vm-examples",
     "capdl",
     "sel4-tutorials",
+    "microkit",
+    "rust-sel4",
 ]
 
 # URL of the seL4 org on GitHub:

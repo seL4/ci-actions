@@ -17,24 +17,36 @@ exclude_repos = [
     "website_pr_hosting",
 ]
 
+# Repos in which the main branch is called 'main':
+main_branch_repos = [
+    "microkit",
+    "rust-microkit-demo",
+    "rust-microkit-http-server-demo",
+    "rust-root-task-demo",
+    "rust-sel4",
+]
+
 # Exclude workflows that are not available on default branch:
 exlude_workflows = {
     "website": ["action.yml", "main.yml", "bamboo-pr.yml"],
     "util_libs": ["sel4test-hw.yml"],
     "seL4_tools": ["sel4test-hw.yml"],
     "graph-refine": ["decompiler.yml", "graph-refine.yml"],
-    "seL4-CAmkES-L4v-dockerfiles": ["linter.yml"],
+    "seL4-CAmkES-L4v-dockerfiles": ["linter.yml", "docker-build.yml"],
     "rumprun-sel4-demoapps": ["test.yml"],
     "docs": ["pages-build-deployment"],
-    "ci-actions": ["test.yml"],
+    "ci-actions": ["test.yml", "sel4bench-hw.yml", "sel4test-hw.yml", "sel4test-sim.yml"],
     "camkes-vm": ["test.yml"],
-    "camkes-vm-examples": ["test.yml"],
+    "camkes-vm-examples": ["test.yml", "test-hw.yml"],
     "camkes-tool": ["cli.yml", "vm-test.yml", "test.yml"],
     "camkes": ["test.yml", "vm-test.yml"],
-    "l4v": ["aarch64.yml"],
+    "l4v": ["aarch64.yml", "proof.yml"],
     "sel4bench": ["sel4bench-pr.yml"],
+    "sel4bench-manifest": ["sel4bench-pr.yml"],
     "seL4": ["kernel-compile.yml", "syscall_xml_lint.yml", "sel4test-sim.yml",
-             "sel4test-hw.yml", "proof.yml"],
+             "sel4test-hw.yml", "proof.yml", "sel4bench-pr.yml"],
+    "sel4test": ["sel4test-hw.yml"],
+    "sel4webserver": ["test.yml"],
 }
 
 # Repos that should be listed first:
@@ -46,6 +58,8 @@ main_repos = [
     "camkes-vm-examples",
     "capdl",
     "sel4-tutorials",
+    "microkit",
+    "rust-sel4",
 ]
 
 # URL of the seL4 org on GitHub:
@@ -96,12 +110,12 @@ on the main branch.
 
 ## Main Tests
 
-<span class="plain-links">[![seL4Test](https://github.com/seL4/seL4/workflows/seL4Test/badge.svg?branch=master)](https://github.com/seL4/seL4/actions/workflows/sel4test-deploy.yml?query=branch%3Amaster)</span>
-<span class="plain-links">[![Proofs](https://github.com/seL4/l4v/workflows/Proofs/badge.svg?branch=master)](https://github.com/seL4/l4v/actions/workflows/proof-deploy.yml?query=branch%3Amaster)</span>
-<span class="plain-links">[![Proof Sync](https://github.com/seL4/seL4/workflows/Proof%20Sync/badge.svg?branch=master)](https://github.com/seL4/seL4/actions/workflows/preprocess-deploy.yml?query=branch%3Amaster)</span>
-<span class="plain-links">[![seL4Bench](https://github.com/seL4/sel4bench/workflows/seL4Bench/badge.svg?branch=master)](https://github.com/seL4/sel4bench/actions/workflows/sel4bench.yml?query=branch%3Amaster)</span>
-<span class="plain-links">[![CAmkES](https://github.com/seL4/camkes-tool/workflows/CAmkES/badge.svg?branch=master)](https://github.com/seL4/camkes-tool/actions/workflows/camkes-deploy.yml?query=branch%3Amaster)</span>
-<span class="plain-links">[![Camkes VM](https://github.com/seL4/camkes-vm-examples/workflows/Camkes%20VM/badge.svg?branch=master)](https://github.com/seL4/camkes-vm-examples/actions/workflows/camkes-vm-deploy.yml?query=branch%3Amaster)</span>
+<span class="plain-links">[![seL4Test](https://github.com/seL4/seL4/actions/workflows/sel4test-deploy.yml/badge.svg?branch=master)](https://github.com/seL4/seL4/actions/workflows/sel4test-deploy.yml?query=branch%3Amaster)</span>
+<span class="plain-links">[![Proofs](https://github.com/seL4/l4v/actions/workflows/proof-deploy.yml/badge.svg)](https://github.com/seL4/l4v/actions/workflows/proof-deploy.yml?query=branch%3Amaster)</span>
+<span class="plain-links">[![Proof Sync](https://github.com/seL4/seL4/actions/workflows/preprocess-deploy.yml/badge.svg?branch=master)](https://github.com/seL4/seL4/actions/workflows/preprocess-deploy.yml?query=branch%3Amaster)</span>
+<span class="plain-links">[![seL4Bench](https://github.com/seL4/sel4bench/actions/workflows/sel4bench.yml/badge.svg?branch=master)](https://github.com/seL4/sel4bench/actions/workflows/sel4bench.yml?query=branch%3Amaster)</span>
+<span class="plain-links">[![CAmkES](https://github.com/seL4/camkes-tool/actions/workflows/camkes-deploy.yml/badge.svg?branch=master)](https://github.com/seL4/camkes-tool/actions/workflows/camkes-deploy.yml?query=branch%3Amaster)</span>
+<span class="plain-links">[![CAmkES VM](https://github.com/seL4/camkes-vm-examples/actions/workflows/camkes-vm-deploy.yml/badge.svg?branch=master)](https://github.com/seL4/camkes-vm-examples/actions/workflows/camkes-vm-deploy.yml?query=branch%3Amaster)</span>
 
 -----
 
@@ -117,10 +131,12 @@ def print_repo(repo_name):
 def print_workflow(repo, workflow):
     '''Print a single workflow.'''
 
+    branch_name = "main" if repo in main_branch_repos else "master"
+    workflow_name = os.path.basename(workflow.path)
     base_url = f"{org_url}/{repo}/actions/workflows"
-    action_url = f"{base_url}/{os.path.basename(workflow.path)}?query=branch%3Amaster"
-    print(f"<span class=\"plain-links\">[![{workflow.name}]({workflow.badge_url}"
-          f"?branch=master)]({action_url})</span>")
+    badge_url = f"{base_url}/{workflow_name}/badge.svg?branch={branch_name}"
+    action_url = f"{base_url}/{workflow_name}?query=branch%3A{branch_name}"
+    print(f"<span class=\"plain-links\">[![{workflow.name}]({badge_url})]({action_url})</span>")
 
 
 def print_badges(workflows: dict):

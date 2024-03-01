@@ -18,13 +18,13 @@ import sys
 def run_simulation(manifest_dir: str, build: Build):
     """Run one simulation build and test."""
 
-    expect = f"\"{build.success}\""
+    expect = '{ "%s" {exit 0} timeout {exit 1} }' % build.success
 
     script = [
         ["../init-build.sh"] + build.settings_args(),
         ["ninja"],
         ["bash", "-c",
-         f"expect -c 'spawn ./simulate; set timeout 3000; expect {expect}' | tee {junit_results}"]
+         f"expect -c 'spawn ./simulate; set timeout 1200; expect {expect}' | tee {junit_results}"]
     ]
 
     return run_build_script(manifest_dir, build, script, junit=True)

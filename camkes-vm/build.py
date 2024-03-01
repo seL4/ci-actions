@@ -8,7 +8,7 @@ Parse builds.yml and run CAmkES VM test on each of the build definitions.
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds, release_mq_locks, SKIP
+from builds import Build, run_build_script, run_builds, load_builds, release_mq_locks, SKIP, sim_script
 from pprint import pprint
 
 import os
@@ -44,10 +44,7 @@ def run_build(manifest_dir: str, build: Build):
     ]
 
     if plat.has_simulation and plat.name != 'PC99':
-        script.append(
-            ["bash", "-c",
-             f"expect -c 'spawn ./simulate; set timeout 3000; expect \"{build.success}\"'"]
-        )
+        script.append(sim_script(build.success))
 
     return run_build_script(manifest_dir, build, script)
 

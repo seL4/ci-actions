@@ -27,7 +27,8 @@ import sys
 
 # exported names:
 __all__ = [
-    "Build", "load_builds", "run_builds", "run_build_script", "junit_results", "sanitise_junit"
+    "Build", "load_builds", "run_builds", "run_build_script", "junit_results", "sanitise_junit",
+    "sim_script"
 ]
 
 # where to expect jUnit results by default
@@ -550,6 +551,14 @@ parsed_junit_results = 'parsed_results.xml'
 # expects to run in build dir of a standard seL4 project setup
 sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_results.py",
                   "-q", junit_results, parsed_junit_results]
+
+
+def sim_script(success: str, timeout=1200):
+    return [
+        "expect", "-c",
+        'spawn ./simulate; set timeout %d; expect { "%s" {exit 0} timeout {exit 1} }' %
+        (timeout, success)
+    ]
 
 
 def run_build_script(manifest_dir: str,

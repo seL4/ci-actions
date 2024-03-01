@@ -8,7 +8,7 @@ Parse builds.yml and run rumprun test on each of the build definitions.
 Expects seL4-platforms/ to be co-located or otherwise in the PYTHONPATH.
 """
 
-from builds import Build, run_build_script, run_builds, load_builds
+from builds import Build, run_build_script, run_builds, load_builds, sim_script
 from builds import release_mq_locks, SKIP
 from pprint import pprint
 
@@ -32,10 +32,7 @@ def run_build(manifest_dir: str, build: Build):
     ]
 
     if build.req == 'sim':
-        script.append(
-            ["bash", "-c",
-             f"expect -c 'spawn ./simulate; set timeout 3000; expect \"{build.success}\"'"]
-        )
+        script.append(sim_script(build.success))
     else:
         script.append(["tar", "czf", f"../{build.name}-images.tar.gz", "images/"])
 

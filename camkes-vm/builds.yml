@@ -74,10 +74,12 @@ builds:
     app: vm_minimal
     platform: ARMVIRT32
     sim: true
+    success: "buildroot login:"
 - vm_minimal_ARMVIRT64:
     app: vm_minimal
     platform: ARMVIRT64
     sim: true
+    success: "buildroot login:"
 - vm_minimal_ODROID_XU4:
     app: vm_minimal
     platform: ODROID_XU4
@@ -144,3 +146,4 @@ builds:
     app: vm_introspect
     platform: ARMVIRT64
     sim: true
+    success: "buildroot login:"

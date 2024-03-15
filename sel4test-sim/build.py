@@ -18,7 +18,7 @@ import sys
 def run_simulation(manifest_dir: str, build: Build):
     """Run one simulation build and test."""
 
-    expect = '{ "%s" {exit 0} timeout {exit 1} }' % build.success
+    expect = '"%s" {exit 0} timeout {exit 1}' % build.success
 
     script = [
         ["../init-build.sh"] + build.settings_args(),

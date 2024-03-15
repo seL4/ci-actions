@@ -553,11 +553,14 @@ sanitise_junit = ["python3", "../projects/seL4_libs/libsel4test/tools/extract_re
                   "-q", junit_results, parsed_junit_results]
 
 
-def sim_script(success: str, timeout=1200):
+def sim_script(success: str, failure=None, timeout=1200):
+    """Return a script to run a simulation with timeout and expected success string.
+       Abort early on expected failure string."""
+    fail_str = "%s {exit 1}" % failure if failure else ""
     return [
         "expect", "-c",
-        'spawn ./simulate; set timeout %d; expect { "%s" {exit 0} timeout {exit 1} }' %
-        (timeout, success)
+        'spawn ./simulate; set timeout %d; expect "%s" {exit 0} %s timeout {exit 1}' %
+        (timeout, fail_str, success)
     ]
 
 

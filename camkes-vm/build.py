@@ -44,7 +44,7 @@ def run_build(manifest_dir: str, build: Build):
     ]
 
     if plat.has_simulation and plat.name != 'PC99':
-        script.append(sim_script(build.success))
+        script.append(sim_script(build.success, failure=build.error))
 
     return run_build_script(manifest_dir, build, script)
 

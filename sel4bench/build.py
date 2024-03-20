@@ -223,11 +223,12 @@ def gen_web(runs: List[Run], yml, file_name: str):
     ]
 
     with open(file_name, 'w') as f:
-        f.write('<!-- <title>seL4 benchmarks</title> -->\n')
-        f.write('<!--\n')
-        f.write('Copyright 2021 seL4 Project a Series of LF Projects, LLC.\n')
-        f.write('SPDX-License-Identifier: CC-BY-SA-4.0\n')
-        f.write('-->\n\n')
+        f.write('---')
+        f.write('# Copyright 2021 seL4 Project a Series of LF Projects, LLC.')
+        f.write('# SPDX-License-Identifier: CC-BY-SA-4.0')
+        f.write('title: seL4 benchmarks')
+        f.write('redirect_from: /About/Performance/home.pml')
+        f.write('---')
 
         f.write('<h1>Performance</h1>\n')
         f.write('<p>This page displays the latest benchmark numbers for seL4 from the publicly\n')
@@ -378,7 +379,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--web':
-        gen_web(make_runs(builds), yml, "home.pml")
+        gen_web(make_runs(builds), yml, "index.html")
         sys.exit(0)
 
     sys.exit(run_builds(builds, hw_build))

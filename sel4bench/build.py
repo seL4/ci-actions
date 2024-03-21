@@ -223,12 +223,12 @@ def gen_web(runs: List[Run], yml, file_name: str):
     ]
 
     with open(file_name, 'w') as f:
-        f.write('---')
-        f.write('# Copyright 2021 seL4 Project a Series of LF Projects, LLC.')
-        f.write('# SPDX-License-Identifier: CC-BY-SA-4.0')
-        f.write('title: seL4 benchmarks')
-        f.write('redirect_from: /About/Performance/home.pml')
-        f.write('---')
+        f.write('---\n')
+        f.write('# Copyright 2021 seL4 Project a Series of LF Projects, LLC.\n')
+        f.write('# SPDX-License-Identifier: CC-BY-SA-4.0\n')
+        f.write('title: seL4 benchmarks\n')
+        f.write('redirect_from: /About/Performance/home.pml\n')
+        f.write('---\n')
 
         f.write('<h1>Performance</h1>\n')
         f.write('<p>This page displays the latest benchmark numbers for seL4 from the publicly\n')

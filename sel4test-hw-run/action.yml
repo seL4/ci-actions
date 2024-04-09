@@ -18,7 +18,7 @@ inputs:
     description: Comma separated list of modes (32/64) to filter test configs on.
     required: false
   compiler:
-    description: One of `{gcc, clang} to filter test configs on`
+    description: One of `{gcc, clang}` to filter test configs on.
     required: false
   debug:
     description: |

@@ -58,7 +58,7 @@ jobs:
     steps:
     strategy:
           matrix:
-            march: ["armv7a, armv8a", nehalem, rv32imac, rv64imac]
+            march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
     steps:
     - uses: seL4/ci-actions/sel4bench@master
       with:

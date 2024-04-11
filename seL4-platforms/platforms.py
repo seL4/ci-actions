@@ -160,9 +160,6 @@ class Platform:
     def cmake_toolchain_setting(self, mode: int) -> str:
         return self.toolchain_arch_str() + str(mode)
 
-    def settings(self) -> str:
-        return self.settings
-
     def get_image_platform(self, mode: int) -> str:
         return self.image_platform or self.get_platform(mode)
 

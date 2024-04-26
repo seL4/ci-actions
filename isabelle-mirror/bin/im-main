@@ -31,7 +31,7 @@ fi
 
 ISA_AFP_BASE="https://foss.heptapod.net/isa-afp"
 
-im-fetch-upstream-hg    isabelle         "http://isabelle.in.tum.de/repos/isabelle"
+im-fetch-upstream-hg    isabelle         "https://isabelle.in.tum.de/repos/isabelle"
 
 im-fetch-downstream-git isabelle-mirror  "$IM_MIRROR_URL_BASE/sel4/isabelle.git"
 

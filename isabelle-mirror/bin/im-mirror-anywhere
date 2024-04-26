@@ -28,7 +28,7 @@
 #
 # Currently, there are two upstream repositories of interest:
 #
-# - http://isabelle.in.tum.de/repos/isabelle
+# - https://isabelle.in.tum.de/repos/isabelle
 #   This is the primary repository, containing the development branch.
 #   We mirror this as the 'master' branch in the seL4 Isabelle git mirror.
 #
@@ -68,7 +68,7 @@
 # the mirror located at git@github.com:seL4/isabelle.git:
 #
 #   im-mirror-anywhere \
-#     http://isabelle.in.tum.de/repos/isabelle \
+#     https://isabelle.in.tum.de/repos/isabelle \
 #     git@github.com:seL4/isabelle.git \
 #     master
 #

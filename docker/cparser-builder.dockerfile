@@ -12,10 +12,18 @@
 ARG WORKSPACE=/workspace
 ARG CP_DEST=/c-parser/standalone-parser
 
-FROM trustworthysystems/l4v:latest AS builder
+FROM trustworthysystems/sel4:latest AS builder
 
 COPY scripts/checkout-manifest.sh /usr/bin/
 RUN chmod a+rx /usr/bin/checkout-manifest.sh
+
+ARG SCRATCH=/scrach
+ARG MLTON=mlton-20210117-1.amd64-linux-glibc2.31
+WORKDIR ${SCRATCH}
+RUN apt update && apt install -y libgmp-dev
+RUN wget https://sourceforge.net/projects/mlton/files/mlton/20210117/${MLTON}.tgz
+RUN tar xvfz ${MLTON}.tgz
+ENV PATH=${SCRATCH}/${MLTON}/bin:$PATH
 
 ARG WORKSPACE
 RUN mkdir -p ${WORKSPACE}
@@ -25,7 +33,7 @@ RUN checkout-manifest.sh
 
 ARG CPARSER_DIR=${WORKSPACE}/l4v/tools/c-parser
 WORKDIR ${CPARSER_DIR}
-RUN make standalone-cparser
+RUN make cparser_tools
 
 ARG CP_DEST
 RUN mkdir -p ${CP_DEST}

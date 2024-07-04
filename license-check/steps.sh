@@ -10,7 +10,7 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing reuse tool"
-pip3 install -q reuse
+pip3 install -q reuse==3.0.2
 
 checkout.sh
 echo "::endgroup::"

@@ -17,8 +17,16 @@ else
   REPO_URL="https://${REPO_PATH}"
 fi
 
-echo "Cloning ${REPO_PATH}@${GITHUB_REF}"
+# if an explicit PR number is set as INPUT (e.g. for pull_request_target), prefer that
+if [ -n "${INPUT_PR_NUM}" ]
+then
+  REF="refs/pull/${INPUT_PR_NUM}/head"
+else
+  REF="${GITHUB_REF}"
+fi
+
+echo "Cloning ${REPO_PATH}@${REF}"
 git init -q .
 git remote add origin ${REPO_URL}
-git fetch -q --no-tags --depth ${DEPTH} origin +${GITHUB_REF}:refs/heads/test-revision
+git fetch -q --no-tags --depth ${DEPTH} origin +${REF}:refs/heads/test-revision
 git checkout -q test-revision

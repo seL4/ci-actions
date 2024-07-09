@@ -20,6 +20,7 @@ that can be displayed as source annotation with the [yuzutech/annotations][1] ac
 - `disable`: a comma-separated list of warning classes to disable (default: none).
              One of `diag`, `find-proofs`, `sorry`, `axiom`, `style`.
              Do not use spaces between comma and warning class.
+- `pr_num`: pull request number to check out, e.g. for `pull_request_target` triggers.
 - `token`: GitHub PA token to authenticate for private repos (optional)
 
 ## Example

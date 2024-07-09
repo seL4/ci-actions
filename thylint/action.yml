@@ -10,6 +10,9 @@ inputs:
   token:
     description: 'GitHub token for read access to repository'
     required: false
+  pr_num:
+    description: 'Explicit pull request number to check out, e.g. for pull_request_target'
+    required: false
   disable:
     description: 'Comma-separated list (no spaces) of warning classes to disable (default: none)'
     required: false

@@ -16,12 +16,11 @@ inputs:
   disable:
     description: 'Comma-separated list (no spaces) of warning classes to disable (default: none)'
     required: false
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'thylint'
 
 runs:
-  using: "composite"
-  steps:
-    - run: ${{ github.action_path }}/steps.sh
-      shell: bash
-      env:
-        INPUT_TOKEN: ${{ inputs.token }}
-        INPUT_DISABLE: ${{ inputs.disable }}
+  using: 'node20'
+  main: '../js/index.js'

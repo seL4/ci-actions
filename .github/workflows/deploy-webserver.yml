@@ -15,6 +15,9 @@ on:
     - 'seL4-platforms/**'
     - 'webserver/**'
   workflow_dispatch:
+  # allow explict trigger from other repos when dependencies have changed
+  repository_dispatch:
+    types: [deps-update]
 
 jobs:
   docker:

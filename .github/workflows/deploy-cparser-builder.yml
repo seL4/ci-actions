@@ -24,7 +24,7 @@ on:
     - 'cparser-run/**'
     - 'preprocess/**'
   repository_dispatch:
-    types: [cparser-deploy]
+    types: [cparser-deploy, deps-update]
   workflow_dispatch:
 
 jobs:

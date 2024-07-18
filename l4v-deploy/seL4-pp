@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright 2020, Data61, CSRIO
+# Copyright 2020, Data61, CSIRO
 # SPDX-License-Identifier: BSD-2-Clause
 #
 # This is a post-build deploy script for the “seL4 preprocess” build.
@@ -16,13 +16,12 @@
 
 import argparse
 import os
-import re
 import subprocess
 import sys
 from xml.dom import minidom
 
 # Local imports
-from common import *
+from common import run_command, loud_command, indent, set_repo_email, format_commit_message
 
 parser = argparse.ArgumentParser("Update seL4 revision in verification-manifest from CI",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)

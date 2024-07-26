@@ -8,7 +8,7 @@ ARG WORKSPACE=/workspace
 ARG SCRIPTS=/ci-scripts
 ARG ACTION=sel4test-hw
 
-FROM trustworthysystems/sel4:latest
+FROM trustworthysystems/sel4:2024_07_11
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

@@ -237,6 +237,7 @@ platforms:
     arch: arm
     modes: [64]
     smp: [64]
+    aarch_hyp: [64]
     platform: zynqmp
     req: [zcu102_2]
     march: armv8a
@@ -249,6 +250,7 @@ platforms:
     arch: arm
     modes: [64]
     smp: [64]
+    aarch_hyp: [64]
     platform: zynqmp
     req: [zcu106]
     march: armv8a

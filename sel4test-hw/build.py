@@ -79,9 +79,10 @@ def build_filter(build: Build) -> bool:
             return False
 
         # HYP/SMP exclusions:
-        # IMX8MQ_EVK is failing multicore tests for SMP + HYP + clang
+        # IMX8MQ_EVK and ZYNQMPs are failing multicore tests for SMP + HYP + clang
         # see also https://github.com/seL4/sel4test/issues/44
-        if plat.name == 'IMX8MQ_EVK' and build.is_hyp() and build.is_smp() and build.is_clang():
+        if plat.name in ['IMX8MQ_EVK', 'ZYNQMP', 'ZYNQMP106'] and \
+           build.is_hyp() and build.is_smp() and build.is_clang():
             return False
 
     if plat.arch == 'x86':

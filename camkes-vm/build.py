@@ -28,7 +28,8 @@ def run_build(manifest_dir: str, build: Build):
 
     build.files = plat.image_names(build.get_mode(), "capdl-loader")
     build.settings['CAMKES_VM_APP'] = build.app or build.name
-    del build.settings['BAMBOO']    # not used in this test, avoid warning
+    if 'BAMBOO' in build.settings:
+        del build.settings['BAMBOO']    # not used in this test, avoid warning
 
     if plat.arch == 'x86':
         del build.settings['PLATFORM']  # not used for x86 in this test, avoid warning

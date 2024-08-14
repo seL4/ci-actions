@@ -85,6 +85,10 @@ def build_filter(build: Build) -> bool:
            build.is_hyp() and build.is_smp() and build.is_clang():
             return False
 
+        # zynqmp 32 does not work with MCS
+        if plat.name == 'ZYNQMP' and build.get_mode() == 32 and build.is_mcs():
+            return False
+
     if plat.arch == 'x86':
         # Bamboo config says no VTX for SMP or verification
         if build.is_hyp() and (build.is_smp() or build.is_verification()):

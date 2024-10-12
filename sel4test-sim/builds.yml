@@ -48,8 +48,6 @@ build-filter:
       arch: [riscv]
       # Bamboo has no "release" simulation for RISCV, and it doesn't seem to work either:
       debug: [debug]
-      # remove riscv clang for now, until muslibc is working with clang-12
-      compiler: gcc
 
 
 # A build-filter is a list of dicts. A build passes the filter if it passes any

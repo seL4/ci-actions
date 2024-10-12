@@ -123,7 +123,8 @@ def to_json(builds: List[Build]) -> str:
         if plat.arch == 'riscv':
             return [
                 {"platform": plat.name, "march": plat.march, "compiler": "gcc"},
-                {"platform": plat.name, "march": plat.march, "compiler": "clang"},
+                # temporarily remove riscv/clang until clang-12 works:
+                # {"platform": plat.name, "march": plat.march, "compiler": "clang"},
             ]
 
         # separate runs for each compiler + mode on x86, because we have more machines available

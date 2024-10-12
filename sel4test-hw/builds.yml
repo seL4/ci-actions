@@ -17,3 +17,9 @@ variants:
     # domains: ['', DOM]
     compiler: [gcc, clang]
     mode: [32, 64]
+
+build-filter:
+    - arch: [arm, x86]
+    - arch: [riscv]
+      # remove riscv clang for now, until muslibc is working with clang-12
+      compiler: gcc

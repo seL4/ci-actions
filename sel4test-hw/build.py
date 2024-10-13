@@ -77,6 +77,12 @@ def build_filter(build: Build) -> bool:
         # IMX8MM_EVK is failing multicore tests for MCS + SMP:
         if plat.name == 'IMX8MM_EVK' and build.is_mcs() and build.is_smp():
             return False
+        # ODROID_C4 is failing multicore tests for debug + MCS + SMP + clang:
+        # Since https://github.com/seL4/seL4/pull/1206
+        # See also https://github.com/seL4/seL4/issues/1333
+        if plat.name == 'ODROID_C4' and build.is_debug() and build.is_mcs() and \
+           build.is_smp() and build.is_clang():
+            return False
 
         # HYP/SMP exclusions:
         # IMX8MQ_EVK and ZYNQMPs are failing multicore tests for SMP + HYP + clang

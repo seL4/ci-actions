@@ -75,6 +75,14 @@ platforms:
     march: rv64imac
     no_hw_test: true
 
+  P550:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: p550
+    march: rv64imacfd
+    req: [p550a]
+
   SABRE:
     arch: arm
     modes: [32]

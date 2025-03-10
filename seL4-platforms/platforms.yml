@@ -97,6 +97,14 @@ platforms:
     march: rv64imac
     req: [p550a]
 
+  STAR64:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: star64
+    march: rv64imac
+    req: [star64]
+
   SABRE:
     arch: arm
     modes: [32]

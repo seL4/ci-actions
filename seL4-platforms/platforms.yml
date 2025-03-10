@@ -171,6 +171,15 @@ platforms:
     req: [tqma]
     march: armv8a
 
+  IMX93:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: imx93
+    march: armv8a
+    no_hw_test: true
+
   OMAP3:
     arch: arm
     modes: [32]
@@ -298,6 +307,7 @@ platforms:
   RPI4:
     arch: arm
     modes: [64]
+    smp: [64]
     platform: rpi4
     req: [pi4B]
     image_platform: bcm2711

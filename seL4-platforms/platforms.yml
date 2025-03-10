@@ -23,6 +23,20 @@ architectures: [x86, arm, riscv]
 #     no_hw_build: optional; (null = false); no hw build for this platform (implies no_hw_test)
 
 platforms:
+  ARIANE:
+    arch: riscv
+    modes: [64]
+    platform: ariane
+    march: rv64imafdc
+    no_hw_test: true
+
+  CHESHIRE:
+    arch: riscv
+    modes: [64]
+    platform: cheshire
+    march: rv64imafdc
+    no_hw_test: true
+
   SPIKE32:
     arch: riscv
     modes: [32]

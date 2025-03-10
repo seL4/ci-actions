@@ -37,7 +37,7 @@ platforms:
     modes: [64]
     platform: spike
     has_simulation: true
-    march: rv64imac
+    march: rv64imafdc
     no_hw_test: true
     no_hw_build: true
 
@@ -46,7 +46,7 @@ platforms:
     modes: [64]
     platform: qemu-riscv-virt
     has_simulation: true
-    march: rv64imac
+    march: rv64imafdc
     no_hw_test: true
     no_hw_build: true
 
@@ -65,14 +65,14 @@ platforms:
     smp: [64]
     platform: hifive
     req: [hifive] # , hifive1]
-    march: rv64imac
+    march: rv64imafdc
 
   POLARFIRE:
     arch: riscv
     modes: [64]
     smp: [64]
     platform: polarfire
-    march: rv64imac
+    march: rv64imafdc
     no_hw_test: true
 
   SABRE:

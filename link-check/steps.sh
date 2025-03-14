@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Copyright 2020, Data61, CSIRO (ABN 41 687 119 230)
+# Copyright 2025, Proofcraft Pty Ltd
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
@@ -10,18 +10,43 @@ echo "::group::Setting up"
 mkdir -p /repo
 cd /repo
 checkout.sh
+
+# get ignored input files from .linkcheck-ignore.yml
+IGNORE_FILES=""
+if [ -r .linkcheck-ignore.yml ]; then
+  echo "Getting ignored files from .linkcheck-ignore.yml"
+  readarray FILES < <(yq '.files[]' .linkcheck-ignore.yml)
+  for FILE in "${FILES[@]}"
+  do
+    if [ -z "${IGNORE_FILES}" ]
+    then
+      IGNORE_FILES="${FILE%%[[:space:]]}"
+    else
+      IGNORE_FILES="${IGNORE_FILES}\\|${FILE%%[[:space:]]}"
+    fi
+  done
+fi
+
+# make a .lycheeignore file from .linkcheck-ignore.yml
+if [ -r .linkcheck-ignore.yml ]; then
+  echo "Creating .lycheeignore file from .linkcheck-ignore.yml"
+  yq '.urls[]' .linkcheck-ignore.yml > .lycheeignore
+fi
+
 echo "::endgroup::"
 
-INPUT_EXCLUDE=${INPUT_EXCLUDE:-^$}
+: "${INPUT_DIR:=.}"
 
 echo "Checking links"
 
 (set -x; \
   find "${INPUT_DIR}" -type f \( -name "*.md" -or -name "*.html" \) | \
-  grep -v "${INPUT_EXCLUDE}" | tr '\n' '\000' | \
-  xargs -0 /liche ${INPUT_DOC_ROOT:+-d "${INPUT_DOC_ROOT}"} \
+  grep -v "${IGNORE_FILES}" | tr '\n' '\000' | \
+  xargs -0 lychee -n \
+         ${INPUT_EXCLUDE:+--exclude-path "${INPUT_EXCLUDE}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \
-         ${INPUT_NUM_REQUESTS:+-c "${INPUT_NUM_REQUESTS}"} \
-         ${INPUT_EXCLUDE_URLS:+-x "${INPUT_EXCLUDE_URLS}"} \
-         ${INPUT_VERBOSE:+-v} ) \
+         ${INPUT_NUM_REQUESTS:+--max-concurrency "${INPUT_NUM_REQUESTS}"} \
+         ${INPUT_EXCLUDE_URLS:+--exclude "${INPUT_EXCLUDE_URLS}"} \
+         ${INPUT_VERBOSE:+-v} \
+         ${INPUT_DOC_ROOT:+--root-dir "${INPUT_DOC_ROOT}"}) \
   && echo "No broken links!"

@@ -12,3 +12,4 @@ aws-proofs/vm-steps.sh
 
 # uses bash arrays
 thylint/steps.sh
+link-check/steps.sh

@@ -24,5 +24,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: seL4/ci-actions/link-check@master
-        with:
-          exclude: '/node_modules/'

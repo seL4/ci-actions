@@ -11,6 +11,10 @@ on:
       - master
   pull_request:
   workflow_call:
+    secrets:
+      token:
+        description: 'Optional token for private repositories'
+        required: false
 
 jobs:
   check:
@@ -18,9 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/license-check@master
+      with:
+        token: ${{ secrets.token }}
 
   links:
     name: Links
     runs-on: ubuntu-latest
     steps:
       - uses: seL4/ci-actions/link-check@master
+        with:
+          token: ${{ secrets.token }}

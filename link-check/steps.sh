@@ -35,13 +35,29 @@ fi
 
 echo "::endgroup::"
 
-: "${INPUT_DIR:=.}"
+IGNORE_FILES=${IGNORE_FILES:-^$}
+INPUT_DIR=${INPUT_DIR:-.}
 
 echo "Checking links"
 
+FILES=$(mktemp /tmp/files.XXXXXX)
+
+find "${INPUT_DIR}" -type f \( -name "*.md" -or -name "*.html" \) | \
+  grep -v "${IGNORE_FILES}" > "${FILES}"
+
+if [ -s "${FILES}" ]; then
+  echo "Checking links in the following files:"
+  echo "::group::Files"
+  cat "${FILES}"
+  echo "::group::Files"
+else
+  echo "No files to check"
+  rm -f "${FILES}"
+  exit 0
+fi
+
 (set -x; \
-  find "${INPUT_DIR}" -type f \( -name "*.md" -or -name "*.html" \) | \
-  grep -v "${IGNORE_FILES}" | tr '\n' '\000' | \
+  cat "${FILES}" | tr '\n' '\000' | \
   xargs -0 lychee -n \
          ${INPUT_EXCLUDE:+--exclude-path "${INPUT_EXCLUDE}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \
@@ -50,3 +66,5 @@ echo "Checking links"
          ${INPUT_VERBOSE:+-v} \
          ${INPUT_DOC_ROOT:+--root-dir "${INPUT_DOC_ROOT}"}) \
   && echo "No broken links!"
+
+rm -f "${FILES}"

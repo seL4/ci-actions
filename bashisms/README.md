@@ -38,7 +38,8 @@ jobs:
 
 ### Maintenance
 
-The `checkbashism` script in `../scripts` is directly extracted from
-<https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_2.25.2.tar.xz>.
+The `checkbashism` script in `../scripts` is directly extracted from the
+`devscripts_2.XXX.tar.xz` file in
+<https://deb.debian.org/debian/pool/main/d/devscripts/>.
 Installing it via `apt-get` takes forever, because the rest of the devscripts
 has lots of dependencies.

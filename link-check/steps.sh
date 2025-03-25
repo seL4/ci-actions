@@ -66,5 +66,3 @@ fi
          ${INPUT_VERBOSE:+-v} \
          ${INPUT_DOC_ROOT:+--root-dir "${INPUT_DOC_ROOT}"}) \
   && echo "No broken links!"
-
-rm -f "${FILES}"

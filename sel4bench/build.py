@@ -175,7 +175,7 @@ def get_results(run: Run) -> List[float]:
         if bench['Benchmark'].startswith('IRQ path cycle count'):
             results = bench['Results']
             for result in results:
-                if result['Type'] == 'Without context switch':
+                if result['Type'] == 'With context switch':
                     irq_invoke = round(result['Mean'])
                     irq_invoke_s = round(result['Stddev'])
 
@@ -238,7 +238,7 @@ def gen_web(runs: List[Run], yml, file_name: str):
 
         f.write('<ul>')
         f.write('<li><strong>IRQ invoke</strong>: ')
-        f.write('Time in cycles to invoke a user-level interrupt handler running in the same\n')
+        f.write('Time in cycles to invoke a user-level interrupt handler running a different\n')
         f.write('address space as the interrupted thread.</li>\n')
 
         f.write('<li><strong>IPC call</strong>: ')

@@ -18,7 +18,7 @@ on:
 jobs:
   gitlint:
     name: Gitlint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - uses: seL4/ci-actions/gitlint@master
       with:

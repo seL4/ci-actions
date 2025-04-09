@@ -20,7 +20,7 @@ jobs:
     name: Gitlint
     runs-on: ubuntu-latest
     steps:
-    - uses: seL4/ci-actions/gitlint@master
+    - uses: seL4/ci-actions/gitlint@python-fix
       with:
         token: ${{ secrets.token }}
 
@@ -42,8 +42,8 @@ jobs:
 
   style:
     name: Style
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: seL4/ci-actions/style@master
+    - uses: seL4/ci-actions/style@python-fix
       with:
         token: ${{ secrets.token }}

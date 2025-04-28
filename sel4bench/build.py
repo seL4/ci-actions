@@ -15,8 +15,6 @@ from builds import SKIP, SUCCESS, REPEAT, FAILURE
 from pprint import pprint
 from typing import List, Optional
 
-from datetime import datetime
-
 import json
 import os
 import sys
@@ -196,163 +194,85 @@ def get_run(runs: List[Run], name: str) -> Optional[Run]:
     return None
 
 
-def gen_web(runs: List[Run], yml, file_name: str):
-    """Generate web page for benchmark results according to the set defined in builds.yml"""
+def gen_json(runs: List[Run], yml, file_name: str):
+    """Generate json with benchmark results according to the set defined in builds.yml"""
 
     manifest_sha = os.getenv('INPUT_MANIFEST_SHA')
 
     boards = yml["boards"]
     sections = yml["results"]
 
-    th_style = {
-        0: 'style=""',
-        1: 'style="text-align: center;"',
-        2: 'style="text-align: center;"'
-    }
-
-    # (column name, th_style, span, width)
-    cols = [
-        ('ISA', 0, 1, "8ex"),
-        ('Mode', 2, 1, "4ex"),
-        ('Core/SoC/Board', 0, 1, "40%"),
-        ('Clock', 1, 1, "8ex"),
-        ('IRQ Invoke', 1, 2, ""),
-        ('IPC call', 1, 2, ""),
-        ('IPC reply', 1, 2, ""),
-        ('Notify', 1, 2, "")
+    # Data columns (column header, key)
+    data_cols = [
+        ('ISA', 'isa'),
+        ('Mode', 'mode'),
+        ('Core/SoC/Board', 'name'),
+        ('Clock', 'clock'),
+        ('IRQ Invoke', 'irq'),
+        ('IPC call', 'call'),
+        ('IPC reply', 'reply'),
+        ('Notify', 'notify'),
     ]
 
+    # Compilation details (column header, key)
+    comp_cols = [
+        ('ISA', 'isa'),
+        ('Mode', 'mode'),
+        ('Core/SoC/Board', 'name'),
+        ('Clock', 'clock'),
+        ('Compiler', 'compiler'),
+        ('Build command', 'build_command'),
+    ]
+
+    # Results
+    data = {}
+    for section_name in sections:
+        data[section_name] = []
+        for result in sections[section_name]:
+            board_name = result['board']
+            board = boards.get(board_name)
+            if not board:
+                print(f'Board {board_name} not found in builds.yml')
+                continue
+            run = get_run(runs, result['run'])
+            if not run:
+                print(f'Run {run} not found.')
+                continue
+            row = {}
+            row['board'] = board_name
+            row['run'] = result['run']
+            row['isa'] = run.build.getISA()
+            row['mode'] = run.build.get_mode()
+            if board.get('core'):
+                row['name'] = f"{board['core']}/{board['soc']}/{board_name}"
+            else:
+                row['name'] = f"{board['soc']}/{board_name}"
+            note = board.get('note')
+            if note:
+                row['note'] = board.get('note')
+            row['clock'] = board.get('clock')
+            row['compiler'] = board['compiler']
+            results = get_results(run)
+            row['irq'] = (results[0], results[1])
+            row['call'] = (results[2], results[3])
+            row['reply'] = (results[4], results[5])
+            row['notify'] = (results[6], results[7])
+
+            adjust_build_settings(run.build)
+            build_command = " ".join(["init-build.sh"] + run.build.settings_args())
+            row['build_command'] = build_command
+
+            data[section_name].append(row)
+
+    final = {}
+    final['data_cols'] = data_cols
+    final['comp_cols'] = comp_cols
+    final['data'] = data
+    if manifest_sha:
+        final['sha'] = manifest_sha[0:8]
+
     with open(file_name, 'w') as f:
-        f.write('---\n')
-        f.write('# Copyright 2021 seL4 Project a Series of LF Projects, LLC.\n')
-        f.write('# SPDX-License-Identifier: CC-BY-SA-4.0\n')
-        f.write('title: seL4 benchmarks\n')
-        f.write('redirect_from: /About/Performance/home.pml\n')
-        f.write('---\n')
-
-        f.write('<h1>Performance</h1>\n')
-        f.write('<p>This page displays the latest benchmark numbers for seL4 from the publicly\n')
-        f.write('available <a href="https://github.com/seL4/sel4bench">sel4bench repository</a>.\n')
-        f.write('The following times are reported as mean and standard deviation in\n')
-        f.write('the format <em>mean (std dev)</em>, both rounded to the nearest integer.</p>\n')
-
-        f.write('<ul>')
-        f.write('<li><strong>IRQ invoke</strong>: ')
-        f.write('Time in cycles to invoke a user-level interrupt handler running a different\n')
-        f.write('address space as the interrupted thread.</li>\n')
-
-        f.write('<li><strong>IPC call</strong>: ')
-        f.write('Time in cycles for invoking a server in a different address space on the same core.</li>\n')
-
-        f.write('<li><strong>IPC reply</strong>: ')
-        f.write('Time in cycles for a server replying to a client in a different address space on\n')
-        f.write('the same core.</li>\n')
-
-        f.write('<li><strong>Notify</strong>: ')
-        f.write('Time in cycles to send a signal from a process with priority 1 to a higher\n')
-        f.write('priority (255) process in a different address space</li>\n')
-        f.write('</ul>')
-
-        # Results
-        for section_name in sections:
-            f.write(f'<h2>{section_name}</h2>\n')
-            f.write(f'<table class="data-table">\n')
-            f.write(f'  <tr>\n')
-            for (col, style, span, width) in cols:
-                if width:
-                    the_style = th_style[style][:-1] + f' width: {width};"'
-                else:
-                    the_style = th_style[style]
-                f.write(f'    <th {the_style} colspan="{span}">{col}</th>\n')
-            f.write(f'  </tr>')
-
-            for result in sections[section_name]:
-                board_name = result['board']
-                board = boards.get(board_name)
-                if not board:
-                    print(f'Board {board_name} not found in builds.yml')
-                    continue
-                run = get_run(runs, result['run'])
-                if not run:
-                    continue
-                results = get_results(run)
-                f.write(f'  <tr>\n')
-                f.write(f'    <td>{run.build.getISA()}</td>\n')
-                f.write(f'    <td class="data-table-right">{run.build.get_mode()}</td>\n')
-                if board.get('core'):
-                    f.write(f"    <td>{board['core']}/{board['soc']}/{board_name}")
-                else:
-                    f.write(f"    <td>{board['soc']}/{board_name}")
-                note = board.get('note')
-                if note:
-                    f.write(f' {note}')
-                f.write(f'</td>\n')
-                f.write(f"    <td class=\"data-table-right\">{board['clock']}</td>\n")
-                f.write(f'    <td class="data-mean">{results[0]}</td>\n')
-                f.write(f'    <td class="data-stddev">({results[1]})</td>\n')
-                f.write(f'    <td class="data-mean">{results[2]}</td>\n')
-                f.write(f'    <td class="data-stddev">({results[3]})</td>\n')
-                f.write(f'    <td class="data-mean">{results[4]}</td>\n')
-                f.write(f'    <td class="data-stddev">({results[5]})</td>\n')
-                f.write(f'    <td class="data-mean">{results[6]}</td>\n')
-                f.write(f'    <td class="data-stddev">({results[7]})</td>\n')
-                f.write(f'  </tr>')
-
-            f.write(f'</table>\n\n')
-
-        # Compilation details
-        cols = ['ISA', 'Mode', 'Core/SoC/Board', 'Clock', 'Compiler', 'Build command']
-
-        f.write(f'<h2>Compilation Details</h2>\n')
-
-        f.write(f'<p>')
-        f.write(f'All benchmarks were built using the trustworthy-systems/sel4\n')
-        f.write(f'docker image from the <a href="https://github.com/seL4/seL4-CAmkES-L4v-dockerfiles">seL4\n')
-        f.write(f'docker file repository</a>')
-        f.write(f'</p>')
-
-        for section_name in sections:
-            f.write(f'<h3>{section_name}</h3>\n')
-            f.write(f'<table class="data-table">\n')
-            f.write(f'  <tr>\n')
-            for col in cols:
-                f.write(f'    <th>{col}</th>\n')
-            f.write(f'  </tr>')
-
-            for result in sections[section_name]:
-                board_name = result['board']
-                board = boards.get(board_name)
-                if not board:
-                    print(f'Board {board_name} not found in builds.yml')
-                    continue
-                run = get_run(runs, result['run'])
-                if not run:
-                    continue
-                adjust_build_settings(run.build)
-                build_command = " ".join(["init-build.sh"] + run.build.settings_args())
-
-                f.write(f'  <tr>\n')
-                f.write(f'    <td>{run.build.getISA()}</td>\n')
-                f.write(f'    <td class="data-table-right">{run.build.get_mode()}</td>\n')
-                if board.get('core'):
-                    f.write(f"    <td>{board['core']}/{board['soc']}/{board_name}</td>\n")
-                else:
-                    f.write(f"    <td>{board['soc']}/{board_name}</td>\n")
-                f.write(f"    <td class=\"data-table-right\">{board['clock']}</td>\n")
-                f.write(f"    <td>{board['compiler']}</td>\n")
-                f.write(f'    <td class=\"monospace\">{build_command}</td>\n')
-                f.write(f'  </tr>')
-
-            f.write(f'</table>\n\n')
-
-        f.write(f'<h2>Source Code</h2>\n')
-        date = datetime.now().strftime('%Y-%m-%d')
-        f.write(f'<p>This page was generated on {date}')
-        if manifest_sha:
-            f.write(' for sel4bench-manifest <a href="')
-            f.write(f'https://github.com/seL4/sel4bench-manifest/blob/{manifest_sha}/default.xml">')
-            f.write(f'{manifest_sha[0:8]}</a>')
-        f.write('.</p>')
+        json.dump(final, f, indent=2)
 
 
 # If called as main, run all builds from builds.yml
@@ -379,7 +299,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--web':
-        gen_web(make_runs(builds), yml, "index.html")
+        gen_json(make_runs(builds), yml, "benchmarks.json")
         sys.exit(0)
 
     sys.exit(run_builds(builds, hw_build))

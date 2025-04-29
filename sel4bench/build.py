@@ -219,7 +219,6 @@ def gen_json(runs: List[Run], yml, file_name: str):
         ('ISA', 'isa'),
         ('Mode', 'mode'),
         ('Core/SoC/Board', 'name'),
-        ('Clock', 'clock'),
         ('Compiler', 'compiler'),
         ('Build command', 'build_command'),
     ]

@@ -49,7 +49,7 @@ if [ -s "${FILES}" ]; then
   echo "Checking links in the following files:"
   echo "::group::Files"
   cat "${FILES}"
-  echo "::group::Files"
+  echo "::endgroup::"
 else
   echo "No files to check"
   rm -f "${FILES}"

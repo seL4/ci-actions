@@ -59,6 +59,7 @@ fi
 (set -x; \
   cat "${FILES}" | tr '\n' '\000' | \
   xargs -0 lychee -n \
+         ${INPUT_TOKEN:+--github-token "${INPUT_TOKEN}"} \
          ${INPUT_EXCLUDE:+--exclude-path "${INPUT_EXCLUDE}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \
          ${INPUT_NUM_REQUESTS:+--max-concurrency "${INPUT_NUM_REQUESTS}"} \

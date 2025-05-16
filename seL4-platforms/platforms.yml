@@ -171,7 +171,7 @@ platforms:
     aarch_hyp: [64]
     platform: imx93
     march: armv8a
-    no_hw_test: true
+    req: imx93a
 
   OMAP3:
     arch: arm

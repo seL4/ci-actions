@@ -175,7 +175,7 @@ platforms:
     settings:
       # override the default of 4 for sel4test; ignored in non-SMP builds
       # if the platform is enabled for other apps this may need manual override
-      NUM_NODES=2
+      NUM_NODES: 2
 
   OMAP3:
     arch: arm

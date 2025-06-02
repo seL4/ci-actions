@@ -36,7 +36,6 @@ platforms:
     platform: cheshire
     march: rv64imac
     no_hw_test: true
-    no_hw_build: true
 
   SPIKE32:
     arch: riscv

@@ -15,7 +15,7 @@ jobs:
   isabelle-mirror:
     name: 'Isabelle Mirror'
     if: ${{ github.repository_owner == 'seL4' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       ISA_MIRROR_TOKEN: ${{ secrets.ISA_MIRROR_TOKEN }}
     steps:

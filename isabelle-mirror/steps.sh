@@ -8,9 +8,25 @@ set -e
 
 echo "::group::Setting up"
 echo "Installing python 2.7"
-sudo apt update
-sudo apt-get install -qq python2-dev > /dev/null
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
+
+echo "  > Installing python build dependencies"
+sudo apt-get update
+sudo apt-get install -qq make build-essential libssl-dev zlib1g-dev \
+                         libbz2-dev libreadline-dev libsqlite3-dev curl git \
+                         libncursesw5-dev xz-utils tk-dev libxml2-dev \
+                         libxmlsec1-dev libffi-dev liblzma-dev
+
+echo "  > Installing pyenv"
+git clone -b v2.6.1 --depth 1 https://github.com/pyenv/pyenv.git ~/.pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[ -d $PYENV_ROOT/bin ] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
+
+echo "  > Installing python 2.7"
+pyenv install 2.7
+pyenv global 2.7
+
+echo "  > Versions"
 python --version
 hg --version
 

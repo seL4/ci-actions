@@ -90,6 +90,14 @@ platforms:
     march: rv64imac
     no_hw_test: true
 
+  STAR64:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: star64
+    req: [star64]
+    march: rv64imafdc
+
   SABRE:
     arch: arm
     modes: [32]

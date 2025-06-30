@@ -278,6 +278,7 @@ class Run:
             mq_release(machine)
         ]
 
+
 def release_mq_locks(runs: List[Union[Run, Build]]):
     """Release locks from this job; runs the commands instead of returning a list."""
 
@@ -363,27 +364,29 @@ def mq_run(success_str: str,
     for f in files:
         command.extend(['-f', f])
 
-    return command
+    return wrap_ssh_failure(command)
 
 
-def mq_lock(machine: str) -> List[str]:
+def mq_lock(machine: str):
     """Get lock for a machine. Allow lock to be reclaimed after 30min."""
-    return ['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800']
+    return wrap_ssh_failure(['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800'])
 
 
 def mq_release(machine: str) -> List[str]:
     """Release lock on a machine."""
+    # no point in detecting ssh failure -- retrying the test will only stall
     return ['mq.sh', 'sem', '-signal', machine, '-k', job_key()]
 
 
 def mq_cancel(machine: str) -> List[str]:
     """Cancel processes waiting on lock for a machine."""
+    # no point in detecting ssh failure -- retrying the test will only stall
     return ['mq.sh', 'sem', '-cancel', machine, '-k', job_key()]
 
 
-def mq_print_lock(machine: str) -> List[str]:
+def mq_print_lock(machine: str):
     """Print lock status for machine."""
-    return ['mq.sh', 'sem', '-info', machine]
+    return wrap_ssh_failure(['mq.sh', 'sem', '-info', machine])
 
 
 # return codes for a test run or single step of a run
@@ -391,6 +394,23 @@ FAILURE = 0
 SUCCESS = 1
 SKIP = 2
 REPEAT = 3
+
+# string for detecting ssh failure
+ssh_failure_str = "Unable to ssh to tftp.keg.cse.unsw.edu.au"
+
+
+def wrap_ssh_failure(cmd: List[str]):
+    """Wrap a list of commands in a check for failing to connect via ssh.
+    Signal test repeat instead of failure in that case
+    """
+    def wrapped_cmd(run, prev_output):
+        result, output = run_cmd(cmd, run, prev_output)
+        if result == FAILURE:
+            if any(ssh_failure_str in line for line in output):
+                printc(ANSI_YELLOW, "Detected ssh failure, trying to repeat test.")
+                return REPEAT, output
+        return result, output
+    return wrapped_cmd
 
 
 def success_from_bool(success: bool) -> int:

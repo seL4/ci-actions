@@ -17,7 +17,7 @@ RUN apt-get update \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN gem install bundler:2.1.2
-RUN pip3 install junitparser PyGithub
+RUN pip3 install "junitparser==3.*" PyGithub
 
 ARG ACTION
 ARG SCRIPTS

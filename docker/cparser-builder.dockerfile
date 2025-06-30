@@ -33,7 +33,7 @@ RUN checkout-manifest.sh
 
 ARG CPARSER_DIR=${WORKSPACE}/l4v/tools/c-parser
 WORKDIR ${CPARSER_DIR}
-RUN make cparser_tools
+RUN L4V_ARCH=ARM make cparser_tools
 
 ARG CP_DEST
 RUN mkdir -p ${CP_DEST}

@@ -16,7 +16,7 @@ RUN apt-get update \
     && apt-get clean autoclean \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
-RUN pip3 install junitparser PyGithub
+RUN pip3 install "junitparser==3.*" PyGithub
 
 ARG ACTION
 ARG SCRIPTS

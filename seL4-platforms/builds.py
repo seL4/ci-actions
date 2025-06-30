@@ -19,7 +19,6 @@ from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
 
 import copy
-import time
 import os
 import shutil
 import subprocess
@@ -276,92 +275,8 @@ class Run:
                    log=log,
                    error_str=build.error)
         ], [
-            lambda r, log: repeat_on_boot_failure(log),
             mq_release(machine)
         ]
-
-
-# Pattern fires if consecutive lines each contain the corresponding pattern line
-boot_fail_patterns = [
-    [
-        # all boards occasionally:
-        "[[Boot timeout]]",
-        "None",
-        "0 tries remaining..",
-        "",
-        "[[Timeout]]"
-    ],
-    [
-        # tx2:
-        "*** ERROR: `ipaddr' not set",
-        "Config file not found",
-        "Tegra186 (P2771-0000-500) #",
-        "[[Timeout]]",
-        "None"
-    ],
-    [
-        # imx8mq:
-        "Retry count exceeded; starting again",
-        "u-boot=>",
-        "[[Timeout]]"
-    ],
-    [
-        # hifive:
-        "ARP Retry count exceeded; starting again",
-        "## Starting application at",
-        "",
-        "[[Timeout]]",
-        "None",
-        "",
-        "console_run returned -1"
-    ],
-    [
-        # hifive:
-        "ARP Retry count exceeded; starting again",
-        "## Starting application at",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "",
-        "[[Timeout]]",
-        "None",
-        "",
-        "console_run returned -1",
-    ]
-]
-
-
-def repeat_on_boot_failure(log: Optional[List[str]]) -> int:
-    """Try to repeat the test run if the board failed to boot."""
-
-    if log:
-        for pat in boot_fail_patterns:
-            for i in range(len(log)+1-len(pat)):
-                if all(p in log[i+j] for j, p in enumerate(pat)):
-                    printc(ANSI_RED, "Boot failure detected.")
-                    time.sleep(10)
-                    return REPEAT, None
-    else:
-        print("No log to check boot failure on.")
-
-    return SUCCESS, None
-
 
 def release_mq_locks(runs: List[Union[Run, Build]]):
     """Release locks from this job; runs the commands instead of returning a list."""

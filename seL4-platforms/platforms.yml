@@ -95,7 +95,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: hifive-p550
-    march: rv64imacfd
+    march: rv64imac
     req: [p550a]
 
   SABRE:

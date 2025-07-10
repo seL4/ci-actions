@@ -97,17 +97,26 @@ do_compile_kernel()
         exit 1
     fi
 
-    echo "::group::Run CMake${variant_info}"
+    echo "::group::Run cmake${variant_info}"
     ( # run in sub shell
         set -x
-        cmake -G Ninja -B ${build_folder} -C ${config_file} ${toolchain_flags} ${extra_params}
+        cmake -G Ninja -B ${build_folder} \
+              -DCMAKE_INSTALL_PREFIX="${build_folder}/install" \
+              -C ${config_file} ${toolchain_flags} ${extra_params}
     )
     echo "::endgroup::"
 
-    echo "::group::Run Ninja${variant_info}"
+    echo "::group::Run${variant_info}: ninja"
     ( # run in sub shell
         set -x
         ninja -C ${build_folder} kernel.elf
+    )
+    echo "::endgroup::"
+
+    echo "::group::Run${variant_info}: ninja install"
+    ( # run in sub shell
+        set -x
+        ninja -C ${build_folder} install
     )
     echo "::endgroup::"
 }

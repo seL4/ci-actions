@@ -60,7 +60,7 @@ boards:
         compiler: gcc GNU 10.2.1
     Skylake:
         soc: i7-6700
-        note: (without meltdown mitigation)
+        note: without meltdown mitigation
         clock: 3.4 GHz
         compiler: gcc GNU 10.2.1
     Jetson:

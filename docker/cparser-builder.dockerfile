@@ -18,10 +18,10 @@ COPY scripts/checkout-manifest.sh /usr/bin/
 RUN chmod a+rx /usr/bin/checkout-manifest.sh
 
 ARG SCRATCH=/scrach
-ARG MLTON=mlton-20210117-1.amd64-linux-glibc2.31
+ARG MLTON=mlton-20241230-1.amd64-linux.ubuntu-24.04_static
 WORKDIR ${SCRATCH}
 RUN apt update && apt install -y libgmp-dev
-RUN wget https://sourceforge.net/projects/mlton/files/mlton/20210117/${MLTON}.tgz
+RUN wget https://github.com/MLton/mlton/releases/download/on-20241230-release/${MLTON}.tgz
 RUN tar xvfz ${MLTON}.tgz
 ENV PATH=${SCRATCH}/${MLTON}/bin:$PATH
 
@@ -33,7 +33,7 @@ RUN checkout-manifest.sh
 
 ARG CPARSER_DIR=${WORKSPACE}/l4v/tools/c-parser
 WORKDIR ${CPARSER_DIR}
-RUN make cparser_tools
+RUN L4V_ARCH=ARM make cparser_tools
 
 ARG CP_DEST
 RUN mkdir -p ${CP_DEST}

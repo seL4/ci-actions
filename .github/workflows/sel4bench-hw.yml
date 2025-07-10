@@ -8,6 +8,12 @@ name: seL4Bench-HW
 
 on:
   workflow_call:
+    inputs:
+      always_build:
+        description: 'Always build sel4bench images, even if no label is present'
+        required: false
+        default: false
+        type: boolean
 
 # intended to run on
 #  pull_request_target:
@@ -21,13 +27,15 @@ jobs:
   code:
     name: Freeze Code
     runs-on: ubuntu-latest
+
+# Since we cancel older runs of this workflow for the current PR, we want to
+# restart tests ("contains" clause), even if the event is for adding a different
+# label.
     if: ${{ github.event_name == 'pull_request_target' &&
-            (
-               github.event.action != 'labeled' &&
-                contains(github.event.pull_request.labels.*.name, 'hw-bench') ||
-               github.event.action == 'labeled' &&
-                github.event.label.name == 'hw-bench'
-            ) }}
+            ((
+               contains(github.event.pull_request.labels.*.name, 'hw-bench') ||
+               github.event.label.name == 'hw-bench'
+             ) || inputs.always_build) }}
     outputs:
       xml: ${{ steps.repo.outputs.xml }}
     steps:
@@ -65,7 +73,13 @@ jobs:
 
   hw-run:
     name: HW Benchmark
-    if: ${{ github.repository_owner == 'seL4' }}
+    if: ${{ github.repository_owner == 'seL4' &&
+            github.event_name == 'pull_request_target' &&
+            (
+              contains(github.event.pull_request.labels.*.name, 'hw-bench') ||
+              github.event.label.name == 'hw-bench'
+            )
+        }}
     runs-on: ubuntu-latest
     needs: [build]
     concurrency:

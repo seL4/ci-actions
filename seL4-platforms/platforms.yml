@@ -23,6 +23,21 @@ architectures: [x86, arm, riscv]
 #     no_hw_build: optional; (null = false); no hw build for this platform (implies no_hw_test)
 
 platforms:
+  ARIANE:
+    arch: riscv
+    modes: [64]
+    platform: ariane
+    march: rv64imac
+    no_hw_test: true
+
+  CHESHIRE:
+    arch: riscv
+    modes: [64]
+    platform: cheshire
+    march: rv64imac
+    no_hw_test: true
+    no_hw_build: true
+
   SPIKE32:
     arch: riscv
     modes: [32]
@@ -165,6 +180,19 @@ platforms:
     req: [tqma]
     march: armv8a
 
+  IMX93:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: imx93
+    march: armv8a
+    req: imx93a
+    settings:
+      # override the default of 4 for sel4test; ignored in non-SMP builds
+      # if the platform is enabled for other apps this may need manual override
+      NUM_NODES: 2
+
   OMAP3:
     arch: arm
     modes: [32]
@@ -292,6 +320,7 @@ platforms:
   RPI4:
     arch: arm
     modes: [64]
+    smp: [64]
     platform: rpi4
     req: [pi4B]
     image_platform: bcm2711

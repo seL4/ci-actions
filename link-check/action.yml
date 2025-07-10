@@ -27,7 +27,7 @@ inputs:
     description: 'Maximum number of concurrent requests'
     required: false
   token:
-    description: 'GitHub token for read access to repository'
+    description: 'GitHub token for read access to repository and rate limit'
     required: false
   verbose:
     description: 'Print more information if set (default unset)'

@@ -5,19 +5,20 @@
 
 # Check links in .md and .html files
 
-This action checks out the target repository, and runs the [liche tool][1] on
-it. It is loosely based on <https://github.com/peter-evans/link-checker>.
+This action checks out the target repository, and runs the [lychee tool][1] on
+it, checking all `.html` and `.md` files in the repository for broken links,
+local and remote. It is loosely based on <https://github.com/peter-evans/link-checker>.
 
 The action is written for the context of the [seL4][2] repositories, but
 should work more generally.
 
-[1]: https://github.com/raviqqe/liche
+[1]: https://github.com/lycheeverse/lychee
 [2]: https://github.com/seL4/
 
 ## Content
 
 This is a minimal Docker action. It mostly uses Docker instead of JavaScript,
-so it can run a pre-built `liche` binary.
+so it can run a pre-built `lychee` binary.
 
 ## Arguments
 
@@ -32,6 +33,28 @@ No arguments are required. The following are available.
 * `num_requests`: Maximum number of concurrent requests
 * `verbose`: Print more information if set (default unset)
 * `token`: GitHub PA token to authenticate for private repos
+
+## Ignoring URLs and files
+
+By default the action checks all `.md` and `.html` files in the target repository.
+The file `.linkcheck-ignore.yml` can be used to ignore specific input file
+path patterns or specific URL patterns. The file is expected to contain two
+lists `files` and `urls`. See the [lychee docs][1] for information on the format
+of the `--exclude` option for URLs. The `files`  list are `grep` regular expressions
+on file paths that start with `./`. Example use:
+
+```yml
+# regexp, not glob
+files:
+  - README.md
+  - "\\./[a-z]*/.*\\.md"
+
+# regexp
+urls:
+  - https://github.com
+  - "https://.*.example.com"
+```
+
 
 ## Example
 
@@ -56,4 +79,6 @@ jobs:
 
 ## Build
 
-Run `make` to build the Docker image for local testing. The image is deployed to dockerhub automatically on push to the `master` branch when relevant files change.
+Run `make` to build the Docker image for local testing. The image is deployed to
+Docker hub automatically on push to the `master` branch when relevant files
+change.

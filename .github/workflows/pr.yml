@@ -6,7 +6,14 @@
 
 name: PR
 
-on: [pull_request, workflow_call]
+on:
+  pull_request:
+  workflow_call:
+    secrets:
+      token:
+        description: 'Optional token for private repositories'
+        required: false
+
 
 jobs:
   gitlint:
@@ -14,21 +21,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/gitlint@master
+      with:
+        token: ${{ secrets.token }}
 
   whitespace:
     name: 'Trailing Whitespace'
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/git-diff-check@master
+      with:
+        token: ${{ secrets.token }}
 
   shell:
     name: 'Portable Shell'
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/bashisms@master
+      with:
+        token: ${{ secrets.token }}
 
   style:
     name: Style
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/style@master
+      with:
+        token: ${{ secrets.token }}

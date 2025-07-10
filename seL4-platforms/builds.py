@@ -19,7 +19,6 @@ from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
 
 import copy
-import time
 import os
 import shutil
 import subprocess
@@ -276,91 +275,8 @@ class Run:
                    log=log,
                    error_str=build.error)
         ], [
-            lambda r, log: repeat_on_boot_failure(log),
             mq_release(machine)
         ]
-
-
-# Pattern fires if consecutive lines each contain the corresponding pattern line
-boot_fail_patterns = [
-    [
-        # all boards occasionally:
-        "[[Boot timeout]]",
-        "None",
-        "0 tries remaining..",
-        "",
-        "[[Timeout]]"
-    ],
-    [
-        # tx2:
-        "*** ERROR: `ipaddr' not set",
-        "Config file not found",
-        "Tegra186 (P2771-0000-500) #",
-        "[[Timeout]]",
-        "None"
-    ],
-    [
-        # imx8mq:
-        "Retry count exceeded; starting again",
-        "u-boot=>",
-        "[[Timeout]]"
-    ],
-    [
-        # hifive:
-        "ARP Retry count exceeded; starting again",
-        "## Starting application at",
-        "",
-        "[[Timeout]]",
-        "None",
-        "",
-        "console_run returned -1"
-    ],
-    [
-        # hifive:
-        "ARP Retry count exceeded; starting again",
-        "## Starting application at",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "sbi_trap_error: hart",
-        "",
-        "[[Timeout]]",
-        "None",
-        "",
-        "console_run returned -1",
-    ]
-]
-
-
-def repeat_on_boot_failure(log: Optional[List[str]]) -> int:
-    """Try to repeat the test run if the board failed to boot."""
-
-    if log:
-        for pat in boot_fail_patterns:
-            for i in range(len(log)+1-len(pat)):
-                if all(p in log[i+j] for j, p in enumerate(pat)):
-                    printc(ANSI_RED, "Boot failure detected.")
-                    time.sleep(10)
-                    return REPEAT, None
-    else:
-        print("No log to check boot failure on.")
-
-    return SUCCESS, None
 
 
 def release_mq_locks(runs: List[Union[Run, Build]]):
@@ -448,27 +364,29 @@ def mq_run(success_str: str,
     for f in files:
         command.extend(['-f', f])
 
-    return command
+    return wrap_ssh_failure(command)
 
 
-def mq_lock(machine: str) -> List[str]:
+def mq_lock(machine: str):
     """Get lock for a machine. Allow lock to be reclaimed after 30min."""
-    return ['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800']
+    return wrap_ssh_failure(['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800'])
 
 
 def mq_release(machine: str) -> List[str]:
     """Release lock on a machine."""
+    # no point in detecting ssh failure -- retrying the test will only stall
     return ['mq.sh', 'sem', '-signal', machine, '-k', job_key()]
 
 
 def mq_cancel(machine: str) -> List[str]:
     """Cancel processes waiting on lock for a machine."""
+    # no point in detecting ssh failure -- retrying the test will only stall
     return ['mq.sh', 'sem', '-cancel', machine, '-k', job_key()]
 
 
-def mq_print_lock(machine: str) -> List[str]:
+def mq_print_lock(machine: str):
     """Print lock status for machine."""
-    return ['mq.sh', 'sem', '-info', machine]
+    return wrap_ssh_failure(['mq.sh', 'sem', '-info', machine])
 
 
 # return codes for a test run or single step of a run
@@ -476,6 +394,23 @@ FAILURE = 0
 SUCCESS = 1
 SKIP = 2
 REPEAT = 3
+
+# string for detecting ssh failure
+ssh_failure_str = "Unable to ssh to tftp.keg.cse.unsw.edu.au"
+
+
+def wrap_ssh_failure(cmd: List[str]):
+    """Wrap a list of commands in a check for failing to connect via ssh.
+    Signal test repeat instead of failure in that case
+    """
+    def wrapped_cmd(run, prev_output):
+        result, output = run_cmd(cmd, run, prev_output)
+        if result == FAILURE:
+            if any(ssh_failure_str in line for line in output):
+                printc(ANSI_YELLOW, "Detected ssh failure, trying to repeat test.")
+                return REPEAT, output
+        return result, output
+    return wrapped_cmd
 
 
 def success_from_bool(success: bool) -> int:
@@ -641,8 +576,9 @@ def run_build_script(manifest_dir: str,
             except IOError:
                 printc(ANSI_RED, f"Error reading {junit_file}")
                 result = FAILURE
-            except:
+            except Exception as e:
                 printc(ANSI_RED, f"Error parsing {junit_file}")
+                print("Exception: " + e)
                 result = FAILURE
 
         if result == REPEAT and tries_left > 0:

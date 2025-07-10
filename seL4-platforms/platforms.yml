@@ -186,7 +186,7 @@ platforms:
     aarch_hyp: [64]
     platform: imx93
     march: armv8a
-    req: imx93a
+    req: [imx93a,imx93b]
     settings:
       # override the default of 4 for sel4test; ignored in non-SMP builds
       # if the platform is enabled for other apps this may need manual override

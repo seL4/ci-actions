@@ -67,7 +67,9 @@ elif [ ! -d "$IM_LOCAL_DIR" ]; then
     # support the share-safe repo requirement. Passing format.use-share-safe=False
     # should be safe for hg-system with versions < 6.2, because unknown format
     # options are ignored.
-    hg-system --config format.use-share-safe=False clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
+    # We need to set zlib compression explicitly, because newer versions default
+    # to zstd which is not available in hg 3.x.
+    hg-system --config format.use-share-safe=False --config format.revlog-compression=zlib clone -U "$IM_REMOTE_URL" "$IM_LOCAL_NAME"
   )
 
 else

@@ -392,9 +392,6 @@ platforms:
 # platforms where MCS is wholly unsupported
 # (for platforms with partial support see sel4test-hw/build.py and comments below)
 mcs_unsupported_platforms:
-  # both fail SCHED0012 and debug assertions on boot:
-  - IMX8MQ_EVK
-  - MAAXBOARD
   # unsupported for specific configs: ODROID_X4, TX2
   # unsupported for multicore: SABRE, IMX8MM_EVK
   # see also https://github.com/seL4/ci-actions/blob/master/sel4test-hw/build.py

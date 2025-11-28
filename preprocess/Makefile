@@ -14,5 +14,5 @@ push: build
 
 test: build
 	docker run -ti --entrypoint bash -e GITHUB_REPOSITORY -e GITHUB_REF \
-	  -e INPUT_L4V_ARCH -e INPUT_L4V_FEATURES -e INPUT_L4V_PLAT \
+	  -e INPUT_L4V_ARCH -e INPUT_L4V_FEATURES \
 		-e GITHUB_WORKSPACE -e GITHUB_BASE_REF -e GITHUB_ACTIONS $(IMG)

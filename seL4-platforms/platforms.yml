@@ -115,6 +115,14 @@ platforms:
     march: armv8a
     no_hw_test: true
 
+  ROCK3B:
+    arch: arm
+    modes: [64]
+    platform: rock3b
+    req: [rock3b]
+    march: armv8a
+    no_hw_test: true
+
   QUARTZ64:
     arch: arm
     modes: [64]

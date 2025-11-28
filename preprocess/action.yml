@@ -18,10 +18,6 @@ inputs:
     description: 'Additional features to include. Empty ("") or "MCS".'
     required: false
 
-  L4V_PLAT:
-    description: 'Platform variant to test (optional). Either a platform name or unset.'
-    required: false
-
   action_name:
     description: 'internal -- do not use'
     required: false

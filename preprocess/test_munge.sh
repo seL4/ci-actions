@@ -14,7 +14,7 @@ USAGE: test_munge.sh [-h|-d|-v] <git-ref> [git-ref]
   -a    AST check
   -v    Verbose
   -c    Colorized output
-  -p    Path to th repo collection
+  -p    Path to the repo collection
   -h    Print help
 EOF
 }

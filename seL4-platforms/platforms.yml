@@ -118,6 +118,8 @@ platforms:
   ROCK3B:
     arch: arm
     modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
     platform: rock3b
     req: [rock3b]
     march: armv8a

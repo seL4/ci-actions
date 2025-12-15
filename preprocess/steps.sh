@@ -38,5 +38,22 @@ repo-util hashes
 cp -r /c-parser "${REPOS}/l4v/tools/"
 echo "::endgroup::"
 
-# start test
+# one test for the default L4V_ARCH/L4V_FEATURES combination
 test_munge.sh -ac -p "${REPOS}" $MANIFEST_REV $TEST_REF
+
+# then all platform combinations if any exist
+
+# find all L4V_PLAT for the provided L4V_ARCH/L4V_FEATURES combination in
+# seL4/configs/ and store them in the array CONFIGS
+FEAT="${L4V_FEATURES:+${L4V_FEATURES}_}"
+
+shopt -s nullglob
+cd "${SEL4_REPO}/configs/"
+CONFIGS=$(echo ${L4V_ARCH}_${FEAT}[a-z0-9]*_verified.cmake)
+cd - > /dev/null
+
+for CONFIG in ${CONFIGS}; do
+  L4V_PLAT=${CONFIG##${L4V_ARCH}_${FEAT}}
+  export L4V_PLAT=${L4V_PLAT%_verified.cmake}
+  test_munge.sh -ac -p "${REPOS}" $MANIFEST_REV $TEST_REF
+done

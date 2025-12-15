@@ -77,6 +77,8 @@ MAKE_MUNGE=${SCRIPT_DIR}/make_munge.sh
 echo -e "${YEL}REF1=seL4@${REF1}"
 echo "REF2=seL4@${REF2}"
 echo "L4V_ARCH=${L4V_ARCH}"
+echo "L4V_PLAT=${L4V_PLAT}"
+echo "L4V_FEATURES=${L4V_FEATURES}"
 echo -e "WORKING...${NC}"
 
 if [ -z ${VERBOSE} ]
@@ -130,7 +132,7 @@ fi
 echo -en "${NC}"
 
 if ! ${ERRORS}
-then echo -e "${GRE}Clean diff, test PASSED for L4V_ARCH=${L4V_ARCH}.${NC}"
+then echo -e "${GRE}Clean diff, test PASSED for L4V_ARCH=${L4V_ARCH} and L4V_PLAT=${L4V_PLAT}.${NC}"
 else
     echo -en "${RED}"
     if ! diff -q kernel_all_1.txt kernel_all_2.txt
@@ -146,5 +148,6 @@ else
     fi
     echo
     echo -e "${RED}Preprocess test FAILED.${NC}"
+    echo -e "${RED}L4V_ARCH=${L4V_ARCH}; L4V_PLAT=${L4V_PLAT}; L4V_FEATURES=${L4V_FEATURES}${NC}"
     exit 1
 fi

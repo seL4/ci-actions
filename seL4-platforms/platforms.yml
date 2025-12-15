@@ -233,14 +233,6 @@ platforms:
     req: [odroidc4_1, odroidc4_2]
     march: armv8a
 
-  ODROID_X:
-    arch: arm
-    modes: [32]
-    platform: exynos4
-    req: [odroid]
-    march: armv7a
-    no_hw_test: true
-
   ODROID_XU:
     arch: arm
     modes: [32]
@@ -250,15 +242,6 @@ platforms:
     image_platform: exynos5
     march: armv7a
     no_hw_test: true
-
-  ARNDALE:
-    arch: arm
-    modes: [32]
-    platform: exynos5250
-    req: [arndale]
-    image_platform: exynos5
-    march: armv7a
-    no_hw_build: true
 
   ODROID_XU4:
     arch: arm
@@ -299,15 +282,6 @@ platforms:
     platform: zynqmp
     req: [zcu106]
     march: armv8a
-
-  HIKEY:
-    arch: arm
-    modes: [32, 64]
-    aarch_hyp: [64]
-    platform: hikey
-    req: [hikey]
-    march: armv8a
-    no_hw_test: true
 
   TK1:
     arch: arm
@@ -353,15 +327,6 @@ platforms:
     platform: tx2
     req: [tx2a, tx2b]
     march: armv8a
-
-  APQ8064:
-    arch: arm
-    modes: [32]
-    platform: apq8064
-    req: [inforce]
-    image_platform: inforce
-    march: armv7a
-    no_hw_build: true
 
   WANDQ:
     arch: arm

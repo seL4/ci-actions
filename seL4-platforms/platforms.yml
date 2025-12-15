@@ -328,33 +328,6 @@ platforms:
     req: [tx2a, tx2b]
     march: armv8a
 
-  WANDQ:
-    arch: arm
-    modes: [32]
-    platform: wandq
-    image_platform: imx6
-    # march: ?
-    no_hw_test: true
-    no_hw_build: true
-
-  ALLWINNER20:
-    arch: arm
-    modes: [32]
-    platform: allwinner20
-    march: armv7a
-    no_hw_test: true
-    no_hw_build: true
-
-  IMX7SABRE:
-    arch: arm
-    modes: [32]
-    platform: imx7sabre
-    req: [imx7]
-    image_platform: imx7
-    # march: ?
-    no_hw_test: true
-    no_hw_build: true
-
   PC99:
     arch: x86
     modes: [32, 64]

@@ -183,7 +183,7 @@ def get_results(run: Run) -> List[float]:
         if bench['Benchmark'].startswith('IRQ path cycle count'):
             results = bench['Results']
             for result in results:
-                if result['Type'] == 'With context switch':
+                if result['Type'] == 'With context switch (early processing)':
                     irq_invoke = round(result['Mean'])
                     irq_invoke_s = round(result['Stddev'])
 

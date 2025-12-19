@@ -146,7 +146,9 @@ def get_results(run: Run) -> List[float]:
         data = json.load(f)
 
     ipc_call = 0
+    ipc_call_fpu = 0
     ipc_reply = 0
+    ipc_reply_fpu = 0
     irq_invoke = 0
     notify = 0
     notify_s = '?'
@@ -159,10 +161,18 @@ def get_results(run: Run) -> List[float]:
                    result['Direction'] == 'client->server' and result['IPC length'] == 0:
                     ipc_call = round(result['Mean'])
                     ipc_call_s = round(result['Stddev'])
+                elif result['Function'] == 'seL4_Call (FPU)' and not result['Same vspace?'] and \
+                        result['Direction'] == 'client->server' and result['IPC length'] == 0:
+                    ipc_call_fpu = round(result['Mean'])
+                    ipc_call_fpu_s = round(result['Stddev'])
                 elif result['Function'] == 'seL4_ReplyRecv' and not result['Same vspace?'] and \
                         result['Direction'] == 'server->client' and result['IPC length'] == 0:
                     ipc_reply = round(result['Mean'])
                     ipc_reply_s = round(result['Stddev'])
+                elif result['Function'] == 'seL4_ReplyRecv (FPU)' and not result['Same vspace?'] and \
+                        result['Direction'] == 'server->client' and result['IPC length'] == 0:
+                    ipc_reply_fpu = round(result['Mean'])
+                    ipc_reply_fpu_s = round(result['Stddev'])
         if bench['Benchmark'].startswith('Signal to process of higher prio'):
             results = bench['Results']
             for result in results:
@@ -177,10 +187,11 @@ def get_results(run: Run) -> List[float]:
                     irq_invoke = round(result['Mean'])
                     irq_invoke_s = round(result['Stddev'])
 
-        if ipc_call > 0 and ipc_reply > 0 and irq_invoke > 0 and notify > 0:
+        if ipc_call > 0 and ipc_call_fpu > 0 and ipc_reply > 0 and ipc_reply_fpu > 0 and irq_invoke > 0 and notify > 0:
             break
 
-    return [irq_invoke, irq_invoke_s, ipc_call, ipc_call_s, ipc_reply, ipc_reply_s, notify, notify_s]
+    return [irq_invoke, irq_invoke_s, ipc_call, ipc_call_s, ipc_reply, ipc_reply_s, notify, notify_s,
+            ipc_call_fpu, ipc_call_fpu_s, ipc_reply_fpu, ipc_reply_fpu_s]
 
 
 def get_run(runs: List[Run], name: str) -> Optional[Run]:
@@ -256,6 +267,8 @@ def gen_json(runs: List[Run], yml, file_name: str):
             row['call'] = (results[2], results[3])
             row['reply'] = (results[4], results[5])
             row['notify'] = (results[6], results[7])
+            row['call_fpu'] = (results[8], results[9])
+            row['reply_fpu'] = (results[10], results[11])
 
             adjust_build_settings(run.build)
             build_command = " ".join(["init-build.sh"] + run.build.settings_args())

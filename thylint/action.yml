@@ -22,5 +22,5 @@ inputs:
     default: 'thylint'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'

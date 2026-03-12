@@ -16,5 +16,5 @@ inputs:
     default: 'bashisms'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'

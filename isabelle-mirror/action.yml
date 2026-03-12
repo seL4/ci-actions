@@ -13,5 +13,5 @@ inputs:
     default: 'isabelle-mirror'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'

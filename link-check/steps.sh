@@ -56,9 +56,13 @@ else
   exit 0
 fi
 
+# Use a cache from the last run if available to avoid hitting GitHub rate limits
+# and accept/ignore 429 (Too Many Requests) errors.
 (set -x; \
   cat "${FILES}" | tr '\n' '\000' | \
   xargs -0 lychee -n \
+         --cache \
+         --accept 429 \
          ${INPUT_TOKEN:+--github-token "${INPUT_TOKEN}"} \
          ${INPUT_EXCLUDE:+--exclude-path "${INPUT_EXCLUDE}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \

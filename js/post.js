@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-var run = require('./run')
+import { run } from './run.js';
 
-run.run('post-steps.sh');
+run('post-steps.sh');

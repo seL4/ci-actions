@@ -8,7 +8,7 @@
 # CI actions and Workflows for seL4 repositories
 
 This repository collects definitions for continuous integration (CI)
-tasks/actions for the repositories of the seL4 foundation. While some of these
+tasks/actions for the repositories of the seL4 Foundation. While some of these
 might be useful more generally, most of them will be specific to the seL4 setup.
 
 The idea is to concentrate most of the GitHub workflow definitions here in a
@@ -35,15 +35,42 @@ define an `on: workflow_call` trigger. In particular:
 
 The following GitHub actions are available:
 
-- [Style](style/)
-- [Gitlint](gitlint/)
-- [`git diff --check`](git-diff-check/)
-- [License Check](license-check/)
-- [Link Check](link-check/)
-- [Portable Shell Script](bashisms/) check
-- [Preprocess](preprocess/) the seL4 source to check for changes to verified configurations.
-- [Run Proofs](run-proofs/): check if the proofs still work after a code change.
-- [Kernel Compile](standalone-kernel/): standalone seL4 kernel compilation for different compiler/arch/python combinations.
+- [AWS Proofs](aws-proofs/): run the l4v proofs on AWS
+- [Bashisms](bashisms/): check shell for non-portable shell scripts
+- [CAmkES Hardware Test](camkes-hw/): CAmkES test hardware runs
+- [CAmkES Tests](camkes-test/): CAmkES test builds and simulations
+- [CAmkES Unit Tests](camkes-unit/): unit tests for the `camkes-tool` repository
+- [CAmkES VM Tests](camkes-vm/): CAmkES VM tests
+- [CAmkES VM Hardware Tests](camkes-vm-hw/): CAmkES VM hardware runs
+- [CParser Run](cparser-run/): check seL4 PRs for C verification subset
+- [Git Diff Check](git-diff-check/): check for trailing whitespace and merge conflict markers
+- [Gitlint](gitlint/): run gitlint on pull requests
+- [Isabelle Mirror](isabelle-mirror/): mirrors the upstream Isabelle repository to git
+- [L4v Deploy](l4v-deploy/): deploys l4v default.xml manifest after successful proof runs
+- [License Check](license-check/): runs the FSFE reuse license tool
+- [Link Check](link-check/): checks links in `.md` and `.html` files
+- [Manifest Deploy](manifest-deploy/): deploys default.xml manifests after successful tests
+- [m-arch of Platform](march-of-platform/): outputs the `march` of a given platform
+- [Preprocess](preprocess/): run AST diff on preprocessed source for verified configurations
+- [Repo Checkout](repo-checkout/): checks out a `repo` collection
+- [RumpRun](rump-hello/): rumprun hello-world simulation test
+- [RumpRun Hardware](rump-hello-hw/): rumprun hello-world test on hardware
+- [Run Proofs](run-proofs/): run the l4v proofs in docker (not used in CI)
+- [seL4 Benchmark Builds](sel4bench/): sel4bench image builds
+- [seL4 Benchmark Runs](sel4bench-hw/): run sel4bench images on hardware
+- [seL4 Benchmark Results](sel4bench-web/): publish sel4bench results to the seL4 website
+- [seL4 Manual](seL4-manual/): build seL4 PDF manual
+- [seL4Test Hardware Builds](sel4test-hw/): sel4test image builds
+- [seL4Test Hardware Runs](sel4test-hw-run/): sel4test hardware runs
+- [seL4Test Hardware Run Matrix](sel4test-hw-matrix/): matrix for sel4test hardware runs
+- [seL4Test Simulation](sel4test-sim/): sel4test simulations for platforms with a simulation binary
+- [Standalone Kernel](standalone-kernel/): standalone seL4 kernel compilation
+- [Style](style/): coding style checks of the seL4 Foundation
+- [Thylint](thylint/): basic Isabelle theory file linter
+- [Trigger](trigger/): triggers a test run in the main repository of a repo manifest set
+- [Tutorials](tutorials/): run the seL4 tutorial tests (simulation only)
+- [Webserver Tests](webserver/): builds for the seL4 webserver demo app
+- [Webserver Hardware Tests](webserver-hw/): hardware runs for the seL4 webserver demo app
 
 ## Contributing
 

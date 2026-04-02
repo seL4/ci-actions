@@ -30,6 +30,14 @@ def hw_build(manifest_dir: str, build: Build):
 
     script = [
         ["../init-build.sh"] + build.settings_args(),
+    ]
+
+    if verification_equals_release(build) and build.is_release():
+        base_args = [arg for arg in build.settings_args()
+                     if not arg.startswith('-DRELEASE=')]
+        script.append(["check-config-eq.sh"] + base_args)
+
+    script += [
         ["ninja"],
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"],
         ["cp", "kernel/kernel.elf", f"../{build.name}-kernel.elf"]
@@ -54,10 +62,19 @@ def hw_run(manifest_dir: str, build: Build):
     return run_build_script(manifest_dir, build, script, final_script=final, junit=True)
 
 
+def verification_equals_release(build: Build) -> bool:
+    """Return whether in this build release and verification settings are equivalent."""
+
+    return build.get_platform().arch == 'riscv'
+
+
 def build_filter(build: Build) -> bool:
     plat = build.get_platform()
 
     if plat.no_hw_build:
+        return False
+
+    if build.is_verification() and verification_equals_release(build):
         return False
 
     if plat.arch == 'arm':

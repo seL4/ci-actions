@@ -21,7 +21,7 @@ RUN pip3 install "junitparser==3.*" PyGithub
 ARG SCRIPTS
 ARG ACTION
 RUN mkdir ${SCRIPTS}
-COPY ${ACTION}/steps.sh scripts/* ${SCRIPTS}/
+COPY ${ACTION}/steps.sh ${ACTION}/check-config-eq.sh scripts/* ${SCRIPTS}/
 RUN chmod a+rx ${SCRIPTS}/*
 ENV  PATH "${SCRIPTS}:${PATH}"
 

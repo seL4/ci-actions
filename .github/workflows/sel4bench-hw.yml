@@ -66,7 +66,7 @@ jobs:
         xml: ${{ needs.code.outputs.xml }}
         march: ${{ matrix.march }}
     - name: Upload images
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: images-sel4bench-${{ matrix.march }}
         path: '*-images.tar.gz'
@@ -104,7 +104,7 @@ jobs:
             req: haswell3
     steps:
       - name: Get machine queue
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: seL4/machine_queue
           path: machine_queue
@@ -126,7 +126,7 @@ jobs:
         env:
           HW_SSH: ${{ secrets.HW_SSH }}
       - name: Upload results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           # funky expression below is to work around lack of ternary operator
           name: sel4bench-results-${{ matrix.platform }}${{ matrix.req != '' && format('-{0}', matrix.req) || '' }}

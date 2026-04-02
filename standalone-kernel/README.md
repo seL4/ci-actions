@@ -51,7 +51,7 @@ standalone_kernel:
           - arch: RISCV64
             compiler: llvm
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
     - uses: seL4/ci-actions/standalone-kernel@master
       with:
         ARCH: ${{ matrix.arch }}

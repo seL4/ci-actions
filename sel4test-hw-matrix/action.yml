@@ -12,6 +12,12 @@ inputs:
     required: false
     default: 'sel4test-hw-matrix'
 
+outputs:
+  matrix:
+    description: 'Hardware run matrix (JSON)'
+  max_parallel:
+    description: 'Number of base matrix entries, for use as strategy.max-parallel'
+
 runs:
   using: 'node24'
   main: '../js/index.js'

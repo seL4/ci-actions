@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: 'seL4Test/Hardware Run Matrix'
-description: Generates matrix for hardware runs.
+name: 'seL4Test/Hardware Matrices'
+description: Generates build and run matrices for seL4Test.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
@@ -13,10 +13,12 @@ inputs:
     default: 'sel4test-hw-matrix'
 
 outputs:
-  matrix:
+  build_matrix:
+    description: 'Hardware build matrix (JSON)'
+  run_matrix:
     description: 'Hardware run matrix (JSON)'
-  max_parallel:
-    description: 'Number of base matrix entries, for use as strategy.max-parallel'
+  run_max_parallel:
+    description: 'Number of base run matrix entries, for use as strategy.max-parallel'
 
 runs:
   using: 'node24'

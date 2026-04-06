@@ -119,9 +119,33 @@ def build_filter(build: Build) -> bool:
     return True
 
 
+def to_build_matrix(builds: List[Build]) -> str:
+    """Return a GitHub build matrix for hw-build jobs as a JSON string.
+
+    Splits by debug-level, compiler, march, and subgroup (if there is more than one).
+    """
+
+    sorted_platforms = sorted(set([b.get_platform() for b in builds]), key=lambda p: p.name)
+    # Collect unique (march, subgroup) pairs. For most march there is only one subgroup.
+    march_subgroups = sorted(set((p.march, p.subgroup) for p in sorted_platforms))
+
+    debug_levels = ["debug", "release", "verification"]
+    compilers = ["gcc", "clang"]
+    base_entries = [
+        {"march": m, "compiler": c, "subgroup": s}
+        for m, s in march_subgroups for c in compilers
+    ]
+
+    include = [
+        {**entry, "debug": d}
+        for d in debug_levels for entry in base_entries
+    ]
+
+    return json.dumps({"include": include})
+
+
 def to_matrix(builds: List[Build]) -> tuple[str, int]:
-    """Return a GitHub build matrix per enabled hardware platform as GitHub output assignment
-    and max-parallel value to set on that matrix.
+    """Return a GitHub hw-run matrix as a JSON string and max-parallel value.
 
     The matrix is ordered by debug level with max-parallel set such that debug levels run roughly
     sequentially per board. None of that ordering is guaranteed by GitHub actions, but seems to
@@ -133,26 +157,30 @@ def to_matrix(builds: List[Build]) -> tuple[str, int]:
         if plat.no_hw_test or plat.no_hw_build:
             return []
 
+        p = plat.name
+        m = plat.march
+        s = plat.subgroup
+
         # separate runs for each compiler on arm
         if plat.arch == 'arm':
             return [
-                {"platform": plat.name, "march": plat.march, "compiler": "gcc"},
-                {"platform": plat.name, "march": plat.march, "compiler": "clang"},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "gcc"},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "clang"},
             ]
 
         if plat.arch == 'riscv':
             return [
-                {"platform": plat.name, "march": plat.march, "compiler": "gcc"},
-                {"platform": plat.name, "march": plat.march, "compiler": "clang"},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "gcc"},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "clang"},
             ]
 
         # separate runs for each compiler + mode on x86, because we have more machines available
         if plat.arch == 'x86':
             return [
-                {"platform": plat.name, "march": plat.march, "compiler": "gcc", "mode": 32},
-                {"platform": plat.name, "march": plat.march, "compiler": "clang", "mode": 32},
-                {"platform": plat.name, "march": plat.march, "compiler": "gcc", "mode": 64},
-                {"platform": plat.name, "march": plat.march, "compiler": "clang", "mode": 64},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "gcc", "mode": 32},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "clang", "mode": 32},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "gcc", "mode": 64},
+                {"platform": p, "march": m, "subgroup": s, "compiler": "clang", "mode": 64},
             ]
 
     # Sort platforms by name for a stable ordering within each debug level.
@@ -164,10 +192,12 @@ def to_matrix(builds: List[Build]) -> tuple[str, int]:
     # Set max-parallel set to len(base_entries) so debug fills all slots first,
     # then each further level starts roughly sequentially as jobs finish.
     debug_levels = ["debug", "release", "verification"]
-    include = [{**entry, "debug": d} for d in debug_levels for entry in base_entries]
+    include = [
+        {**entry, "debug": d}
+        for d in debug_levels for entry in base_entries
+    ]
 
-    matrix = {"include": include}
-    return json.dumps(matrix), len(base_entries)
+    return json.dumps({"include": include}), len(base_entries)
 
 
 # If called as main, run all builds from builds.yml
@@ -178,10 +208,11 @@ if __name__ == '__main__':
         pprint(builds)
         sys.exit(0)
 
-    if len(sys.argv) > 1 and sys.argv[1] == '--matrix':
-        matrix_json, max_parallel = to_matrix(builds)
-        gh_output(f"matrix={matrix_json}")
-        gh_output(f"max_parallel={max_parallel}")
+    if len(sys.argv) > 1 and sys.argv[1] == '--matrices':
+        run_matrix_json, max_parallel = to_matrix(builds)
+        gh_output(f"run_matrix={run_matrix_json}")
+        gh_output(f"run_max_parallel={max_parallel}")
+        gh_output(f"build_matrix={to_build_matrix(builds)}")
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--hw':

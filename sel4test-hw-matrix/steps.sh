@@ -17,4 +17,4 @@ export PYTHONPATH="${ACTION_DIR}/seL4-platforms"
 echo "::endgroup::"
 
 # start test
-python3 "${ACTION_DIR}/${INPUT_ACTION_NAME}/build.py" --matrix
+python3 "${ACTION_DIR}/${INPUT_ACTION_NAME}/build.py" --matrices

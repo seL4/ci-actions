@@ -123,6 +123,7 @@ platforms:
     platform: rk3568
     req: [rk3568]
     march: armv8a
+    subgroup: 2
     no_hw_test: true
 
   QUARTZ64:
@@ -130,6 +131,7 @@ platforms:
     modes: [64]
     platform: quartz64
     march: armv8a
+    subgroup: 2
     no_hw_test: true
 
   ARMVIRT32:
@@ -232,6 +234,7 @@ platforms:
     platform: odroidc4
     req: [odroidc4_1, odroidc4_2]
     march: armv8a
+    subgroup: 2
 
   ODROID_XU:
     arch: arm
@@ -269,6 +272,7 @@ platforms:
     platform: zynqmp
     req: [zcu102_2]
     march: armv8a
+    subgroup: 2
     # The ZCU102 in machine queue expects a binary image
     # settings:
     # Sel4testAllowSettingsOverride: true
@@ -298,6 +302,7 @@ platforms:
     req: [rpi3]
     image_platform: bcm2837
     march: armv8a # ARMv8 platform currently used in AARCH32 mode only.
+    subgroup: 2
     no_hw_test: true
 
   RPI4:
@@ -308,6 +313,7 @@ platforms:
     req: [pi4B]
     image_platform: bcm2711
     march: armv8a
+    subgroup: 2
     no_hw_test: true
 
   TX1:
@@ -318,6 +324,7 @@ platforms:
     platform: tx1
     req: [tx1a]
     march: armv8a
+    subgroup: 2
 
   TX2:
     arch: arm
@@ -327,6 +334,7 @@ platforms:
     platform: tx2
     req: [tx2a]
     march: armv8a
+    subgroup: 2
 
   PC99:
     arch: x86

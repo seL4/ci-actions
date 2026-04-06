@@ -44,10 +44,22 @@ jobs:
         manifest: master.xml
         sha: ${{ github.event.pull_request.head.sha }}
 
+  matrices:
+    name: Matrices
+    needs: code
+    runs-on: ubuntu-latest
+    outputs:
+      build_matrix: ${{ steps.matrices.outputs.build_matrix }}
+      run_matrix: ${{ steps.matrices.outputs.run_matrix }}
+      run_max_parallel: ${{ steps.matrices.outputs.run_max_parallel }}
+    steps:
+    - id: matrices
+      uses: seL4/ci-actions/sel4test-hw-matrix@master
+
   hw-build:
     name: HW Build
     runs-on: ubuntu-latest
-    needs: code
+    needs: [code, matrices]
     # To reduce the load (especially on the machine queue) we cancel any older
     # runs of this workflow for the current PR.
     concurrency:
@@ -55,11 +67,7 @@ jobs:
       cancel-in-progress: true
     strategy:
       fail-fast: false
-      matrix:
-        # There is no "rv32imac" hardware yet.
-        march: [armv7a, armv8a, nehalem, rv64imac]
-        compiler: [gcc, clang]
-        debug: [debug, release, verification]
+      matrix: ${{ fromJson(needs.matrices.outputs.build_matrix) }}
     steps:
     - name: Build
       uses: seL4/ci-actions/sel4test-hw@master
@@ -68,32 +76,22 @@ jobs:
         march: ${{ matrix.march }}
         compiler: ${{ matrix.compiler }}
         debug: ${{ matrix.debug }}
+        subgroup: ${{ matrix.subgroup }}
     - name: Upload images
       uses: actions/upload-artifact@v7
       with:
-        name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}
+        name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}-${{ matrix.subgroup }}
         path: '*-images.tar.gz'
     - name: Upload kernel.elf files
       uses: actions/upload-artifact@v7
       with:
-        name: kernel.elf-sel4test-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}
+        name: kernel.elf-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}-${{ matrix.subgroup }}
         path: '*-kernel.elf'
-
-  the_matrix:
-    name: Matrix
-    needs: hw-build
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      max_parallel: ${{ steps.matrix.outputs.max_parallel }}
-    steps:
-    - id: matrix
-      uses: seL4/ci-actions/sel4test-hw-matrix@master
 
   hw-run:
     name: HW Run
     runs-on: ubuntu-latest
-    needs: the_matrix
+    needs: [hw-build, matrices]
     if: ${{ github.repository_owner == 'seL4' &&
             (github.event_name == 'pull_request_target' &&
                (contains(github.event.pull_request.labels.*.name, 'hw-test') ||
@@ -103,8 +101,8 @@ jobs:
       cancel-in-progress: true
     strategy:
       fail-fast: false
-      max-parallel: ${{ needs.the_matrix.outputs.max_parallel }}
-      matrix: ${{ fromJson(needs.the_matrix.outputs.matrix) }}
+      max-parallel: ${{ needs.matrices.outputs.run_max_parallel }}
+      matrix: ${{ fromJson(needs.matrices.outputs.run_matrix) }}
     steps:
       - name: Get machine queue
         uses: actions/checkout@v6
@@ -114,7 +112,7 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v8
         with:
-          name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}
+          name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}-${{ matrix.subgroup }}
       - name: Run
         uses: seL4/ci-actions/sel4test-hw-run@master
         with:

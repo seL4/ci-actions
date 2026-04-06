@@ -718,7 +718,7 @@ def get_env_filters() -> list:
     def to_list(string: str) -> list:
         return [s.strip() for s in string.split(',')]
 
-    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform', 'name', 'app', 'req']
+    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform', 'name', 'app', 'req', 'subgroup']
     filter = {k: to_list(get(k)) for k in keys if get(k)}
     # 'mode' expects integers:
     if 'mode' in filter:
@@ -769,6 +769,9 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                     return False
             elif k == 'domains':
                 if (v == '') == build.is_domains():
+                    return False
+            elif k == 'subgroup':
+                if str(build.get_platform().subgroup) not in v:
                     return False
             elif k == 'req':
                 for req in v:

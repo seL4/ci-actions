@@ -32,5 +32,5 @@ jobs:
     - uses: docker/build-push-action@v7
       with:
         push: true
-        file: sel4-manual/Dockerfile
+        file: seL4-manual/Dockerfile
         tags: sel4/sel4manual:latest

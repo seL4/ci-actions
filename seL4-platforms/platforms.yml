@@ -215,7 +215,7 @@ platforms:
     platform: am335x-boneblack
     image_platform: am335x
     req: [bboneblack]
-    march: armv8a
+    march: armv7a
 
   ODROID_C2:
     arch: arm

@@ -119,8 +119,15 @@ def build_filter(build: Build) -> bool:
     return True
 
 
-def to_json(builds: List[Build]) -> str:
-    """Return a GitHub build matrix per enabled hardware platform as GitHub output assignment."""
+def to_matrix(builds: List[Build]) -> tuple[str, int]:
+    """Return a GitHub build matrix per enabled hardware platform as GitHub output assignment
+    and max-parallel value to set on that matrix.
+
+    The matrix is ordered by debug level with max-parallel set such that debug levels run roughly
+    sequentially per board. None of that ordering is guaranteed by GitHub actions, but seems to
+    work out Ok. The purpose of sequential runs is to get more fine-grained ability to re-run
+    jobs without overloading the machine queue.
+    """
 
     def run_for_plat(plat: Platform) -> List[dict]:
         if plat.no_hw_test or plat.no_hw_build:
@@ -148,10 +155,19 @@ def to_json(builds: List[Build]) -> str:
                 {"platform": plat.name, "march": plat.march, "compiler": "clang", "mode": 64},
             ]
 
-    platforms = set([b.get_platform() for b in builds])
-    matrix = {"include": [run for plat in platforms for run in run_for_plat(plat)]}
+    # Sort platforms by name for a stable ordering within each debug level.
+    # Uses set for removing duplicates.
+    sorted_platforms = sorted(set([b.get_platform() for b in builds]), key=lambda p: p.name)
+    base_entries = [run for plat in sorted_platforms for run in run_for_plat(plat)]
 
-    return "matrix=" + json.dumps(matrix)
+    # Split by debug level at the outermost level.
+    # Set max-parallel set to len(base_entries) so debug fills all slots first,
+    # then each further level starts roughly sequentially as jobs finish.
+    debug_levels = ["debug", "release", "verification"]
+    include = [{**entry, "debug": d} for d in debug_levels for entry in base_entries]
+
+    matrix = {"include": include}
+    return json.dumps(matrix), len(base_entries)
 
 
 # If called as main, run all builds from builds.yml
@@ -163,7 +179,9 @@ if __name__ == '__main__':
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--matrix':
-        gh_output(to_json(builds))
+        matrix_json, max_parallel = to_matrix(builds)
+        gh_output(f"matrix={matrix_json}")
+        gh_output(f"max_parallel={max_parallel}")
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--hw':

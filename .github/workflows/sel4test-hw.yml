@@ -92,8 +92,7 @@ jobs:
     name: HW Run
     runs-on: ubuntu-latest
     needs: [hw-build, matrices]
-    if: ${{ github.repository_owner == 'seL4' &&
-            (github.event_name == 'pull_request_target' &&
+    if: ${{ (github.event_name == 'pull_request_target' &&
                (contains(github.event.pull_request.labels.*.name, 'hw-test') ||
                 github.event.label.name == 'hw-test')) }}
     concurrency:

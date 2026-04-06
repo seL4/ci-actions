@@ -14,6 +14,10 @@ inputs:
   march:
     description: Comma separated list of march flags to filter test configs on.
     required: false
+  subgroup:
+    description: |
+      Subgroup number (currently: 1, 2) to further filter builds on.
+    required: false
   mode:
     description: Comma separated list of modes (32/64) to filter test configs on.
     required: false

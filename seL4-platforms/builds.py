@@ -712,8 +712,8 @@ def build_for_variant(base_build: Build, variant, filter_fun=lambda x: True) -> 
     return build if filter_fun(build) else None
 
 
-DEFAULT_ENV_FILTER_KEYS = ['march', 'arch', 'mode',
-                           'compiler', 'debug', 'platform', 'name', 'app', 'req']
+DEFAULT_ENV_FILTER_KEYS = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform',
+                           'name', 'app', 'req', 'subgroup']
 
 
 def get_env_filters(keys: list[str] = DEFAULT_ENV_FILTER_KEYS) -> list:
@@ -775,6 +775,9 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                     return False
             elif k == 'domains':
                 if (v == '') == build.is_domains():
+                    return False
+            elif k == 'subgroup':
+                if str(build.get_platform().subgroup) not in v:
                     return False
             elif k == 'req':
                 for req in v:

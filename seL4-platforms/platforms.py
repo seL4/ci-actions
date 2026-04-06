@@ -54,6 +54,7 @@ class Platform:
         self.image_platform = None
         self.has_simulation = False
         self.march = None
+        self.subgroup = 1
         self.req = None
         self.no_hw_test = False
         self.no_hw_build = False

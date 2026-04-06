@@ -42,4 +42,4 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://sel4/sel4test-hw:latest'
+  image: 'docker://lsf37/sel4test-hw:latest'

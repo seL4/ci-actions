@@ -54,7 +54,7 @@ jobs:
       run_max_parallel: ${{ steps.matrices.outputs.run_max_parallel }}
     steps:
     - id: matrices
-      uses: seL4/ci-actions/sel4test-hw-matrix@master
+      uses: seL4/ci-actions/sel4test-hw-matrix@more-matrix
 
   hw-build:
     name: HW Build
@@ -70,7 +70,7 @@ jobs:
       matrix: ${{ fromJson(needs.matrices.outputs.build_matrix) }}
     steps:
     - name: Build
-      uses: seL4/ci-actions/sel4test-hw@master
+      uses: seL4/ci-actions/sel4test-hw@more-matrix
       with:
         xml: ${{ needs.code.outputs.xml }}
         march: ${{ matrix.march }}
@@ -114,7 +114,7 @@ jobs:
         with:
           name: images-sel4test-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.debug }}-${{ matrix.subgroup }}
       - name: Run
-        uses: seL4/ci-actions/sel4test-hw-run@master
+        uses: seL4/ci-actions/sel4test-hw-run@more-matrix
         with:
           platform: ${{ matrix.platform }}
           compiler: ${{ matrix.compiler }}

@@ -100,7 +100,7 @@ jobs:
       cancel-in-progress: true
     strategy:
       fail-fast: false
-      max-parallel: ${{ needs.matrices.outputs.run_max_parallel }}
+      max-parallel: ${{ fromJson(needs.matrices.outputs.run_max_parallel) }}
       matrix: ${{ fromJson(needs.matrices.outputs.run_matrix) }}
     steps:
       - name: Get machine queue

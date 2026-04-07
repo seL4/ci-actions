@@ -33,4 +33,4 @@ jobs:
       with:
         push: true
         file: seL4-manual/Dockerfile
-        tags: sel4/sel4manual:latest
+        tags: sel4/sel4-manual:latest

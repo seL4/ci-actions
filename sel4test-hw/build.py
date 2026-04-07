@@ -65,7 +65,8 @@ def hw_run(manifest_dir: str, build: Build):
 def verification_equals_release(build: Build) -> bool:
     """Return whether in this build release and verification settings are equivalent."""
 
-    return build.get_platform().arch == 'riscv'
+    plat = build.get_platform()
+    return plat.arch == 'riscv' or plat.arch == 'arm'
 
 
 def build_filter(build: Build) -> bool:

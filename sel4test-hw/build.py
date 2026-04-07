@@ -53,7 +53,7 @@ def hw_run(manifest_dir: str, build: Build):
         print(f"Build {build.name} disabled, skipping.")
         return SKIP
 
-    if build.is_verification() and build.is_smp:
+    if build.is_verification() and build.is_smp():
         print(f"Build {build.name} is verification+SMP, skipping.")
         return SKIP
 

@@ -26,7 +26,9 @@ else
 fi
 
 echo "Cloning ${REPO_PATH}@${REF}"
-git config --global --add safe.directory .
+# If this produces a git error message about dubious ownership, then there likely
+# already exists a git repo in the current directory and we should fail. To fix,
+# the caller should create a new empty directory first.
 git init -q .
 git remote add origin ${REPO_URL}
 git fetch -q --no-tags --depth ${DEPTH} origin +${REF}:refs/heads/test-revision

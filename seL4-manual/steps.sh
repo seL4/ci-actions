@@ -11,6 +11,8 @@ set -e
 
 # actions:
 echo "::group::Setting up"
+mkdir checkout
+cd checkout
 checkout.sh
 echo "::endgroup::"
 

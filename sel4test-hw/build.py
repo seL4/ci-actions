@@ -66,7 +66,8 @@ def verification_equals_release(build: Build) -> bool:
     """Return whether in this build release and verification settings are equivalent."""
 
     plat = build.get_platform()
-    return plat.arch == 'riscv' or plat.arch == 'arm'
+    # TX2 currently still set AArch64SErrorIgnore=ON for release mode
+    return plat.arch == 'riscv' or (plat.arch == 'arm' and not plat.name == 'TX2')
 
 
 def build_filter(build: Build) -> bool:

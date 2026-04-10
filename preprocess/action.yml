@@ -18,6 +18,11 @@ inputs:
     description: 'Additional features to include. Empty ("") or "MCS".'
     required: false
 
+  base_ref:
+    description: |
+      seL4 base ref to compare against instead of the verification manifest hash.
+    required: false
+
   action_name:
     description: 'internal -- do not use'
     required: false

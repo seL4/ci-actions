@@ -15,6 +15,11 @@ chmod a+x ~/bin/repo
 
 PATH=~/bin:"${GITHUB_WORKSPACE}/seL4_release":$PATH
 
+if [ -z "${GH_SSH}" ]; then
+  echo "No 'GH_SSH' key provided" >&2
+  exit 1
+fi
+
 echo "Setting up ssh"
 eval $(ssh-agent)
 ssh-add -q - <<< "${GH_SSH}"

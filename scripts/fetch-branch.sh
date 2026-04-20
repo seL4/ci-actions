@@ -7,6 +7,8 @@
 # Fetches the branch in ${GITHUB_REF} into a repo manifest checkout.
 # Does nothing if INPUT_XML is set, because that means we have already done this.
 
+set -e
+
 if [ -z "${INPUT_XML}" ]
 then
 

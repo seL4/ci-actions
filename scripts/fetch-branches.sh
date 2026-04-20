@@ -8,6 +8,8 @@
 # Skips branch fetching if explicit input manifest XML is present.
 # Always print repo summary. Needs a repo checkout.
 
+set -e
+
 if [ -z "${INPUT_XML}" ]
 then
   cd $(repo-util path ${GITHUB_REPOSITORY})

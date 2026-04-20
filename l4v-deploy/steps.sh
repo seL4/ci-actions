@@ -16,6 +16,11 @@ PATH=~/bin:"${SCRIPTS}/../l4v-deploy":$PATH
 
 pip3 install --user lxml
 
+if [ -z "${GH_SSH}" ]; then
+  echo "No 'GH_SSH' key provided" >&2
+  exit 1
+fi
+
 eval $(ssh-agent)
 ssh-add -q - <<< "${GH_SSH}"
 echo "::endgroup::"

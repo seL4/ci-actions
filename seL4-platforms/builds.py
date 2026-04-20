@@ -544,7 +544,7 @@ def run_build_script(manifest_dir: str,
         result = SUCCESS
         output = None
         for line in script:
-            result, ouput = run_cmd(line, run, output)
+            result, output = run_cmd(line, run, output)
             if result != SUCCESS:
                 break
 
@@ -556,7 +556,7 @@ def run_build_script(manifest_dir: str,
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
             for line in final_script:
-                r, output = run_cmd(line, run, ouput)
+                r, output = run_cmd(line, run, output)
                 if r == FAILURE:
                     # If a final script task fails, the overall task fails unless
                     # we have already decided to repeat. In either case we stop

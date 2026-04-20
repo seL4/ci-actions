@@ -24,6 +24,9 @@ inputs:
       override sha to advance PR repo to (e.g. sha for seL4 repo in
       seL4/sel4test-manifest if seL4 is the repo the action is called from)
     required: false
+  xml:
+    description: overrides the manifest with an XML file to use instead
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

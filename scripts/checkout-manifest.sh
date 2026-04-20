@@ -44,4 +44,4 @@ then
   $REPO init ${DEPTH} -m "${TEST_XML}"
 fi
 
-$REPO sync -j 4
+$REPO sync -j 4 --tags

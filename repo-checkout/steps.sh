@@ -20,8 +20,13 @@ echo "::endgroup::"
 
 echo "::group::Repo checkout"
 
+if echo "$INPUT_MANIFEST_REPO" | grep -q "/" 2>/dev/null; then
+  export MANIFEST_URL="https://github.com/${INPUT_MANIFEST_REPO}"
+else
+  export MANIFEST_URL="https://github.com/seL4/${INPUT_MANIFEST_REPO}"
+fi
 export REPO_MANIFEST="${INPUT_MANIFEST}"
-export MANIFEST_URL="https://github.com/seL4/${INPUT_MANIFEST_REPO}"
+export REPO_BRANCH="${INPUT_MANIFEST_BRANCH}"
 checkout-manifest.sh
 
 fetch-branches.sh

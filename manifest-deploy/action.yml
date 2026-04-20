@@ -12,8 +12,18 @@ inputs:
   xml:
     description: manifest to deploy in xml
     required: true
+  manifest:
+    description: |
+      the manifest xml file name to checkout from, if xml not specified.
+      NOT used for the deploy, which uses default.xml always
+    default: master.xml
+    required: false
   manifest_repo:
     description: the manifest repository to deploy to
+    required: false
+  manifest_branch:
+    description: Manifest repo branch
+    default: master
     required: false
   action_name:
     description: 'internal -- do not use'

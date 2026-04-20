@@ -9,11 +9,15 @@ author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   manifest_repo:
-    description: Manifest repostory (e.g. 'sel4test-manifest', 'sel4bench-manifest')
+    description: Manifest repository (e.g. 'sel4test-manifest', 'sel4bench-manifest')
     required: true
   manifest:
     description: Manifest file
     default: master.xml
+    required: false
+  manifest_branch:
+    description: Manifest repo branch
+    default: master
     required: false
   sha:
     description: |

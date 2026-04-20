@@ -8,11 +8,13 @@
 set -e
 
 echo "::group::Setting up"
-mkdir -p ~/bin
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+x ~/bin/repo
 
-PATH=~/bin:"${SCRIPTS}/../l4v-deploy":$PATH
+BINDIR="${RUNNER_TEMP}/bin"
+mkdir -p "${BINDIR}"
+curl https://storage.googleapis.com/git-repo-downloads/repo > "${BINDIR}/repo"
+chmod a+x "${BINDIR}/repo"
+
+PATH="${BINDIR}":"${SCRIPTS}/../l4v-deploy":$PATH
 
 pip3 install --user lxml
 

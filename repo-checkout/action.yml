@@ -9,7 +9,7 @@ author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   manifest_repo:
-    description: Manifest repostory (e.g. 'sel4test-manifest', 'sel4bench-manifest')
+    description: Manifest repository (e.g. 'sel4test-manifest', 'sel4bench-manifest')
     required: true
   manifest:
     description: Manifest file
@@ -19,6 +19,9 @@ inputs:
     description: |
       override sha to advance PR repo to (e.g. sha for seL4 repo in
       seL4/sel4test-manifest if seL4 is the repo the action is called from)
+    required: false
+  xml:
+    description: overrides the manifest with an XML file to use instead
     required: false
   action_name:
     description: 'internal -- do not use'

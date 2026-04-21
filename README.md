@@ -51,6 +51,9 @@ The following GitHub actions are available:
 - [Link Check](link-check/): checks links in `.md` and `.html` files
 - [Manifest Deploy](manifest-deploy/): deploys default.xml manifests after successful tests
 - [m-arch of Platform](march-of-platform/): outputs the `march` of a given platform
+- [microkit Hardware Builds](microkit-hw-build/): microkit image builds
+- [microkit Hardware Runs](microkit-hw-run/): microkit hardware runs
+- [microkit Hardware Run Matrix](microkit-hw-matrix/): matrix for microkit hardware runs
 - [Preprocess](preprocess/): run AST diff on preprocessed source for verified configurations
 - [Repo Checkout](repo-checkout/): checks out a `repo` collection
 - [RumpRun](rump-hello/): rumprun hello-world simulation test

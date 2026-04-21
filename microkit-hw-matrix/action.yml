@@ -1,0 +1,19 @@
+# Copyright 2021, Proofcraft Pty Ltd
+# Copyright 2026, UNSW
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'microkit/Hardware Matrix'
+description: |
+  Generates hardware build matrix
+author: Julia Vassiliki <julia.vassiliki@unsw.edu.au>
+
+inputs:
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'microkit-hw-matrix'
+
+runs:
+  using: 'node24'
+  main: '../js/index.js'

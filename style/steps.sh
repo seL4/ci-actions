@@ -10,6 +10,7 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing seL4 python deps"
+. ${SCRIPTS}/setup-python-venv.sh
 pip3 install -q sel4-deps
 
 echo "Installing astyle"

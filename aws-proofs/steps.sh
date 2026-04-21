@@ -13,6 +13,7 @@ if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ] ||
    [ "${GITHUB_EVENT_NAME}" = "pull_request" ]
 then
   echo "::group::PR info"
+  . ${SCRIPTS}/setup-python-venv.sh
   pip3 install -U PyGithub
   export INPUT_EXTRA_REFS="$(get-prs)"
   echo "::endgroup::"

@@ -16,7 +16,8 @@ chmod a+x "${BINDIR}/repo"
 
 PATH="${BINDIR}":"${SCRIPTS}/../l4v-deploy":$PATH
 
-pip3 install --user lxml
+. ${SCRIPTS}/setup-python-venv.sh
+pip3 install lxml
 
 if [ -z "${GH_SSH}" ]; then
   echo "No 'GH_SSH' key provided" >&2

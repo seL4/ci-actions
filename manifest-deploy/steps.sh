@@ -30,7 +30,8 @@ echo "Fetching seL4_release repo"
 git clone --depth 1 ssh://git@github.com/seL4/seL4_release
 
 echo "Installing python dependencies"
-pip3 install --user -r ${GITHUB_WORKSPACE}/seL4_release/requirements.txt
+. ${SCRIPTS}/setup-python-venv.sh
+pip3 install -r ${GITHUB_WORKSPACE}/seL4_release/requirements.txt
 
 echo "Install doxygen"
 sudo apt-get install -qq doxygen

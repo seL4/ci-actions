@@ -16,6 +16,7 @@ chmod a+x "${BINDIR}/repo"
 
 PATH="${BINDIR}":$PATH
 
+. ${SCRIPTS}/setup-python-venv.sh
 pip3 install -U PyGithub
 
 echo "::endgroup::"

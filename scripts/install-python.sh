@@ -14,6 +14,7 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 python3 --version
 
+. ${SCRIPTS}/setup-python-venv.sh
 # setuptools and wheel versions must be matched to working releases
 # we need an old version of setuptools (see PR seL4/ci-actions#381)
 # and newer versions of wheel removes the bdist_wheel implementation

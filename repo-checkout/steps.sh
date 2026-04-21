@@ -14,6 +14,10 @@ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+x ~/bin/repo
 PATH=~/bin:$PATH
 
+if [ -z "${VIRTUAL_ENV}" ]; then
+  python3 -m venv "${GITHUB_WORKSPACE}/venv"
+  . "${GITHUB_WORKSPACE}/venv/bin/activate"
+fi
 pip3 install -U PyGithub
 
 echo "::endgroup::"

@@ -10,6 +10,10 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing reuse tool"
+if [ -z "${VIRTUAL_ENV}" ]; then
+  python3 -m venv "${GITHUB_WORKSPACE}/venv"
+  . "${GITHUB_WORKSPACE}/venv/bin/activate"
+fi
 pip3 install -q reuse==5.0.2
 
 checkout.sh

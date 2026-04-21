@@ -385,7 +385,26 @@ platforms:
     image_platform: bcm2711
     march: armv8a
     no_hw_test: true
-    microkit_boards: [rpi4b_1gb, rpi4b_2gb, rpi4b_4gb, rpi4b_8gb]
+    microkit_boards: [rpi4b_1gb, rpi4b_2gb, rpi4b_4gb]
+
+  # microkit only. in general this is somewhat of a hack,
+  # mostly because specifying properties on a per-board level
+  # under microkit_boards is not easily possible.
+  # we cannot test this platform as the RPI4 in our CI is
+  # a 4GB model, not an 8GB model.
+  RPI4_8GB:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: rpi4
+    req: []
+    image_platform: bcm2711
+    march: armv8a
+    # microkit-only
+    no_hw_build: true
+    # cannot be tested
+    microkit_no_hw_test: true
+    microkit_boards: [rpi4b_8gb]
 
   TX1:
     arch: arm

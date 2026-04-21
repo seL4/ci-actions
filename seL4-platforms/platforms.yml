@@ -29,12 +29,24 @@ platforms:
     platform: ariane
     march: rv64imac
     no_hw_test: true
+    microkit_no_hw_test: true
 
   CHESHIRE:
     arch: riscv
     modes: [64]
     platform: cheshire
     march: rv64imac
+    no_hw_test: true
+    microkit_no_hw_test: true
+
+  SERENGETI:
+    arch: riscv
+    modes: [64]
+    platform: cheshire
+    req: [serengeti1, serengeti2]
+    march: rv64imac
+    # microkit hw build/test only
+    no_hw_build: true
     no_hw_test: true
 
   SPIKE32:
@@ -63,6 +75,9 @@ platforms:
     march: rv64imac
     no_hw_test: true
     no_hw_build: true
+    microkit_no_hw_test: true
+    microkit_no_hw_build: true
+    microkit_boards: qemu_virt_riscv64
 
   RISCVVIRT32:
     arch: riscv
@@ -121,7 +136,9 @@ platforms:
     platform: rockpro64
     req: [rockpro64a]
     march: armv8a
+    # no board in machine queue
     no_hw_test: true
+    microkit_no_hw_test: true
 
   ROCK3B:
     arch: arm
@@ -131,7 +148,9 @@ platforms:
     platform: rk3568
     req: [rk3568]
     march: armv8a
+    # no board in machine queue
     no_hw_test: true
+    microkit_no_hw_test: true
 
   QUARTZ64:
     arch: arm
@@ -157,6 +176,9 @@ platforms:
     march: armv8a # Cortex-A53 is emulated by default
     no_hw_test: true
     no_hw_build: true
+    microkit_no_hw_test: true
+    microkit_no_hw_build: true
+    microkit_boards: [qemu_virt_aarch64]
 
   IMX8MQ_EVK:
     arch: arm
@@ -188,6 +210,29 @@ platforms:
     platform: imx8mm-evk
     req: [imx8mm]
     march: armv8a
+
+  IMX8MP_EVK:
+    arch: arm
+    modes: [32, 64]
+    smp: [64]
+    platform: imx8mp-evk
+    req: []
+    march: armv8a
+    # there is no board in the machine queue at the moment.
+    no_hw_test: true
+    microkit_no_hw_test: true
+
+  # microkit only
+  IMX8MP_IOTGATE:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: imx8mp-iotgate
+    req: [iotgate1, iotgate3, iotgate4, iotgate5]
+    march: armv8a
+    # microkit only, no seL4
+    no_hw_build: true
+    no_hw_test: true
 
   TQMA8XQP1GB:
     arch: arm
@@ -231,6 +276,7 @@ platforms:
     platform: odroidc2
     req: [odroidc2]
     march: armv8a
+    microkit_boards: [odroidc2]
 
   ODROID_C4:
     arch: arm
@@ -240,6 +286,7 @@ platforms:
     platform: odroidc4
     req: [odroidc4_1, odroidc4_2]
     march: armv8a
+    microkit_boards: [odroidc4]
 
   ODROID_XU:
     arch: arm
@@ -277,10 +324,31 @@ platforms:
     platform: zynqmp
     req: [zcu102_2]
     march: armv8a
+    microkit_boards: [zcu102]
     # The ZCU102 in machine queue expects a binary image
     # settings:
     # Sel4testAllowSettingsOverride: true
     # ElfloaderImage: "binary"
+
+  KRIA_K26:
+    arch: arm
+    modes: [64]
+    aarch_hyp: [64]
+    platform: zynqmp
+    march: armv8a
+    # not in seL4 tooling
+    no_hw_build: true
+    # We don't have any of these physical boards to test against
+    microkit_no_hw_test: true
+
+  ULTRA96V2:
+    arch: arm
+    modes: [64]
+    aarch_hyp: [64]
+    platform: zynqmp
+    march: armv8a
+    # We don't have any of these physical boards to test against
+    microkit_no_hw_test: true
 
   ZYNQMP106:
     arch: arm
@@ -317,6 +385,7 @@ platforms:
     image_platform: bcm2711
     march: armv8a
     no_hw_test: true
+    microkit_boards: [rpi4b_1gb, rpi4b_2gb, rpi4b_4gb, rpi4b_8gb]
 
   TX1:
     arch: arm
@@ -344,6 +413,7 @@ platforms:
     req: [skylake, haswell3, haswell4, skylake3]
     has_simulation: true
     march: nehalem
+    microkit_boards: [x86_64_generic, x86_64_generic_vtx]
 
 # platforms where MCS is wholly unsupported
 # (for platforms with partial support see sel4test-hw/build.py and comments below)

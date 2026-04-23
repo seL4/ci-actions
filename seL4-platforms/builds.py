@@ -430,13 +430,17 @@ def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> i
         sys.stdout.flush()
         # Print output as it arrives. Some of the build commands take too long to
         # wait until all output is there. Keep stderr separate, but flush it.
-        process = subprocess.Popen(cmd, text=True, stdout=subprocess.PIPE,
-                                   stderr=sys.stderr, bufsize=1)
+        # Opens in binary mode; the child might end up messing with the pty
+        # so that it is in raw mode and expects \r\n for a newline, so we can't
+        # use the text= option with line buffering and universal newlines.
+        # Python is however helpful and iterating over process.stdout does
+        # a line-at-a-time as we desire, so we just need to decode bytes ourselves.
+        # Disable buffering so we don't hit issues with unflushed output.
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=sys.stderr, bufsize=0)
         lines = []
         for line in process.stdout:
-            line = line.rstrip()
-            lines.append(line)
-            print(line)
+            lines.append(line.decode().rstrip())
+            sys.stdout.buffer.write(line)
             sys.stdout.flush()
             sys.stderr.flush()
         ret = process.wait()

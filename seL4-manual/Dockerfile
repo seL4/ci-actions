@@ -12,6 +12,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        doxygen \
        texlive \
+       texlive-plain-generic \
        texlive-fonts-extra \
        texlive-latex-extra \
     && apt-get clean autoclean \

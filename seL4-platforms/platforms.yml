@@ -291,6 +291,15 @@ platforms:
     req: [zcu106]
     march: armv8a
 
+  STM32MP2:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: stm32mp2
+    req: [stm32mp]
+    march: armv8a
+
   TK1:
     arch: arm
     modes: [32]

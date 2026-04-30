@@ -12,15 +12,11 @@ FROM trustworthysystems/camkes:latest
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       rubygems ruby-dev bundler doxygen python3-venv \
+       rubygems ruby-dev bundler doxygen \
     && apt-get clean autoclean \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN gem install bundler:2.1.2
-
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN pip3 install "junitparser==3.*" PyGithub
 
 ARG ACTION

@@ -24,7 +24,7 @@ ARG SCRIPTS
 RUN mkdir ${SCRIPTS}
 COPY ${ACTION}/steps.sh scripts/* ${SCRIPTS}/
 RUN chmod a+rx ${SCRIPTS}/*
-ENV  PATH "${SCRIPTS}:${PATH}"
+ENV  PATH="${SCRIPTS}:${PATH}"
 
 RUN mkdir /builds
 COPY ${ACTION}/builds.yml \

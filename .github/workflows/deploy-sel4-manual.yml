@@ -12,7 +12,7 @@ on:
     - master
     paths:
     - 'scripts/**'
-    - 'sel4-manual/**'
+    - 'seL4-manual/**'
   workflow_dispatch:
   # allow explict trigger from other repos when dependencies have changed
   repository_dispatch:

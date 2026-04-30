@@ -11,4 +11,4 @@ COPY scripts/*.sh camkes-unit/steps.sh /usr/bin/
 RUN mkdir /workspace
 WORKDIR /workspace
 
-ENTRYPOINT steps.sh
+ENTRYPOINT ["steps.sh"]

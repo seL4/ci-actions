@@ -13,4 +13,4 @@ COPY run-proofs/settings /isabelle/etc/
 RUN mkdir /workspace
 WORKDIR /workspace
 
-ENTRYPOINT steps.sh
+ENTRYPOINT ["steps.sh"]

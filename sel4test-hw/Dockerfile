@@ -23,7 +23,7 @@ ARG ACTION
 RUN mkdir ${SCRIPTS}
 COPY ${ACTION}/steps.sh ${ACTION}/check-config-eq.sh scripts/* ${SCRIPTS}/
 RUN chmod a+rx ${SCRIPTS}/*
-ENV  PATH "${SCRIPTS}:${PATH}"
+ENV  PATH="${SCRIPTS}:${PATH}"
 
 RUN mkdir /builds
 COPY ${ACTION}/builds.yml \

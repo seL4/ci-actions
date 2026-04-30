@@ -12,4 +12,4 @@ RUN curl -OL https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_
 RUN tar -xvf yq_linux_386.tar.gz ./yq_linux_386 && mv yq_linux_386 /usr/bin/yq && rm yq_linux_386.tar.gz
 COPY scripts/checkout.sh link-check/steps.sh /usr/bin/
 
-ENTRYPOINT steps.sh
+ENTRYPOINT ["steps.sh"]

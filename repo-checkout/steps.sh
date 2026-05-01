@@ -9,10 +9,10 @@ set -e
 
 echo "::group::Setting up"
 
-mkdir -p ~/bin
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+x ~/bin/repo
-PATH=~/bin:$PATH
+mkdir -p "${GITHUB_WORKSPACE}/bin"
+curl https://storage.googleapis.com/git-repo-downloads/repo > "${GITHUB_WORKSPACE}/bin/repo"
+chmod a+x "${GITHUB_WORKSPACE}/bin/repo"
+PATH="${GITHUB_WORKSPACE}/bin":$PATH
 
 pip3 install -U PyGithub
 

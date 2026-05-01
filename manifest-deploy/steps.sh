@@ -9,11 +9,11 @@ set -e
 
 echo "::group::Setting up"
 echo "Installing 'repo'"
-mkdir -p ~/bin
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+x ~/bin/repo
+mkdir -p "${GITHUB_WORKSPACE}/bin"
+curl https://storage.googleapis.com/git-repo-downloads/repo > "${GITHUB_WORKSPACE}/bin/repo"
+chmod a+x "${GITHUB_WORKSPACE}/bin/repo"
 
-PATH=~/bin:"${GITHUB_WORKSPACE}/seL4_release":$PATH
+PATH="${GITHUB_WORKSPACE}/bin":"${GITHUB_WORKSPACE}/seL4_release":$PATH
 
 if [ -z "${GH_SSH}" ]; then
   echo "No 'GH_SSH' key provided" >&2

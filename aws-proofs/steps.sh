@@ -13,6 +13,10 @@ if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ] ||
    [ "${GITHUB_EVENT_NAME}" = "pull_request" ]
 then
   echo "::group::PR info"
+  if [ -z "${VIRTUAL_ENV}" ]; then
+    python3 -m venv "${GITHUB_WORKSPACE}/venv"
+    . "${GITHUB_WORKSPACE}/venv/bin/activate"
+  fi
   pip3 install -U PyGithub
   export INPUT_EXTRA_PRS="$(get-prs)"
   echo "::endgroup::"

@@ -14,7 +14,11 @@ chmod a+x ~/bin/repo
 
 PATH=~/bin:"${SCRIPTS}/../l4v-deploy":$PATH
 
-pip3 install --user lxml
+if [ -z "${VIRTUAL_ENV}" ]; then
+  python3 -m venv "${GITHUB_WORKSPACE}/venv"
+  . "${GITHUB_WORKSPACE}/venv/bin/activate"
+fi
+pip3 install lxml
 
 if [ -z "${GH_SSH}" ]; then
   echo "No 'GH_SSH' key provided" >&2

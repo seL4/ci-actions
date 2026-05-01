@@ -10,6 +10,10 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing seL4 python deps"
+if [ -z "${VIRTUAL_ENV}" ]; then
+  python3 -m venv "${GITHUB_WORKSPACE}/venv"
+  . "${GITHUB_WORKSPACE}/venv/bin/activate"
+fi
 pip3 install -q sel4-deps
 
 echo "Installing astyle"

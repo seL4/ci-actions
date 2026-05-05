@@ -14,7 +14,7 @@ if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ] ||
 then
   echo "::group::PR info"
   pip3 install -U PyGithub
-  export INPUT_EXTRA_PRS="$(get-prs)"
+  export INPUT_EXTRA_REFS="$(get-prs)"
   echo "::endgroup::"
 fi
 
@@ -83,7 +83,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_SKIP_DUPS \
     -o SendEnv=INPUT_TOKEN \
     -o SendEnv=INPUT_XML \
-    -o SendEnv=INPUT_EXTRA_PRS \
+    -o SendEnv=INPUT_EXTRA_REFS \
     -o SendEnv=GITHUB_REPOSITORY \
     -o SendEnv=GITHUB_REF \
     -o SendEnv=GITHUB_BASE_REF \

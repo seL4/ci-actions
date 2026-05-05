@@ -19,8 +19,8 @@ then
   if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ] ||
      [ "${GITHUB_EVENT_NAME}" = "pull_request" ]
   then
-  export INPUT_EXTRA_PRS="$(get-prs)"
-  fetch-extra-prs.sh
+  export INPUT_EXTRA_REFS="$(get-prs)"
+  fetch-extra-refs.sh
   fi
 fi
 

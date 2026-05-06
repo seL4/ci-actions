@@ -9,7 +9,7 @@
 echo "Installing python 3.10"
 # for python 3.10 for newer ubuntu distributions
 sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt-get install -qq python3.10 > /dev/null
+sudo apt-get install -qq python3.10 python3.10-venv > /dev/null
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
 python3 --version

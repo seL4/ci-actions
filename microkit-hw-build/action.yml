@@ -5,18 +5,18 @@
 
 name: 'microkit/Hardware Builds'
 description: |
-  Does microkit hw builds.
+  Builds Microkit examples for all hardware test platforms.
 author: Julia Vassiliki <julia.vassiliki@unsw.edu.au>
 
 inputs:
   board:
-    description: Comma separated list of microkit boards (MICROKIT_BOARD) to run the test for.
+    description: Comma separated list of microkit boards (MICROKIT_BOARD) to build the test for.
     required: true
   config:
-    description: Comma separated list of microkit configs (MICROKIT_CONFIG) to run the test for.
+    description: Comma separated list of microkit configs (MICROKIT_CONFIG) to build the test for.
     required: false
   march:
-    description: Comma separated list of platform marches (from platforms.yml) to run the test for.
+    description: Comma separated list of microkit architectures to build the test for.
     required: false
   index:
     description: job index in matrix build

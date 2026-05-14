@@ -5,7 +5,7 @@
 
 name: 'microkit/Hardware Matrix'
 description: |
-  Generates hardware build matrix
+  Generates hardware build matrix for Microkit.
 author: Julia Vassiliki <julia.vassiliki@unsw.edu.au>
 
 inputs:

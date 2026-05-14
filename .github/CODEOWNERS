@@ -4,3 +4,5 @@
 
 # Request review from Gerwin by default
 *   @lsf37
+# .. except for Microkit
+/microkit-*/    @midnightveil

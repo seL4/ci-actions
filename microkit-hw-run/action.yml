@@ -5,7 +5,7 @@
 
 name: 'microkit/Hardware Runs'
 description: |
-  Does microkit test runs from previously built images for all hardware test platforms.
+  Runs Microkit examples from previously built images for all hardware test platforms.
 author: Julia Vassiliki <julia.vassiliki@unsw.edu.au>
 
 inputs:
@@ -16,7 +16,7 @@ inputs:
     description: Comma separated list of microkit configs (MICROKIT_CONFIG) to run the test for.
     required: false
   march:
-    description: Comma separated list of platform marches (from platforms.yml) to run the test for.
+    description: Comma separated list of microkit architectures to run the test for.
     required: false
   index:
     description: job index in matrix build

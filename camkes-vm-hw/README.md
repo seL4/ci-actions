@@ -89,7 +89,7 @@ jobs:
         uses: seL4/ci-actions/camkes-hw@master
         with:
           name: ${{ matrix.name }}
-          index: $${{ strategy.job-index }}
+          index: ${{ strategy.job-index }}
         env:
           HW_SSH: ${{ secrets.HW_SSH }}
 ```

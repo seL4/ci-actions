@@ -316,7 +316,7 @@ def get_machine(req):
         return None
     else:
         # assume jobs for the same platform are consecutive-ish in the build matrix
-        job_index = int(os.environ.get('INPUT_INDEX', '$0')[1:])
+        job_index = int(os.environ.get('INPUT_INDEX', '0'))
         return req[job_index % len(req)]
 
 
@@ -325,7 +325,7 @@ def job_key():
         os.environ.get('GITHUB_WORKFLOW') + "-" + \
         os.environ.get('GITHUB_RUN_ID') + "-" + \
         os.environ.get('GITHUB_JOB') + "-" + \
-        os.environ.get('INPUT_INDEX', '$0')[1:]
+        os.environ.get('INPUT_INDEX', '0')
 
 
 def mq_run(success_str: str,

@@ -347,6 +347,8 @@ platforms:
     aarch_hyp: [64]
     platform: zynqmp
     march: armv8a
+    # not in seL4 tooling
+    no_hw_build: true
     # We don't have any of these physical boards to test against
     microkit_no_hw_test: true
 

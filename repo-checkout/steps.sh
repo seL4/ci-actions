@@ -30,6 +30,7 @@ else
 fi
 export REPO_MANIFEST="${INPUT_MANIFEST}"
 export REPO_BRANCH="${INPUT_MANIFEST_BRANCH}"
+export REPO_DEPTH="${INPUT_MANIFEST_DEPTH}"
 checkout-manifest.sh
 
 fetch-branches.sh

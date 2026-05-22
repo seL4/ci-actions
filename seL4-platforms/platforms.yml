@@ -228,7 +228,7 @@ platforms:
     modes: [64]
     smp: [64]
     platform: imx8mp-iotgate
-    req: [iotgate1, iotgate3, iotgate4, iotgate5]
+    req: [iotgate1]
     march: armv8a
     # microkit only, no seL4
     no_hw_build: true

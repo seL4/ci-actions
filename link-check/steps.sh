@@ -7,8 +7,6 @@
 set -e
 
 echo "::group::Setting up"
-mkdir -p /repo
-cd /repo
 checkout.sh
 
 # get ignored input files from .linkcheck-ignore.yml

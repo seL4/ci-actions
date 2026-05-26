@@ -371,6 +371,13 @@ platforms:
     platform: stm32mp2
     req: [stm32mp]
     march: armv8a
+    # FIXME: the watchdog timer fires during the test which
+    #        prevents it from completing.
+    # @bruelc from STM32 has said that he is going to implement
+    # a basic watchdog reset so that the tests can complete,
+    # but for now, don't run this on real hardware.
+    # https://github.com/seL4/ci-actions/pull/464#issuecomment-4532798902
+    no_hw_test: true
 
   TK1:
     arch: arm

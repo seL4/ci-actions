@@ -7,6 +7,8 @@
 set -e
 
 echo "::group::Setting up"
+# avoid "fatal: detected dubious ownership in repository at '/github/workspace'"
+git config --global --add safe.directory ${GITHUB_WORKSPACE}
 checkout.sh
 
 # get ignored input files from .linkcheck-ignore.yml

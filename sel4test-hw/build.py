@@ -105,8 +105,8 @@ def build_filter(build: Build) -> bool:
             return False
 
     if plat.arch == 'x86':
-        # Bamboo config says no VTX for SMP or verification
-        if build.is_hyp() and (build.is_smp() or build.is_verification()):
+        # Bamboo config says no VTX for verification
+        if build.is_hyp() and build.is_verification():
             return False
 
     if plat.arch == 'riscv':

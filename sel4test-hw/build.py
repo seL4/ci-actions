@@ -106,8 +106,7 @@ def build_filter(build: Build) -> bool:
 
     if plat.arch == 'x86':
         # Bamboo config says no VTX for verification
-        # The kernel does not compile for 32-bit SMP + hyp.
-        if build.is_hyp() and (build.is_verification() or (build.get_mode() == 32 and build.is_smp())):
+        if build.is_hyp() and build.is_verification():
             return False
 
     if plat.arch == 'riscv':

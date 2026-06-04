@@ -266,16 +266,13 @@ class Run:
 
         return [
             ['tar', 'xvzf', f"../{self.build.name}-images.tar.gz"],
-            mq_print_lock(machine),
-            mq_lock(machine),
             mq_run(build.success, machine, build.files,
                    completion_timeout=build.timeout,
-                   lock_held=True,
                    key=job_key(),
                    log=log,
                    error_str=build.error)
         ], [
-            mq_release(machine)
+            # lock release is done in run command
         ]
 
 

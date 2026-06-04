@@ -127,7 +127,8 @@ platforms:
     platform: sabre
     image_platform: imx6
     req: [sabre, sabre4, sabre2]
-    has_simulation: true
+    # remove simulation builds for shorter test times in sel4test-sim; camkes tests still use them
+    # has_simulation: true
     march: armv7a
 
   ROCKPRO64:
@@ -314,7 +315,9 @@ platforms:
     modes: [32]
     platform: zynq7000
     req: [zc706]
-    has_simulation: true
+    # remove simulation builds for shorter test times in sel4test-sim;
+    # sel4tutorials and camkes tests still use them
+    # has_simulation: true
     march: armv7a
     no_hw_test: true
 
@@ -356,7 +359,7 @@ platforms:
 
   ZYNQMP106:
     arch: arm
-    modes: [32, 64]
+    modes: [64] # platform is close enough to ZYNQMP that we skip 32 bit builds
     smp: [64]
     aarch_hyp: [64]
     platform: zynqmp

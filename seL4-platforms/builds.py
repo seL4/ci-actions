@@ -264,15 +264,19 @@ class Run:
             return [['echo', f"Specify list of machines instead of pool for {self.name}."],
                     ['exit', '1']], []
 
+        # acquire/release lock separately, so that we can measure the time taken
+        # for the actual test run without lock wait time.
         return [
             ['tar', 'xvzf', f"../{self.build.name}-images.tar.gz"],
+            mq_lock(machine),
             mq_run(build.success, machine, build.files,
                    completion_timeout=build.timeout,
+                   lock_held=True,
                    key=job_key(),
                    log=log,
                    error_str=build.error)
         ], [
-            # lock release is done in run command
+            mq_release(machine)
         ]
 
 
@@ -304,8 +308,6 @@ def release_mq_locks(runs: List[Union[Run, Build]]):
             run(mq_cancel(machine))
             # release any locks we already have claimed
             run(mq_release(machine))
-            # show lock status (should now show "free" or "locked for another job")
-            run(mq_print_lock(machine))
 
 
 def get_machine(req):

@@ -57,6 +57,10 @@ def hw_run(manifest_dir: str, build: Build):
         print(f"Build {build.name} is verification+SMP, skipping.")
         return SKIP
 
+    # 5 min timeout for the `mq.sh run` command without lock wait time
+    # most boards finish any config within 1 min, slowest in 14k runs (hifive) ~3 min
+    # reserve some extra for occasional reboot failures
+    build.timeout = 300
     script, final = build.hw_run(junit_results)
 
     return run_build_script(manifest_dir, build, script, final_script=final, junit=True)

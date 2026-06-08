@@ -12,14 +12,15 @@ them, `run_build_script` for a standard test driver frame, and
 `default_junit_results` for a standard place to leave a jUnit summary file.
 """
 
-from junitparser.junitparser import Failure, Error
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
 from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
+from dataclasses import dataclass
 
 import copy
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -453,33 +454,76 @@ def printc(color: str, content: str):
     print(color + content + ANSI_RESET)
 
 
-def summarise_junit(file_path: str) -> Tuple[int, List[str]]:
-    """Parse jUnit output and show a summary.
+@dataclass
+class TestSummary:
+    """Summary of the jUnit results of one test run."""
+    name: str
+    total: int
+    skipped: int
+    failed: int
+    succeeded: int
+    # list of failure causes (failed test cases, timeout, infrastructure), with optional log details
+    causes: List[Tuple[str, Optional[str]]]
 
-    Returns True if there were no failures or errors, raises exception
+    def success(self) -> bool:
+        # causes may include timeout or infrastructure failures that are not failed test cases
+        return self.failed == 0 and len(self.causes) == 0
+
+
+# Global dict, mapping run name to TestSummary for later display
+_test_summaries: dict[str, TestSummary] = {}
+
+
+def junit_failure_blocks(file_path: str) -> List[Tuple[str, str]]:
+    """Extract list of name + verbatim <testcase> block from log for fail/error cases."""
+
+    # Match a <testcase> element, self-closing or with content.
+    TESTCASE_RE = re.compile(r"<testcase\b.*?(?:/>|>.*?</testcase>)", re.DOTALL)
+    # extrac test name from <testcase> block
+    NAME_RE = re.compile(r'\bname\s*=\s*"([^"]*)"')
+
+    with open(file_path) as f:
+        text = f.read()
+    blocks = []
+    for m in TESTCASE_RE.finditer(text):
+        block = m.group(0)
+        if "<failure" in block or "<error" in block:
+            name = NAME_RE.search(block)
+            blocks.append((name.group(1) if name else "", block))
+    return blocks
+
+
+def summarise_junit(name: str, file_path: str) -> Tuple[int, List[str]]:
+    """Parse jUnit output, show a summary, and record in _test_summaries.
+
+    Returns the result code and the list of failed cases, raises exception
     on IOError or XML parse errors."""
 
     xml = JUnitXml.fromfile(file_path)
-    succeeded = xml.tests - (xml.failures + xml.errors + xml.skipped)
-    success = xml.failures == 0 and xml.errors == 0
+    causes = junit_failure_blocks(file_path)
+    summary = TestSummary(
+        name=name,
+        total=xml.tests,
+        skipped=xml.skipped,
+        failed=len(causes),
+        succeeded=xml.tests - len(causes) - xml.skipped,
+        causes=causes)
+
+    _junit_summaries[name] = summary
+    success = summary.success()
 
     col = ANSI_GREEN if success else ANSI_RED
 
     printc(col, "Test summary")
     printc(col, "------------")
-    printc(ANSI_GREEN if success else "", f"succeeded: {succeeded}/{xml.tests}")
-    if xml.skipped > 0:
-        printc(ANSI_YELLOW, f"skipped:   {xml.skipped}")
-    if xml.failures > 0:
-        printc(ANSI_RED, f"failures:  {xml.failures}")
-    if xml.errors > 0:
-        printc(ANSI_RED, f"errors:    {xml.errors}")
+    printc(ANSI_GREEN if success else "", f"succeeded: {summary.succeeded}/{summary.total}")
+    if summary.skipped > 0:
+        printc(ANSI_YELLOW, f"skipped:   {summary.skipped}")
+    if summary.failed > 0:
+        printc(ANSI_RED, f"failed:  {summary.failed}")
     print()
 
-    failures = {str(case.name) for case in xml
-                if any([isinstance(r, Failure) or isinstance(r, Error) for r in case.result])}
-
-    return success_from_bool(success), list(failures)
+    return success_from_bool(success), [name for name, _ in causes]
 
 
 # where junit results are left after sanitising:
@@ -575,7 +619,7 @@ def run_build_script(manifest_dir: str,
         failures = []
         if result == SUCCESS and junit:
             try:
-                result, failures = summarise_junit(junit_file)
+                result, failures = summarise_junit(run.name, junit_file)
             except IOError:
                 printc(ANSI_RED, f"Error reading {junit_file}")
                 result = FAILURE
@@ -860,6 +904,9 @@ def run_builds(builds: list, run_fun) -> int:
 
     manifest_dir = os.getcwd()
 
+    # in case there are ever multiple run_builds invocations in one job
+    _test_summaries.clear()
+
     results = {SUCCESS: [], FAILURE: [], SKIP: []}
     for build in builds:
         results[run_fun(manifest_dir, build)].append(build.name)
@@ -873,4 +920,65 @@ def run_builds(builds: list, run_fun) -> int:
         print()
         printc(ANSI_RED, "FAILED tests: " + ", ".join(results[FAILURE]))
 
+    github_job_summary()
+
     return 0 if no_failures else 1
+
+
+def github_job_summary():
+    """Add GITHUB_STEP_SUMMARY with the failures recorded in _test_summaries."""
+
+    summary = job_failure_summary()
+    if summary:
+        with open(os.environ.get('GITHUB_STEP_SUMMARY'), 'a') as f:
+            f.write(summary)
+
+
+def job_failure_summary() -> Optional[str]:
+    """Return a markdown summary of the test runs with failures in this job, based on _test_summaries."""
+
+    def heading(config: str, cause: str) -> str:
+        """Heading of the detail section of a failure cause."""
+        return f"<a name=\"{anchor(config, cause)}\"></a>\n### {config}: {cause}"
+
+    def anchor(config: str, cause: str) -> str:
+        """Heading anchor for a failure cause."""
+        return (config.lower() + "-" + cause.lower()).strip().replace(" ", "-").replace("_", "-")
+
+    def cause(config: str, cause: str, detail: Optional[str]) -> str:
+        """String for cause with optional link to details"""
+        return f"[{cause}](#{anchor(config, cause)})" if detail else cause
+
+    failed = [s for s in _test_summaries.values() if not s.success()]
+    if not failed:
+        return None
+    passed = [s for s in _test_summaries.values() if s.success()]
+
+    lines = [
+        "## Test failures",
+        "",
+        "| Config | | Causes | Failed | Succeeded | Skipped |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for summary in failed + passed:
+        causes = (cause(summary.name, c, detail) for c, detail in summary.causes)
+        causes_str = ", ".join(causes) if summary.causes else "-"
+        pass_fail = "pass" if summary.success() else "FAIL"
+        lines.append(
+            f"| {summary.name} | {pass_fail} | {causes_str} | {summary.failed} "
+            f"| {summary.succeeded}/{summary.total} | {summary.skipped} |"
+        )
+
+    for summary in failed:
+        for cause, detail in summary.causes:
+            if detail:
+                lines += [
+                    "",
+                    heading(summary.name, cause),
+                    "",
+                    "```",
+                    detail,
+                    "```"
+                ]
+
+    return "\n".join(lines)

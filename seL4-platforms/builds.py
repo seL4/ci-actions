@@ -16,7 +16,7 @@ from platforms import ValidationException, Platform, platforms, load_yaml, mcs_u
 
 from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import copy
 import os
@@ -458,12 +458,12 @@ def printc(color: str, content: str):
 class TestSummary:
     """Summary of the jUnit results of one test run."""
     name: str
-    total: int
-    skipped: int
-    failed: int
-    succeeded: int
+    total: int = 0
+    skipped: int = 0
+    failed: int = 0
+    succeeded: int = 0
     # list of failure causes (failed test cases, timeout, infrastructure), with optional log details
-    causes: List[Tuple[str, Optional[str]]]
+    causes: List[Tuple[str, Optional[str]]] = field(default_factory=list)
 
     def success(self) -> bool:
         # causes may include timeout or infrastructure failures that are not failed test cases
@@ -472,6 +472,19 @@ class TestSummary:
 
 # Global dict, mapping run name to TestSummary for later display
 _test_summaries: dict[str, TestSummary] = {}
+
+
+def record_summary(summary: TestSummary):
+    """Merge TestSummary into _test_summaries; add to existing entries."""
+    existing = _test_summaries.get(summary.name)
+    if existing is None:
+        _test_summaries[summary.name] = summary
+    else:
+        existing.total += summary.total
+        existing.skipped += summary.skipped
+        existing.failed += summary.failed
+        existing.succeeded += summary.succeeded
+        existing.causes += summary.causes
 
 
 def junit_failure_blocks(file_path: str) -> List[Tuple[str, str]]:
@@ -509,7 +522,7 @@ def summarise_junit(name: str, file_path: str) -> Tuple[int, List[str]]:
         succeeded=xml.tests - len(causes) - xml.skipped,
         causes=causes)
 
-    _junit_summaries[name] = summary
+    record_summary(summary)
     success = summary.success()
 
     col = ANSI_GREEN if success else ANSI_RED
@@ -597,6 +610,9 @@ def run_build_script(manifest_dir: str,
 
         if result == FAILURE:
             printc(ANSI_RED, ">>> command failed, aborting.")
+            record_summary(TestSummary(
+                name=run.name,
+                causes=[("Incomplete", "\n".join(output[-20:]))]))
         elif result == SKIP:
             printc(ANSI_YELLOW, ">>> skipping this test.")
 

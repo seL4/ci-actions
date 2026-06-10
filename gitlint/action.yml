@@ -4,7 +4,7 @@
 
 name: 'Gitlint'
 description: 'Runs the gitlint tool on pull requests'
-author: Gerwin Klein <kleing@unsw.edu.au>
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   config:

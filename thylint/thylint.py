@@ -107,6 +107,7 @@ diag_words = (
         'show_types',
         'show_sorts',
         'show_consts',
+        'find_names',
     ])
 )
 

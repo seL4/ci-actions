@@ -974,7 +974,7 @@ def job_failure_summary() -> Optional[str]:
         "## Test failures",
         "",
         "| Config | | Causes | Failed | Succeeded | Skipped |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for summary in failed + passed:
         causes = (cause(summary.name, c, detail) for c, detail in summary.causes)

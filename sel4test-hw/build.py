@@ -126,7 +126,7 @@ def build_filter(build: Build) -> bool:
 
 
 def to_json(builds: List[Build]) -> str:
-    """Return a GitHub build matrix per enabled hardware platform as GitHub output assignment."""
+    """Return a GitHub run matrix per enabled hardware platform as GitHub output assignment."""
 
     def run_for_plat(plat: Platform) -> List[dict]:
         if plat.no_hw_test or plat.no_hw_build:
@@ -160,6 +160,15 @@ def to_json(builds: List[Build]) -> str:
     return "matrix=" + json.dumps(matrix)
 
 
+def to_build_json(builds: List[Build]) -> str:
+    """Return a GitHub build matrix over the hardware builds as GitHub output assignment."""
+
+    marches = sorted({b.get_platform().march for b in builds if b.get_platform().march})
+    matrix = {"march": marches, "compiler": ["gcc", "clang"]}
+
+    return "matrix=" + json.dumps(matrix)
+
+
 # If called as main, run all builds from builds.yml
 if __name__ == '__main__':
     builds = load_builds(os.path.dirname(__file__) + "/builds.yml", filter_fun=build_filter)
@@ -170,6 +179,10 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] == '--matrix':
         gh_output(to_json(builds))
+        sys.exit(0)
+
+    if len(sys.argv) > 1 and sys.argv[1] == '--build-matrix':
+        gh_output(to_build_json(builds))
         sys.exit(0)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--hw':

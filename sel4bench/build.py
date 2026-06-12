@@ -173,7 +173,7 @@ def get_results(run: Run) -> List[float]:
                         result['Direction'] == 'server->client' and result['IPC length'] == 0:
                     ipc_reply_fpu = round(result['Mean'])
                     ipc_reply_fpu_s = round(result['Stddev'])
-        if bench['Benchmark'].startswith('Signal to process of higher prio'):
+        if bench['Benchmark'].startswith('Signal to process of higher prio (early processing)'):
             results = bench['Results']
             for result in results:
                 if result['Prio'] == 1:

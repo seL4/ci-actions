@@ -20,6 +20,9 @@ inputs:
   compiler:
     description: One of `{gcc, clang} to filter test configs on`
     required: false
+  subgroup:
+    description: Comma separated list of build subgroups to filter test configs on.
+    required: false
   debug:
     description: |
       Comma separated list of debug levels from `{debug, release, verification}`

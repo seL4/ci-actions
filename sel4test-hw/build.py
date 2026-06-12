@@ -132,27 +132,32 @@ def to_json(builds: List[Build]) -> str:
         if plat.no_hw_test or plat.no_hw_build:
             return []
 
-        # separate runs for each compiler on arm
-        if plat.arch == 'arm':
-            return [
-                {"platform": plat.name, "march": plat.march, "compiler": "gcc"},
-                {"platform": plat.name, "march": plat.march, "compiler": "clang"},
-            ]
+        runs = []
 
-        if plat.arch == 'riscv':
-            return [
+        # separate runs for each compiler on arm and riscv
+        if plat.arch in ['arm', 'riscv']:
+            runs = [
                 {"platform": plat.name, "march": plat.march, "compiler": "gcc"},
                 {"platform": plat.name, "march": plat.march, "compiler": "clang"},
             ]
 
         # separate runs for each compiler + mode on x86, because we have more machines available
         if plat.arch == 'x86':
-            return [
+            runs = [
                 {"platform": plat.name, "march": plat.march, "compiler": "gcc", "mode": 32},
                 {"platform": plat.name, "march": plat.march, "compiler": "clang", "mode": 32},
                 {"platform": plat.name, "march": plat.march, "compiler": "gcc", "mode": 64},
                 {"platform": plat.name, "march": plat.march, "compiler": "clang", "mode": 64},
             ]
+
+        # Add subgroup to the matrix, because build image names have subgroup postfix.
+        # Since subgroup will be the same for all runs of one platform, this provides
+        # info only and does not generate additional jobs.
+        if plat.subgroup is not None:
+            for run in runs:
+                run["subgroup"] = plat.subgroup
+
+        return runs
 
     platforms = set([b.get_platform() for b in builds])
     matrix = {"include": [run for plat in platforms for run in run_for_plat(plat)]}
@@ -163,8 +168,26 @@ def to_json(builds: List[Build]) -> str:
 def to_build_json(builds: List[Build]) -> str:
     """Return a GitHub build matrix over the hardware builds as GitHub output assignment."""
 
-    marches = sorted({b.get_platform().march for b in builds if b.get_platform().march})
-    matrix = {"march": marches, "compiler": ["gcc", "clang"]}
+    compilers = ["gcc", "clang"]
+
+    march_subgroups = {}
+    for b in builds:
+        plat = b.get_platform()
+        march_subgroups.setdefault(plat.march, set()).add(plat.subgroup)
+
+    include = []
+    for march in sorted(march_subgroups):
+        subgroups = sorted(march_subgroups[march])
+        if None in subgroups and len(subgroups) > 1:
+            raise ValueError(f"march {march} mixes subgrouped and ungrouped platforms")
+        for compiler in compilers:
+            if subgroups == [None]:
+                include.append({"march": march, "compiler": compiler})
+            else:
+                for sg in subgroups:
+                    include.append({"march": march, "compiler": compiler, "subgroup": sg})
+
+    matrix = {"include": include}
 
     return "matrix=" + json.dumps(matrix)
 

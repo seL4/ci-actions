@@ -2,11 +2,15 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-name: 'seL4Test/Hardware Run Matrix'
-description: Generates matrix for hardware runs.
+name: 'seL4Test/Hardware Matrix'
+description: Generates a matrix for hardware builds or runs.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
+  matrix:
+    description: 'which matrix to generate: "run" (default) for hardware runs, "build" for builds'
+    required: false
+    default: 'run'
   action_name:
     description: 'internal -- do not use'
     required: false

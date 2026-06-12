@@ -4,10 +4,16 @@
      SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# seL4Test Hardware Run Matrix
+# seL4Test Hardware Matrix
 
-This action generates a GitHub build matrix for the [sel4test-hw-run] action from
-the hardware platforms listed as available in [platforms.yml][] in this repo.
+This action generates a GitHub matrix for sel4test hardware builds and runs
+from the hardware platforms listed as available in [platforms.yml][] in this
+repo.
+
+Depending on the input parameter `matrix`, it generates either:
+
+- a *run* matrix (default) for the [sel4test-hw-run] action, or
+- a *build* matrix for the [sel4test-hw] action
 
 [platforms.yml]: ../seL4-platforms/platforms.yml
 [sel4test-hw-run]: ../sel4test-hw-run/README.md
@@ -31,4 +37,5 @@ The main test driver is [build.py] in this directory, also shared with the
 
 ## Arguments
 
-This action has no input arguments.
+- `matrix`: which matrix to generate, either `run` (default) for the hardware
+  run matrix, or `build` for the build matrix.

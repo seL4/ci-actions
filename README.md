@@ -65,7 +65,7 @@ The following GitHub actions are available:
 - [seL4 Manual](seL4-manual/): build seL4 PDF manual
 - [seL4Test Hardware Builds](sel4test-hw/): sel4test image builds
 - [seL4Test Hardware Runs](sel4test-hw-run/): sel4test hardware runs
-- [seL4Test Hardware Run Matrix](sel4test-hw-matrix/): matrix for sel4test hardware runs
+- [seL4Test Hardware Matrix](sel4test-hw-matrix/): matrix for sel4test hardware builds and runs
 - [seL4Test Simulation](sel4test-sim/): sel4test simulations for platforms with a simulation binary
 - [Standalone Kernel](standalone-kernel/): standalone seL4 kernel compilation
 - [Style](style/): coding style checks of the seL4 Foundation

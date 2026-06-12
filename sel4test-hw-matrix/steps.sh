@@ -17,5 +17,9 @@ pip3 install "junitparser==3.*" sel4-deps
 export PYTHONPATH="${ACTION_DIR}/seL4-platforms"
 echo "::endgroup::"
 
-# start test
-python3 "${ACTION_DIR}/${INPUT_ACTION_NAME}/build.py" --matrix
+case "${INPUT_MATRIX}" in
+  build) MATRIX_ARG="--build-matrix" ;;
+  *)     MATRIX_ARG="--matrix" ;;
+esac
+
+python3 "${ACTION_DIR}/${INPUT_ACTION_NAME}/build.py" "${MATRIX_ARG}"

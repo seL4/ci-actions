@@ -17,7 +17,8 @@ architectures: [x86, arm, riscv]
 #     platform: name; required
 #     image_platform: name; optional
 #     has_simulation: boolean; optional; (null = false); platform has a simulation
-#     march: string; optional
+#     march: string; optional; used for build matrix grouping only, not an actual build parameter
+#     subgroup: int; optional; used for further build matrix sub-grouping
 #     req: list of string; optional; names of test boards in machine queue
 #     no_hw_test: optional; (null = false); no hw test on this platform
 #     no_hw_build: optional; (null = false); no hw build for this platform (implies no_hw_test)
@@ -137,6 +138,7 @@ platforms:
     platform: rockpro64
     req: [rockpro64a]
     march: armv8a
+    subgroup: 4
     # no board in machine queue
     no_hw_test: true
     microkit_no_hw_test: true
@@ -149,6 +151,7 @@ platforms:
     platform: rk3568
     req: [rk3568]
     march: armv8a
+    subgroup: 3
     # no board in machine queue
     no_hw_test: true
     microkit_no_hw_test: true
@@ -158,6 +161,7 @@ platforms:
     modes: [64]
     platform: quartz64
     march: armv8a
+    subgroup: 1
     no_hw_test: true
 
   ARMVIRT32:
@@ -175,6 +179,7 @@ platforms:
     platform: qemu-arm-virt
     has_simulation: true
     march: armv8a # Cortex-A53 is emulated by default
+    subgroup: 1
     no_hw_test: true
     no_hw_build: true
     microkit_no_hw_test: true
@@ -189,6 +194,7 @@ platforms:
     platform: imx8mq-evk
     req: [imx8mq]
     march: armv8a
+    subgroup: 2
 
   MAAXBOARD:
     arch: arm
@@ -198,6 +204,7 @@ platforms:
     platform: maaxboard
     req: [maaxboard1]
     march: armv8a
+    subgroup: 1
     no_hw_build: true
     # The MaaxBoard in machine queue expects a binary image
     # settings:
@@ -211,6 +218,7 @@ platforms:
     platform: imx8mm-evk
     req: [imx8mm]
     march: armv8a
+    subgroup: 2
 
   IMX8MP_EVK:
     arch: arm
@@ -219,6 +227,7 @@ platforms:
     platform: imx8mp-evk
     req: []
     march: armv8a
+    subgroup: 1
     # there is no board in the machine queue at the moment.
     no_hw_test: true
     microkit_no_hw_test: true
@@ -231,6 +240,7 @@ platforms:
     platform: imx8mp-iotgate
     req: [iotgate1, iotgate3, iotgate4, iotgate5]
     march: armv8a
+    subgroup: 2
     # microkit only, no seL4
     no_hw_build: true
     no_hw_test: true
@@ -244,6 +254,7 @@ platforms:
     platform: tqma8xqp1gb
     req: [tqma]
     march: armv8a
+    subgroup: 5
 
   IMX93:
     arch: arm
@@ -252,6 +263,7 @@ platforms:
     aarch_hyp: [64]
     platform: imx93
     march: armv8a
+    subgroup: 4
     req: [imx93a,imx93b]
     settings:
       # override the default of 4 for sel4test; ignored in non-SMP builds
@@ -279,6 +291,7 @@ platforms:
     platform: odroidc2
     req: [odroidc2]
     march: armv8a
+    subgroup: 4
     microkit_boards: [odroidc2]
 
   ODROID_C4:
@@ -289,6 +302,7 @@ platforms:
     platform: odroidc4
     req: [odroidc4_1, odroidc4_2]
     march: armv8a
+    subgroup: 5
     microkit_boards: [odroidc4]
 
   ODROID_XU:
@@ -329,6 +343,7 @@ platforms:
     platform: zynqmp
     req: [zcu102_2]
     march: armv8a
+    subgroup: 2
     microkit_boards: [zcu102]
     # The ZCU102 in machine queue expects a binary image
     # settings:
@@ -341,6 +356,7 @@ platforms:
     aarch_hyp: [64]
     platform: zynqmp
     march: armv8a
+    subgroup: 3
     # not in seL4 tooling
     no_hw_build: true
     # We don't have any of these physical boards to test against
@@ -352,6 +368,7 @@ platforms:
     aarch_hyp: [64]
     platform: zynqmp
     march: armv8a
+    subgroup: 3
     # not in seL4 tooling
     no_hw_build: true
     # We don't have any of these physical boards to test against
@@ -365,6 +382,7 @@ platforms:
     platform: zynqmp
     req: [zcu106]
     march: armv8a
+    subgroup: 3
 
   STM32MP2:
     arch: arm
@@ -374,6 +392,7 @@ platforms:
     platform: stm32mp2
     req: [stm32mp]
     march: armv8a
+    subgroup: 5
     # FIXME: the watchdog timer fires during the test which
     #        prevents it from completing.
     # @bruelc from STM32 has said that he is going to implement
@@ -397,6 +416,7 @@ platforms:
     req: [rpi3]
     image_platform: bcm2837
     march: armv8a # ARMv8 platform currently used in AARCH32 mode only.
+    subgroup: 2
     no_hw_test: true
 
   RPI4:
@@ -407,6 +427,7 @@ platforms:
     req: [pi4B]
     image_platform: bcm2711
     march: armv8a
+    subgroup: 3
     no_hw_test: true
     microkit_boards: [rpi4b_1gb, rpi4b_2gb, rpi4b_4gb]
 
@@ -423,6 +444,7 @@ platforms:
     req: []
     image_platform: bcm2711
     march: armv8a
+    subgroup: 4
     # microkit-only
     no_hw_build: true
     # cannot be tested
@@ -437,6 +459,7 @@ platforms:
     platform: tx1
     req: [tx1a]
     march: armv8a
+    subgroup: 4
 
   TX2:
     arch: arm
@@ -446,6 +469,7 @@ platforms:
     platform: tx2
     req: [tx2a]
     march: armv8a
+    subgroup: 1
 
   PC99:
     arch: x86

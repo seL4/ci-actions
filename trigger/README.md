@@ -92,5 +92,5 @@ jobs:
     steps:
     - uses: seL4/ci-actions/trigger@master
       with:
-        token: $${{ secrets.REPO_TOKEN }}
+        token: ${{ secrets.REPO_TOKEN }}
 ```

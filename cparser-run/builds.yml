@@ -41,6 +41,7 @@ builds:
 
 - AARCH64-ZYNQMP:
     platform: ZYNQMP
+    mode: 64
     l4v_arch: AARCH64
 
 - AARCH32HYP-TK1:

@@ -6,7 +6,7 @@ name: 'Git Diff Check'
 description: |
   Runs git diff --check to check for trailing whitespace and
   merge conflict markers.
-author: Gerwin Klein <kleing@unsw.edu.au>
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   token:
@@ -18,5 +18,5 @@ inputs:
     default: 'git-diff-check'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'

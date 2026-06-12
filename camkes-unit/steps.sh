@@ -22,4 +22,4 @@ echo "      capdl: $(git -C ../capdl rev-parse --short HEAD)"
 export PYTHONPATH=../capdl/python-capdl-tool
 echo "::endgroup::"
 
-nosetests --exe --ignore-file=testvisualcamkes.py
+python3 alltests.py

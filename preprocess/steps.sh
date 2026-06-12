@@ -12,7 +12,6 @@ set -e
 # required parameters:
 export L4V_ARCH="${INPUT_L4V_ARCH}"
 export L4V_FEATURES="${INPUT_L4V_FEATURES}"
-export L4V_PLAT="${INPUT_L4V_PLAT}"
 
 # actions:
 echo "::group::Setting up"
@@ -20,7 +19,21 @@ checkout-manifest.sh
 
 REPOS="$(pwd)"
 SEL4_REPO="${REPOS}/seL4"
-MANIFEST_REV=$(git -C ${SEL4_REPO} rev-parse HEAD)
+
+REMOTE=$(git -C ${SEL4_REPO} remote)
+if [ "$(echo "${REMOTE}" | wc -l)" -ne 1 ]; then
+  echo "::error::Expected exactly one remote, got: ${REMOTE}"
+  exit 1
+fi
+
+if [ -n "${INPUT_BASE_REF}" ]
+then
+  # Use the tip of the specified base branch instead of the manifest hash
+  git -C ${SEL4_REPO} fetch -q --depth 1 "${REMOTE}" "${INPUT_BASE_REF}"
+  git -C ${SEL4_REPO} checkout -q FETCH_HEAD
+fi
+
+BASE_REV=$(git -C ${SEL4_REPO} rev-parse HEAD)
 
 cd "${SEL4_REPO}"
 export BRANCH_NAME="github-ci-work/pr-branch"
@@ -30,7 +43,7 @@ fetch-branch.sh
 TEST_REF=$(git rev-parse HEAD)
 
 # restore previous state
-git checkout -q ${MANIFEST_REV}
+git checkout -q ${BASE_REV}
 cd - > /dev/null
 
 repo-util hashes
@@ -39,5 +52,22 @@ repo-util hashes
 cp -r /c-parser "${REPOS}/l4v/tools/"
 echo "::endgroup::"
 
-# start test
-test_munge.sh -ac -p "${REPOS}" $MANIFEST_REV $TEST_REF
+# one test for the default L4V_ARCH/L4V_FEATURES combination
+test_munge.sh -ac -p "${REPOS}" $BASE_REV $TEST_REF
+
+# then all platform combinations if any exist
+
+# find all L4V_PLAT for the provided L4V_ARCH/L4V_FEATURES combination in
+# seL4/configs/ and store them in the array CONFIGS
+FEAT="${L4V_FEATURES:+${L4V_FEATURES}_}"
+
+shopt -s nullglob
+cd "${SEL4_REPO}/configs/"
+CONFIGS=$(echo ${L4V_ARCH}_${FEAT}[a-z0-9]*_verified.cmake)
+cd - > /dev/null
+
+for CONFIG in ${CONFIGS}; do
+  L4V_PLAT=${CONFIG##${L4V_ARCH}_${FEAT}}
+  export L4V_PLAT=${L4V_PLAT%_verified.cmake}
+  test_munge.sh -ac -p "${REPOS}" $BASE_REV $TEST_REF
+done

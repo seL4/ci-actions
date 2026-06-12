@@ -30,6 +30,14 @@ def hw_build(manifest_dir: str, build: Build):
 
     script = [
         ["../init-build.sh"] + build.settings_args(),
+    ]
+
+    if verification_equals_release(build) and build.is_release():
+        base_args = [arg for arg in build.settings_args()
+                     if not arg.startswith('-DRELEASE=')]
+        script.append(["check-config-eq.sh"] + base_args)
+
+    script += [
         ["ninja"],
         ["tar", "czf", f"../{build.name}-images.tar.gz", "images/"],
         ["cp", "kernel/kernel.elf", f"../{build.name}-kernel.elf"]
@@ -45,15 +53,34 @@ def hw_run(manifest_dir: str, build: Build):
         print(f"Build {build.name} disabled, skipping.")
         return SKIP
 
+    if build.is_verification() and build.is_smp():
+        print(f"Build {build.name} is verification+SMP, skipping.")
+        return SKIP
+
+    # 5 min timeout for the `mq.sh run` command without lock wait time
+    # most boards finish any config within 1 min, slowest in 14k runs (hifive) ~3 min
+    # reserve some extra for occasional reboot failures
+    build.timeout = 300
     script, final = build.hw_run(junit_results)
 
     return run_build_script(manifest_dir, build, script, final_script=final, junit=True)
+
+
+def verification_equals_release(build: Build) -> bool:
+    """Return whether in this build release and verification settings are equivalent."""
+
+    plat = build.get_platform()
+    # TX2 currently still set AArch64SErrorIgnore=ON for release mode
+    return plat.arch == 'riscv' or (plat.arch == 'arm' and not plat.name == 'TX2')
 
 
 def build_filter(build: Build) -> bool:
     plat = build.get_platform()
 
     if plat.no_hw_build:
+        return False
+
+    if build.is_verification() and verification_equals_release(build):
         return False
 
     if plat.arch == 'arm':
@@ -82,8 +109,8 @@ def build_filter(build: Build) -> bool:
             return False
 
     if plat.arch == 'x86':
-        # Bamboo config says no VTX for SMP or verification
-        if build.is_hyp() and (build.is_smp() or build.is_verification()):
+        # Bamboo config says no VTX for verification
+        if build.is_hyp() and build.is_verification():
             return False
 
     if plat.arch == 'riscv':

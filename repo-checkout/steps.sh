@@ -9,19 +9,28 @@ set -e
 
 echo "::group::Setting up"
 
-mkdir -p ~/bin
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+x ~/bin/repo
-PATH=~/bin:$PATH
+BINDIR="${RUNNER_TEMP}/bin"
+mkdir -p "${BINDIR}"
+curl https://storage.googleapis.com/git-repo-downloads/repo > "${BINDIR}/repo"
+chmod a+x "${BINDIR}/repo"
 
+PATH="${BINDIR}":$PATH
+
+. ${SCRIPTS}/setup-python-venv.sh
 pip3 install -U PyGithub
 
 echo "::endgroup::"
 
 echo "::group::Repo checkout"
 
+if echo "$INPUT_MANIFEST_REPO" | grep -q "/" 2>/dev/null; then
+  export MANIFEST_URL="https://github.com/${INPUT_MANIFEST_REPO}"
+else
+  export MANIFEST_URL="https://github.com/seL4/${INPUT_MANIFEST_REPO}"
+fi
 export REPO_MANIFEST="${INPUT_MANIFEST}"
-export MANIFEST_URL="https://github.com/seL4/${INPUT_MANIFEST_REPO}"
+export REPO_BRANCH="${INPUT_MANIFEST_BRANCH}"
+export REPO_DEPTH="${INPUT_MANIFEST_DEPTH}"
 checkout-manifest.sh
 
 fetch-branches.sh

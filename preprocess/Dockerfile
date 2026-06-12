@@ -18,10 +18,10 @@ RUN mkdir ${SCRIPTS}
 COPY ${ACTION}/steps.sh ${ACTION}/make_munge.sh ${ACTION}/test_munge.sh \
      scripts/* ${SCRIPTS}/
 RUN chmod a+rx ${SCRIPTS}/*
-ENV  PATH "${SCRIPTS}:${PATH}"
+ENV  PATH="${SCRIPTS}:${PATH}"
 
 ARG WORKSPACE
 RUN mkdir -p ${WORKSPACE}
 WORKDIR ${WORKSPACE}
 
-ENTRYPOINT steps.sh
+ENTRYPOINT ["steps.sh"]

@@ -60,7 +60,7 @@ jobs:
       with:
         platform: ${{ matrix.platform }}
     - name: Upload images
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v7
       with:
         name: images-${{ matrix.platform }}
         path: '*-images.tar.gz'
@@ -76,13 +76,13 @@ jobs:
     concurrency: webserver-hw-${{ strategy.job-index }}
     steps:
       - name: Get machine queue
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
         with:
           repository: seL4/machine_queue
           path: machine_queue
           token: ${{ secrets.PRIV_REPO_TOKEN }}
       - name: Download image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v8
         with:
           name: images-${{ matrix.platform }}
           index: ${{ strategy.job-index }}
@@ -90,7 +90,7 @@ jobs:
         uses: seL4/ci-actions/webserver-hw@master
         with:
           platform: ${{ matrix.platform }}
-          index: $${{ strategy.job-index }}
+          index: ${{ strategy.job-index }}
         env:
           HW_SSH: ${{ secrets.HW_SSH }}
 ```

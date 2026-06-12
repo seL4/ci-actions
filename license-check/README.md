@@ -8,7 +8,7 @@
 This action checks out the target repository, and runs the FSFE [reuse
 tool][1] on it. It roughly speaking combines
 
-    actions/checkout@v2
+    actions/checkout@v6
     fsfe/reuse-action@master
 
 The action is written for the context of the seL4 repositories, but should

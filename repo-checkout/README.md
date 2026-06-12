@@ -26,6 +26,7 @@ The steps of this action are defined in [steps.sh].
 ## Arguments
 
 - `manifest_repo` (required): the manifest repository to check out (e.g. 'sel4test-manifest')
+- `manifest_depth`: the depth of the checkout of each repository in the manifest (default `1`)
 - `manifest`: the manifest file to use (default `master.xml`)
 - `sha:`: override sha to advance PR repo to (e.g. sha for `seL4` repo in `seL4/sel4test-manifest`
           if seL4 is the repo the action is called from)

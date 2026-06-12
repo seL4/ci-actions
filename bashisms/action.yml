@@ -4,7 +4,7 @@
 
 name: 'Style'
 description: 'Runs check for bashisms on shell scripts'
-author: Gerwin Klein <kleing@unsw.edu.au>
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   token:
@@ -16,5 +16,5 @@ inputs:
     default: 'bashisms'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'

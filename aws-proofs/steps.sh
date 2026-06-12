@@ -13,8 +13,9 @@ if [ "${GITHUB_EVENT_NAME}" = "pull_request_target" ] ||
    [ "${GITHUB_EVENT_NAME}" = "pull_request" ]
 then
   echo "::group::PR info"
+  . ${SCRIPTS}/setup-python-venv.sh
   pip3 install -U PyGithub
-  export INPUT_EXTRA_PRS="$(get-prs)"
+  export INPUT_EXTRA_REFS="$(get-prs)"
   echo "::endgroup::"
 fi
 
@@ -45,6 +46,11 @@ if [ -z ${IP} ]; then exit 1; fi
 
 echo "Waiting for sshd to come up"
 until nc -w5 -z ${IP} 22; do echo "."; sleep 3; done
+
+if [ -z "${AWS_SSH}" ]; then
+  echo "No 'AWS_SSH' key provided" >&2
+  exit 1
+fi
 
 eval $(ssh-agent)
 ssh-add -q - <<< "${AWS_SSH}"
@@ -78,7 +84,7 @@ ssh -o SendEnv=INPUT_CI_BRANCH \
     -o SendEnv=INPUT_SKIP_DUPS \
     -o SendEnv=INPUT_TOKEN \
     -o SendEnv=INPUT_XML \
-    -o SendEnv=INPUT_EXTRA_PRS \
+    -o SendEnv=INPUT_EXTRA_REFS \
     -o SendEnv=GITHUB_REPOSITORY \
     -o SendEnv=GITHUB_REF \
     -o SendEnv=GITHUB_BASE_REF \

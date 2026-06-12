@@ -18,8 +18,9 @@ inputs:
     description: 'Additional features to include. Empty ("") or "MCS".'
     required: false
 
-  L4V_PLAT:
-    description: 'Platform variant to test (optional). Either a platform name or unset.'
+  base_ref:
+    description: |
+      seL4 base ref to compare against instead of the verification manifest hash.
     required: false
 
   action_name:

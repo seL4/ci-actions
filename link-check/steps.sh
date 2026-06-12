@@ -7,8 +7,8 @@
 set -e
 
 echo "::group::Setting up"
-mkdir -p /repo
-cd /repo
+# avoid "fatal: detected dubious ownership in repository at '/github/workspace'"
+git config --global --add safe.directory ${GITHUB_WORKSPACE}
 checkout.sh
 
 # get ignored input files from .linkcheck-ignore.yml
@@ -56,9 +56,13 @@ else
   exit 0
 fi
 
+# Use a cache from the last run if available to avoid hitting GitHub rate limits
+# and accept/ignore 429 (Too Many Requests) errors.
 (set -x; \
   cat "${FILES}" | tr '\n' '\000' | \
   xargs -0 lychee -n \
+         --cache \
+         --accept 429 \
          ${INPUT_TOKEN:+--github-token "${INPUT_TOKEN}"} \
          ${INPUT_EXCLUDE:+--exclude-path "${INPUT_EXCLUDE}"} \
          ${INPUT_TIMEOUT:+-t "${INPUT_TIMEOUT}"} \

@@ -12,14 +12,15 @@ them, `run_build_script` for a standard test driver frame, and
 `default_junit_results` for a standard place to leave a jUnit summary file.
 """
 
-from junitparser.junitparser import Failure, Error
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
 from typing import Optional, List, Tuple, Union
 from junitparser import JUnitXml
+from dataclasses import dataclass, field
 
 import copy
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -264,9 +265,10 @@ class Run:
             return [['echo', f"Specify list of machines instead of pool for {self.name}."],
                     ['exit', '1']], []
 
+        # acquire/release lock separately, so that we can measure the time taken
+        # for the actual test run without lock wait time.
         return [
             ['tar', 'xvzf', f"../{self.build.name}-images.tar.gz"],
-            mq_print_lock(machine),
             mq_lock(machine),
             mq_run(build.success, machine, build.files,
                    completion_timeout=build.timeout,
@@ -307,8 +309,6 @@ def release_mq_locks(runs: List[Union[Run, Build]]):
             run(mq_cancel(machine))
             # release any locks we already have claimed
             run(mq_release(machine))
-            # show lock status (should now show "free" or "locked for another job")
-            run(mq_print_lock(machine))
 
 
 def get_machine(req):
@@ -316,7 +316,7 @@ def get_machine(req):
         return None
     else:
         # assume jobs for the same platform are consecutive-ish in the build matrix
-        job_index = int(os.environ.get('INPUT_INDEX', '$0')[1:])
+        job_index = int(os.environ.get('INPUT_INDEX', '0'))
         return req[job_index % len(req)]
 
 
@@ -325,7 +325,7 @@ def job_key():
         os.environ.get('GITHUB_WORKFLOW') + "-" + \
         os.environ.get('GITHUB_RUN_ID') + "-" + \
         os.environ.get('GITHUB_JOB') + "-" + \
-        os.environ.get('INPUT_INDEX', '$0')[1:]
+        os.environ.get('INPUT_INDEX', '0')
 
 
 def mq_run(success_str: str,
@@ -430,13 +430,17 @@ def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> i
         sys.stdout.flush()
         # Print output as it arrives. Some of the build commands take too long to
         # wait until all output is there. Keep stderr separate, but flush it.
-        process = subprocess.Popen(cmd, text=True, stdout=subprocess.PIPE,
-                                   stderr=sys.stderr, bufsize=1)
+        # Opens in binary mode; the child might end up messing with the pty
+        # so that it is in raw mode and expects \r\n for a newline, so we can't
+        # use the text= option with line buffering and universal newlines.
+        # Python is however helpful and iterating over process.stdout does
+        # a line-at-a-time as we desire, so we just need to decode bytes ourselves.
+        # Disable buffering so we don't hit issues with unflushed output.
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=sys.stderr, bufsize=0)
         lines = []
         for line in process.stdout:
-            line = line.rstrip()
-            lines.append(line)
-            print(line)
+            lines.append(line.decode().rstrip())
+            sys.stdout.buffer.write(line)
             sys.stdout.flush()
             sys.stderr.flush()
         ret = process.wait()
@@ -450,33 +454,89 @@ def printc(color: str, content: str):
     print(color + content + ANSI_RESET)
 
 
-def summarise_junit(file_path: str) -> Tuple[int, List[str]]:
-    """Parse jUnit output and show a summary.
+@dataclass
+class TestSummary:
+    """Summary of the jUnit results of one test run."""
+    name: str
+    total: int = 0
+    skipped: int = 0
+    failed: int = 0
+    succeeded: int = 0
+    # list of failure causes (failed test cases, timeout, infrastructure), with optional log details
+    causes: List[Tuple[str, Optional[str]]] = field(default_factory=list)
 
-    Returns True if there were no failures or errors, raises exception
+    def success(self) -> bool:
+        # causes may include timeout or infrastructure failures that are not failed test cases
+        return self.failed == 0 and len(self.causes) == 0
+
+
+# Global dict, mapping run name to TestSummary for later display
+_test_summaries: dict[str, TestSummary] = {}
+
+
+def record_summary(summary: TestSummary):
+    """Merge TestSummary into _test_summaries; add to existing entries."""
+    existing = _test_summaries.get(summary.name)
+    if existing is None:
+        _test_summaries[summary.name] = summary
+    else:
+        existing.total += summary.total
+        existing.skipped += summary.skipped
+        existing.failed += summary.failed
+        existing.succeeded += summary.succeeded
+        existing.causes += summary.causes
+
+
+def junit_failure_blocks(file_path: str) -> List[Tuple[str, str]]:
+    """Extract list of name + verbatim <testcase> block from log for fail/error cases."""
+
+    # Match a <testcase> element, self-closing or with content.
+    TESTCASE_RE = re.compile(r"<testcase\b.*?(?:/>|>.*?</testcase>)", re.DOTALL)
+    # extrac test name from <testcase> block
+    NAME_RE = re.compile(r'\bname\s*=\s*"([^"]*)"')
+
+    with open(file_path) as f:
+        text = f.read()
+    blocks = []
+    for m in TESTCASE_RE.finditer(text):
+        block = m.group(0)
+        if "<failure" in block or "<error" in block:
+            name = NAME_RE.search(block)
+            blocks.append((name.group(1) if name else "", block))
+    return blocks
+
+
+def summarise_junit(name: str, file_path: str) -> Tuple[int, List[str]]:
+    """Parse jUnit output, show a summary, and record in _test_summaries.
+
+    Returns the result code and the list of failed cases, raises exception
     on IOError or XML parse errors."""
 
     xml = JUnitXml.fromfile(file_path)
-    succeeded = xml.tests - (xml.failures + xml.errors + xml.skipped)
-    success = xml.failures == 0 and xml.errors == 0
+    causes = junit_failure_blocks(file_path)
+    summary = TestSummary(
+        name=name,
+        total=xml.tests,
+        skipped=xml.skipped,
+        failed=len(causes),
+        succeeded=xml.tests - len(causes) - xml.skipped,
+        causes=causes)
+
+    record_summary(summary)
+    success = summary.success()
 
     col = ANSI_GREEN if success else ANSI_RED
 
     printc(col, "Test summary")
     printc(col, "------------")
-    printc(ANSI_GREEN if success else "", f"succeeded: {succeeded}/{xml.tests}")
-    if xml.skipped > 0:
-        printc(ANSI_YELLOW, f"skipped:   {xml.skipped}")
-    if xml.failures > 0:
-        printc(ANSI_RED, f"failures:  {xml.failures}")
-    if xml.errors > 0:
-        printc(ANSI_RED, f"errors:    {xml.errors}")
+    printc(ANSI_GREEN if success else "", f"succeeded: {summary.succeeded}/{summary.total}")
+    if summary.skipped > 0:
+        printc(ANSI_YELLOW, f"skipped:   {summary.skipped}")
+    if summary.failed > 0:
+        printc(ANSI_RED, f"failed:  {summary.failed}")
     print()
 
-    failures = {str(case.name) for case in xml
-                if any([isinstance(r, Failure) or isinstance(r, Error) for r in case.result])}
-
-    return success_from_bool(success), list(failures)
+    return success_from_bool(success), [name for name, _ in causes]
 
 
 # where junit results are left after sanitising:
@@ -544,19 +604,22 @@ def run_build_script(manifest_dir: str,
         result = SUCCESS
         output = None
         for line in script:
-            result, ouput = run_cmd(line, run, output)
+            result, output = run_cmd(line, run, output)
             if result != SUCCESS:
                 break
 
         if result == FAILURE:
             printc(ANSI_RED, ">>> command failed, aborting.")
+            record_summary(TestSummary(
+                name=run.name,
+                causes=[("Incomplete", "\n".join(output[-20:]))]))
         elif result == SKIP:
             printc(ANSI_YELLOW, ">>> skipping this test.")
 
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
             for line in final_script:
-                r, output = run_cmd(line, run, ouput)
+                r, output = run_cmd(line, run, output)
                 if r == FAILURE:
                     # If a final script task fails, the overall task fails unless
                     # we have already decided to repeat. In either case we stop
@@ -572,7 +635,7 @@ def run_build_script(manifest_dir: str,
         failures = []
         if result == SUCCESS and junit:
             try:
-                result, failures = summarise_junit(junit_file)
+                result, failures = summarise_junit(run.name, junit_file)
             except IOError:
                 printc(ANSI_RED, f"Error reading {junit_file}")
                 result = FAILURE
@@ -709,7 +772,11 @@ def build_for_variant(base_build: Build, variant, filter_fun=lambda x: True) -> 
     return build if filter_fun(build) else None
 
 
-def get_env_filters() -> list:
+DEFAULT_ENV_FILTER_KEYS = ['march', 'arch', 'mode',
+                           'compiler', 'debug', 'platform', 'name', 'app', 'req']
+
+
+def get_env_filters(keys: list[str] = DEFAULT_ENV_FILTER_KEYS) -> list:
     """Process input env variables and return a build filter (list of dict)"""
 
     def get(var: str) -> Optional[str]:
@@ -718,7 +785,6 @@ def get_env_filters() -> list:
     def to_list(string: str) -> list:
         return [s.strip() for s in string.split(',')]
 
-    keys = ['march', 'arch', 'mode', 'compiler', 'debug', 'platform', 'name', 'app', 'req']
     filter = {k: to_list(get(k)) for k in keys if get(k)}
     # 'mode' expects integers:
     if 'mode' in filter:
@@ -776,6 +842,12 @@ def filtered(build: Build, build_filters: dict) -> Optional[Build]:
                         return False
             elif k in ['name', 'app']:
                 if vars(build).get(k) not in v:
+                    return False
+            elif k == 'board':
+                if getattr(build, "microkit_board") not in v:
+                    return False
+            elif k == 'config':
+                if getattr(build, "microkit_config") not in v:
                     return False
             elif not vars(build.get_platform()).get(k):
                 return False
@@ -848,6 +920,9 @@ def run_builds(builds: list, run_fun) -> int:
 
     manifest_dir = os.getcwd()
 
+    # in case there are ever multiple run_builds invocations in one job
+    _test_summaries.clear()
+
     results = {SUCCESS: [], FAILURE: [], SKIP: []}
     for build in builds:
         results[run_fun(manifest_dir, build)].append(build.name)
@@ -861,4 +936,65 @@ def run_builds(builds: list, run_fun) -> int:
         print()
         printc(ANSI_RED, "FAILED tests: " + ", ".join(results[FAILURE]))
 
+    github_job_summary()
+
     return 0 if no_failures else 1
+
+
+def github_job_summary():
+    """Add GITHUB_STEP_SUMMARY with the failures recorded in _test_summaries."""
+
+    summary = job_failure_summary()
+    if summary:
+        with open(os.environ.get('GITHUB_STEP_SUMMARY'), 'a') as f:
+            f.write(summary)
+
+
+def job_failure_summary() -> Optional[str]:
+    """Return a markdown summary of the test runs with failures in this job, based on _test_summaries."""
+
+    def heading(config: str, cause: str) -> str:
+        """Heading of the detail section of a failure cause."""
+        return f"<a name=\"{anchor(config, cause)}\"></a>\n### {config}: {cause}"
+
+    def anchor(config: str, cause: str) -> str:
+        """Heading anchor for a failure cause."""
+        return (config.lower() + "-" + cause.lower()).strip().replace(" ", "-").replace("_", "-")
+
+    def cause(config: str, cause: str, detail: Optional[str]) -> str:
+        """String for cause with optional link to details"""
+        return f"[{cause}](#{anchor(config, cause)})" if detail else cause
+
+    failed = [s for s in _test_summaries.values() if not s.success()]
+    if not failed:
+        return None
+    passed = [s for s in _test_summaries.values() if s.success()]
+
+    lines = [
+        "## Test failures",
+        "",
+        "| Config | | Causes | Failed | Succeeded | Skipped |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for summary in failed + passed:
+        causes = (cause(summary.name, c, detail) for c, detail in summary.causes)
+        causes_str = ", ".join(causes) if summary.causes else "-"
+        pass_fail = "pass" if summary.success() else "FAIL"
+        lines.append(
+            f"| {summary.name} | {pass_fail} | {causes_str} | {summary.failed} "
+            f"| {summary.succeeded}/{summary.total} | {summary.skipped} |"
+        )
+
+    for summary in failed:
+        for cause, detail in summary.causes:
+            if detail:
+                lines += [
+                    "",
+                    heading(summary.name, cause),
+                    "",
+                    "```",
+                    detail,
+                    "```"
+                ]
+
+    return "\n".join(lines)

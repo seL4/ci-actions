@@ -12,6 +12,7 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing gitlint tool"
+. ${SCRIPTS}/setup-python-venv.sh
 pip3 install -q gitlint
 
 checkout.sh

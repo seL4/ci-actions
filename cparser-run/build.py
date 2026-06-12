@@ -18,6 +18,9 @@ import sys
 def run_cparser(manifest_dir: str, build):
     """Single run of the C Parser test, for one build definition"""
 
+    if not build.get_mode():
+        raise ValueError("Build has no defined mode")
+
     script = [
         ["../init-build.sh"] + build.settings_args(),
         ["ninja", "kernel_all_pp_wrapper"],

@@ -35,5 +35,10 @@ Host tftp.keg.cse.unsw.edu.au
 
 EOF
 
+if [ -z "${HW_SSH}" ]; then
+  echo "No 'HW_SSH' key provided" >&2
+  exit 1
+fi
+
 eval $(ssh-agent)
 ssh-add -q - <<< "${HW_SSH}"

@@ -19,6 +19,7 @@ default:
 # generating build variants from all platforms, filtered by the build filter
 variants:
     debug: [debug, release]
+    mcs: ['', MCS]
     domains: ['', DOM]
     compiler: [gcc, clang]
     mode: [32, 64]
@@ -36,6 +37,7 @@ variants:
 
 # only generate builds for platforms that have `has_simulation` set
 # only generate builds with DOM set if debug is also set
+# see additional filters in build.py
 build-filter:
     - has_simulation: true
       domains: ''

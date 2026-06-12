@@ -29,12 +29,24 @@ platforms:
     platform: ariane
     march: rv64imac
     no_hw_test: true
+    microkit_no_hw_test: true
 
   CHESHIRE:
     arch: riscv
     modes: [64]
     platform: cheshire
     march: rv64imac
+    no_hw_test: true
+    microkit_no_hw_test: true
+
+  SERENGETI:
+    arch: riscv
+    modes: [64]
+    platform: cheshire
+    req: [serengeti1, serengeti2]
+    march: rv64imac
+    # microkit hw build/test only
+    no_hw_build: true
     no_hw_test: true
 
   SPIKE32:
@@ -63,6 +75,9 @@ platforms:
     march: rv64imac
     no_hw_test: true
     no_hw_build: true
+    microkit_no_hw_test: true
+    microkit_no_hw_build: true
+    microkit_boards: qemu_virt_riscv64
 
   RISCVVIRT32:
     arch: riscv
@@ -97,6 +112,14 @@ platforms:
     march: rv64imac
     req: [p550a]
 
+  STAR64:
+    arch: riscv
+    modes: [64]
+    smp: [64]
+    platform: star64
+    march: rv64imac
+    req: [star64]
+
   SABRE:
     arch: arm
     modes: [32]
@@ -104,7 +127,8 @@ platforms:
     platform: sabre
     image_platform: imx6
     req: [sabre, sabre4, sabre2]
-    has_simulation: true
+    # remove simulation builds for shorter test times in sel4test-sim; camkes tests still use them
+    # has_simulation: true
     march: armv7a
 
   ROCKPRO64:
@@ -113,7 +137,9 @@ platforms:
     platform: rockpro64
     req: [rockpro64a]
     march: armv8a
+    # no board in machine queue
     no_hw_test: true
+    microkit_no_hw_test: true
 
   ROCK3B:
     arch: arm
@@ -123,7 +149,9 @@ platforms:
     platform: rk3568
     req: [rk3568]
     march: armv8a
+    # no board in machine queue
     no_hw_test: true
+    microkit_no_hw_test: true
 
   QUARTZ64:
     arch: arm
@@ -149,6 +177,9 @@ platforms:
     march: armv8a # Cortex-A53 is emulated by default
     no_hw_test: true
     no_hw_build: true
+    microkit_no_hw_test: true
+    microkit_no_hw_build: true
+    microkit_boards: [qemu_virt_aarch64]
 
   IMX8MQ_EVK:
     arch: arm
@@ -180,6 +211,31 @@ platforms:
     platform: imx8mm-evk
     req: [imx8mm]
     march: armv8a
+
+  IMX8MP_EVK:
+    arch: arm
+    modes: [32, 64]
+    smp: [64]
+    platform: imx8mp-evk
+    req: []
+    march: armv8a
+    # there is no board in the machine queue at the moment.
+    no_hw_test: true
+    microkit_no_hw_test: true
+
+  # microkit only
+  IMX8MP_IOTGATE:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: imx8mp-iotgate
+    req: [iotgate1, iotgate3, iotgate4, iotgate5]
+    march: armv8a
+    # microkit only, no seL4
+    no_hw_build: true
+    no_hw_test: true
+    # this is even broken...
+    microkit_no_hw_test: true
 
   TQMA8XQP1GB:
     arch: arm
@@ -223,6 +279,7 @@ platforms:
     platform: odroidc2
     req: [odroidc2]
     march: armv8a
+    microkit_boards: [odroidc2]
 
   ODROID_C4:
     arch: arm
@@ -232,6 +289,7 @@ platforms:
     platform: odroidc4
     req: [odroidc4_1, odroidc4_2]
     march: armv8a
+    microkit_boards: [odroidc4]
 
   ODROID_XU:
     arch: arm
@@ -257,7 +315,9 @@ platforms:
     modes: [32]
     platform: zynq7000
     req: [zc706]
-    has_simulation: true
+    # remove simulation builds for shorter test times in sel4test-sim;
+    # sel4tutorials and camkes tests still use them
+    # has_simulation: true
     march: armv7a
     no_hw_test: true
 
@@ -269,19 +329,58 @@ platforms:
     platform: zynqmp
     req: [zcu102_2]
     march: armv8a
+    microkit_boards: [zcu102]
     # The ZCU102 in machine queue expects a binary image
     # settings:
     # Sel4testAllowSettingsOverride: true
     # ElfloaderImage: "binary"
 
+  KRIA_K26:
+    arch: arm
+    modes: [64]
+    aarch_hyp: [64]
+    platform: zynqmp
+    march: armv8a
+    # not in seL4 tooling
+    no_hw_build: true
+    # We don't have any of these physical boards to test against
+    microkit_no_hw_test: true
+
+  ULTRA96V2:
+    arch: arm
+    modes: [64]
+    aarch_hyp: [64]
+    platform: zynqmp
+    march: armv8a
+    # not in seL4 tooling
+    no_hw_build: true
+    # We don't have any of these physical boards to test against
+    microkit_no_hw_test: true
+
   ZYNQMP106:
     arch: arm
-    modes: [32, 64]
+    modes: [64] # platform is close enough to ZYNQMP that we skip 32 bit builds
     smp: [64]
     aarch_hyp: [64]
     platform: zynqmp
     req: [zcu106]
     march: armv8a
+
+  STM32MP2:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    aarch_hyp: [64]
+    platform: stm32mp2
+    req: [stm32mp]
+    march: armv8a
+    # FIXME: the watchdog timer fires during the test which
+    #        prevents it from completing.
+    # @bruelc from STM32 has said that he is going to implement
+    # a basic watchdog reset so that the tests can complete,
+    # but for now, don't run this on real hardware.
+    # https://github.com/seL4/ci-actions/pull/464#issuecomment-4532798902
+    no_hw_test: true
 
   TK1:
     arch: arm
@@ -309,6 +408,26 @@ platforms:
     image_platform: bcm2711
     march: armv8a
     no_hw_test: true
+    microkit_boards: [rpi4b_1gb, rpi4b_2gb, rpi4b_4gb]
+
+  # microkit only. in general this is somewhat of a hack,
+  # mostly because specifying properties on a per-board level
+  # under microkit_boards is not easily possible.
+  # we cannot test this platform as the RPI4 in our CI is
+  # a 4GB model, not an 8GB model.
+  RPI4_8GB:
+    arch: arm
+    modes: [64]
+    smp: [64]
+    platform: rpi4
+    req: []
+    image_platform: bcm2711
+    march: armv8a
+    # microkit-only
+    no_hw_build: true
+    # cannot be tested
+    microkit_no_hw_test: true
+    microkit_boards: [rpi4b_8gb]
 
   TX1:
     arch: arm
@@ -325,7 +444,7 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: tx2
-    req: [tx2a, tx2b]
+    req: [tx2a]
     march: armv8a
 
   PC99:
@@ -333,9 +452,10 @@ platforms:
     modes: [32, 64]
     smp: [32, 64]
     platform: x86_64
-    req: [skylake, haswell3, haswell4, skylake2]
+    req: [skylake, haswell3, haswell4, skylake3]
     has_simulation: true
     march: nehalem
+    microkit_boards: [x86_64_generic, x86_64_generic_vtx]
 
 # platforms where MCS is wholly unsupported
 # (for platforms with partial support see sel4test-hw/build.py and comments below)

@@ -46,8 +46,8 @@ then
   cd $(repo-util path ${GITHUB_REPOSITORY})
   fetch-branch.sh
   cd - >/dev/null
-  export INPUT_EXTRA_PRS
-  fetch-extra-prs.sh
+  export INPUT_EXTRA_REFS
+  fetch-extra-refs.sh
 fi
 
 repo-util hashes

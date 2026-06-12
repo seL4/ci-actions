@@ -64,6 +64,6 @@ inputs:
     default: 'aws-proofs'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'
   post: '../js/post.js'

@@ -17,14 +17,14 @@ RUN apt-get update \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN gem install bundler:2.1.2
-RUN pip3 install "junitparser==3.*" PyGithub
+RUN pip3 install --break-system-packages "junitparser==3.*" PyGithub
 
 ARG ACTION
 ARG SCRIPTS
 RUN mkdir ${SCRIPTS}
 COPY ${ACTION}/steps.sh scripts/* ${SCRIPTS}/
 RUN chmod a+rx ${SCRIPTS}/*
-ENV  PATH "${SCRIPTS}:${PATH}"
+ENV  PATH="${SCRIPTS}:${PATH}"
 
 RUN mkdir /builds
 COPY ${ACTION}/builds.yml \
@@ -38,4 +38,4 @@ ARG WORKSPACE
 RUN mkdir -p ${WORKSPACE}
 WORKDIR ${WORKSPACE}
 
-ENTRYPOINT steps.sh
+ENTRYPOINT ["steps.sh"]

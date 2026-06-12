@@ -30,9 +30,20 @@ def run_simulation(manifest_dir: str, build: Build):
     return run_build_script(manifest_dir, build, script, junit=True)
 
 
+def build_filter(build: Build) -> bool:
+    plat = build.get_platform()
+
+    # ZYNQ7000 will fail in simulation with 'getCurrentTime() < deadline || globalTimer->isr == 1u'
+    # See discussion: https://github.com/seL4/ci-actions/pull/233#discussion_r3338144123
+    if plat.name == "ZYNQ7000" and build.is_mcs():
+        return False
+
+    return True
+
+
 # If called as main, run all builds from builds.yml
 if __name__ == '__main__':
-    builds = load_builds(os.path.dirname(__file__) + "/builds.yml")
+    builds = load_builds(os.path.dirname(__file__) + "/builds.yml", filter_fun=build_filter)
 
     if len(sys.argv) > 1 and sys.argv[1] == '--dump':
         pprint(builds)

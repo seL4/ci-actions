@@ -8,13 +8,21 @@
 set -e
 
 echo "::group::Setting up"
-mkdir -p ~/bin
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+x ~/bin/repo
 
-PATH=~/bin:"${SCRIPTS}/../l4v-deploy":$PATH
+BINDIR="${RUNNER_TEMP}/bin"
+mkdir -p "${BINDIR}"
+curl https://storage.googleapis.com/git-repo-downloads/repo > "${BINDIR}/repo"
+chmod a+x "${BINDIR}/repo"
 
-pip3 install --user lxml
+PATH="${BINDIR}":"${SCRIPTS}/../l4v-deploy":$PATH
+
+. ${SCRIPTS}/setup-python-venv.sh
+pip3 install lxml
+
+if [ -z "${GH_SSH}" ]; then
+  echo "No 'GH_SSH' key provided" >&2
+  exit 1
+fi
 
 eval $(ssh-agent)
 ssh-add -q - <<< "${GH_SSH}"

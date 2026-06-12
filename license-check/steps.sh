@@ -10,6 +10,7 @@ echo "::group::Setting up"
 install-python.sh
 
 echo "Installing reuse tool"
+. ${SCRIPTS}/setup-python-venv.sh
 pip3 install -q reuse==5.0.2
 
 checkout.sh

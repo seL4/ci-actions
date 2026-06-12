@@ -104,6 +104,10 @@ diag_words = (
         'thm',
         'typ',
         'apply_trace',
+        'show_types',
+        'show_sorts',
+        'show_consts',
+        'find_names',
     ])
 )
 

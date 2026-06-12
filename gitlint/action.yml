@@ -4,7 +4,7 @@
 
 name: 'Gitlint'
 description: 'Runs the gitlint tool on pull requests'
-author: Gerwin Klein <kleing@unsw.edu.au>
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
 inputs:
   config:
@@ -19,5 +19,5 @@ inputs:
     default: 'gitlint'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: '../js/index.js'

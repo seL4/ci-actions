@@ -53,26 +53,26 @@ boards:
         core: A9
         soc: i.MX6
         clock: 1.0 GHz
-        compiler: arm-linux-gnueabi-gcc GNU 10.2.1
+        compiler: arm-linux-gnueabi-gcc GNU 14.2.0
     Haswell:
         soc: i7-4770
         clock: 3.4 GHz
-        compiler: gcc GNU 10.2.1
+        compiler: gcc GNU 14.2.0
     Skylake:
         soc: i7-6700
         note: without meltdown mitigation
         clock: 3.4 GHz
-        compiler: gcc GNU 10.2.1
+        compiler: gcc GNU 14.2.0
     Jetson:
         core: A57
         soc: Tx1
         clock: 1.9 GHz
-        compiler: aarch64-linux-gnu-gcc GNU 10.2.1
+        compiler: aarch64-linux-gnu-gcc GNU 14.2.0
     Hifive:
         core: U54-MC
         soc: SiFive Freedom U540
         clock: 1.5 GHz
-        compiler: riscv64-unknown-elf-gcc GNU 8.3.0
+        compiler: riscv64-unknown-elf-gcc GNU 14.2.0
 
 results:
     Default:

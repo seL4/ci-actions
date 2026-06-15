@@ -18,9 +18,9 @@ set -e
 
 # repo expects git to be set up; provide defaults if they don't exist
 git config user.name > /dev/null || \
-  git config --global user.name "repo"
+  git config --global user.name "seL4 CI"
 git config user.email > /dev/null || \
-  git config --global user.email "repo@no.mail"
+  git config --global user.email "ci@sel4.systems"
 git config color.ui > /dev/null || \
   git config --global color.ui false
 
@@ -44,4 +44,7 @@ then
   $REPO init ${DEPTH} -m "${TEST_XML}"
 fi
 
-$REPO sync -j 4 --tags
+if [ -z "${REPO_NO_SYNC}" ]
+then
+  $REPO sync -j 4 --tags
+fi

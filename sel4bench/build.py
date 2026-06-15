@@ -15,10 +15,12 @@ from builds import SKIP, SUCCESS, REPEAT, FAILURE
 from pprint import pprint
 from typing import List, Optional
 
+import copy
 import json
 import os
 import sys
 import subprocess
+from datetime import datetime, timezone
 import time
 
 
@@ -287,6 +289,73 @@ def gen_json(runs: List[Run], yml, file_name: str):
         json.dump(final, f, indent=2)
 
 
+def find_benchmark(data: dict, metric: dict) -> Optional[List]:
+    """Find the benchmark specified by the metric dict (name + row matches), and extract
+       [min, q1, median, mean, q3, max, stddev, n]. Return None if not found."""
+
+    for bench in data:
+        if bench['Benchmark'] != metric['benchmark']:
+            continue
+        for row in bench['Results']:
+            if all(row.get(k) == v for k, v in metric['match'].items()):
+                mean = round(row['Mean'])
+                stddev = round(row['Stddev'], 1)
+                n = row['Samples']
+                if metric.get('distribution'):
+                    return [round(row['Min']), round(row['1st quantile']),
+                            round(row['Median']), mean, round(row['3rd quantile']),
+                            round(row['Max']), stddev, n]
+                return [0, 0, 0, mean, 0, 0, stddev, n]
+
+    return None
+
+
+def jsonl_path(run: Run) -> str:
+    year = datetime.now(timezone.utc).year
+    platform = run.build.get_platform().name.lower()
+    if run.req:
+        platform = f"{platform}-{run.req[0]}"
+    return f"sel4bench-results/{year}/{platform}/{run.name}.jsonl"
+
+
+def add_metrics(runs: List[Run]) -> None:
+    """Read all generated JSON run results, reduce them according to metrics.yml in
+       seL4/sel4bench-results, and append to time series in files in sel4bench-results.
+
+       Does not commit/push. Expects JSON to be present in results/ and the results repo
+       to be checked out under sel4bench-results/"""
+
+    time_stamp = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    header = {'ts': time_stamp}
+    header['sha'] = os.getenv('INPUT_MANIFEST_SHA')[0:8]
+    header['sha_kernel'] = os.getenv('INPUT_SEL4_SHA')[0:8]
+    header['sha_bench'] = os.getenv('INPUT_SEL4BENCH_SHA')[0:8]
+    header['run_id'] = int(os.getenv('GITHUB_RUN_ID'))
+
+    metrics = load_yaml("sel4bench-results/metrics.yml")["metrics"]
+
+    for run in runs:
+        results_file = f"results/{run.name}.json"
+        if not os.path.exists(results_file):
+            # not all potential runs are in the CI run/build matrix
+            continue
+
+        with open(results_file) as f:
+            data = json.load(f)
+
+        entry = copy.deepcopy(header)
+        for metric in metrics:
+            value = find_benchmark(data, metric)
+            if value is not None:
+                entry[metric['key']] = value
+
+        out_file = jsonl_path(run)
+        os.makedirs(os.path.dirname(out_file), exist_ok=True)
+        with open(out_file, 'a') as f:
+            f.write(json.dumps(entry, separators=(',', ':')) + "\n")
+
+
 # If called as main, run all builds from builds.yml
 if __name__ == '__main__':
     yml = load_yaml(os.path.dirname(__file__) + "/builds.yml")
@@ -312,6 +381,10 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] == '--web':
         gen_json(make_runs(builds), yml, "benchmarks.json")
+        sys.exit(0)
+
+    if len(sys.argv) > 1 and sys.argv[1] == '--metrics':
+        add_metrics(make_runs(builds))
         sys.exit(0)
 
     sys.exit(run_builds(builds, hw_build))

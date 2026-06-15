@@ -1,0 +1,22 @@
+# Copyright 2021, Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+name: 'Collect condensed seL4 Benchmark Results'
+description: |
+  Push condensed sel4bench results to seL4/sel4bench-results
+author: Gerwin Klein <gerwin.klein@proofcraft.systems>
+
+inputs:
+  manifest_sha:
+    description: The SHA of the manifest file that was deployed after successful test
+    required: true
+
+  action_name:
+    description: 'internal -- do not use'
+    required: false
+    default: 'sel4bench-metrics'
+
+runs:
+  using: 'node24'
+  main: '../js/index.js'

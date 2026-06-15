@@ -141,61 +141,6 @@ def make_runs(builds: List[Build]) -> List[Run]:
     return runs
 
 
-def get_results(run: Run) -> List[float]:
-    """Get the benchmark results from JSON for a specific run."""
-
-    with open(f"{run.name}.json") as f:
-        data = json.load(f)
-
-    ipc_call = 0
-    ipc_call_fpu = 0
-    ipc_reply = 0
-    ipc_reply_fpu = 0
-    irq_invoke = 0
-    notify = 0
-    notify_s = '?'
-
-    for bench in data:
-        if bench['Benchmark'].startswith('One way IPC microbenchmarks'):
-            results = bench['Results']
-            for result in results:
-                if result['Function'] == 'seL4_Call' and not result['Same vspace?'] and \
-                   result['Direction'] == 'client->server' and result['IPC length'] == 0:
-                    ipc_call = round(result['Mean'])
-                    ipc_call_s = round(result['Stddev'])
-                elif result['Function'] == 'seL4_Call (FPU)' and not result['Same vspace?'] and \
-                        result['Direction'] == 'client->server' and result['IPC length'] == 0:
-                    ipc_call_fpu = round(result['Mean'])
-                    ipc_call_fpu_s = round(result['Stddev'])
-                elif result['Function'] == 'seL4_ReplyRecv' and not result['Same vspace?'] and \
-                        result['Direction'] == 'server->client' and result['IPC length'] == 0:
-                    ipc_reply = round(result['Mean'])
-                    ipc_reply_s = round(result['Stddev'])
-                elif result['Function'] == 'seL4_ReplyRecv (FPU)' and not result['Same vspace?'] and \
-                        result['Direction'] == 'server->client' and result['IPC length'] == 0:
-                    ipc_reply_fpu = round(result['Mean'])
-                    ipc_reply_fpu_s = round(result['Stddev'])
-        if bench['Benchmark'].startswith('Signal to process of higher prio'):
-            results = bench['Results']
-            for result in results:
-                if result['Prio'] == 1:
-                    notify = round(result['Mean'])
-                    notify_s = round(result['Stddev'])
-
-        if bench['Benchmark'].startswith('IRQ path cycle count'):
-            results = bench['Results']
-            for result in results:
-                if result['Type'] == 'With context switch (early processing)':
-                    irq_invoke = round(result['Mean'])
-                    irq_invoke_s = round(result['Stddev'])
-
-        if ipc_call > 0 and ipc_call_fpu > 0 and ipc_reply > 0 and ipc_reply_fpu > 0 and irq_invoke > 0 and notify > 0:
-            break
-
-    return [irq_invoke, irq_invoke_s, ipc_call, ipc_call_s, ipc_reply, ipc_reply_s, notify, notify_s,
-            ipc_call_fpu, ipc_call_fpu_s, ipc_reply_fpu, ipc_reply_fpu_s]
-
-
 def get_run(runs: List[Run], name: str) -> Optional[Run]:
     """Get a run by name."""
 
@@ -214,6 +159,19 @@ def gen_json(runs: List[Run], yml, file_name: str):
 
     boards = yml["boards"]
     sections = yml["results"]
+
+    # Read metrics definitions and turn the metrics list into a dict
+    metrics_by_key = {m['key']: m for m in load_yaml("sel4bench-results/metrics.yml")["metrics"]}
+
+    # Map table column name to metrics.yml key
+    metric_of_col = {
+        'irq': 'irq_switch_early',
+        'call': 'ipc_call',
+        'reply': 'ipc_reply',
+        'notify': 'notify_process',
+        'call_fpu': 'ipc_call_fpu',
+        'reply_fpu': 'ipc_reply_fpu',
+    }
 
     # Data columns (column header, key)
     data_cols = [
@@ -264,13 +222,11 @@ def gen_json(runs: List[Run], yml, file_name: str):
                 row['note'] = board.get('note')
             row['clock'] = board.get('clock')
             row['compiler'] = board['compiler']
-            results = get_results(run)
-            row['irq'] = (results[0], results[1])
-            row['call'] = (results[2], results[3])
-            row['reply'] = (results[4], results[5])
-            row['notify'] = (results[6], results[7])
-            row['call_fpu'] = (results[8], results[9])
-            row['reply_fpu'] = (results[10], results[11])
+            with open(f"results/{run.name}.json") as f:
+                run_data = json.load(f)
+            for col, key in metric_of_col.items():
+                value = find_benchmark(run_data, metrics_by_key[key])
+                row[col] = (value[3], round(value[6]))  # 3 = mean, 6 = stddev
 
             adjust_build_settings(run.build)
             build_command = " ".join(["init-build.sh"] + run.build.settings_args())

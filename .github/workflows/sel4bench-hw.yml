@@ -114,7 +114,7 @@ jobs:
         with:
           platform: ${{ matrix.platform }}
       - name: Download image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: images-sel4bench-${{ steps.plat.outputs.march }}
       - name: Run

@@ -184,7 +184,7 @@ platforms:
     no_hw_build: true
     microkit_no_hw_test: true
     microkit_no_hw_build: true
-    microkit_boards: [qemu_virt_aarch64]
+    microkit_boards: [qemu_virt_aarch64, qemu_virt_aarch64_el1]
 
   IMX8MQ_EVK:
     arch: arm

@@ -11,8 +11,6 @@ cakeml_libs:
 - camkes-tool
 camkes:
 - camkes-tool
-camkes-arm-vm:
-- sel4webserver
 camkes-tool:
 - camkes-vm-examples
 - sel4-tutorials
@@ -42,12 +40,8 @@ graph-refine:
 - l4v
 hol:
 - l4v
-iperf:
-- rumprun-sel4-demoapps
 isabelle:
 - l4v
-leveldb:
-- rumprun-sel4-demoapps
 libzmq:
 - camkes-vm-examples
 lwip:
@@ -60,7 +54,6 @@ musllibc:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-- rumprun-sel4-demoapps
 nanopb:
 - seL4
 - sel4bench
@@ -86,9 +79,6 @@ pruner:
 - camkes-tool
 rumprun:
 - camkes-tool
-- rumprun-sel4-demoapps
-rumprun-packages:
-- rumprun-sel4-demoapps
 sel4:
 - l4v
 - sel4bench
@@ -96,7 +86,6 @@ sel4:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-- rumprun-sel4-demoapps
 sel4_libs:
 - seL4
 - sel4bench
@@ -104,7 +93,6 @@ sel4_libs:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-- rumprun-sel4-demoapps
 sel4_projects_libs:
 - seL4
 - sel4bench
@@ -119,7 +107,6 @@ sel4_tools:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-- rumprun-sel4-demoapps
 sel4runtime:
 - seL4
 - sel4bench
@@ -127,7 +114,6 @@ sel4runtime:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-- rumprun-sel4-demoapps
 sel4test:
 - seL4
 util_libs:
@@ -137,4 +123,3 @@ util_libs:
 - camkes-vm-examples
 - sel4-tutorials
 - sel4webserver
-- rumprun-sel4-demoapps

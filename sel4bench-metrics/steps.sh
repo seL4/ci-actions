@@ -26,8 +26,8 @@ chmod a+x "${BINDIR}/repo"
 
 PATH="${BINDIR}":$PATH
 
+sudo apt-get install -y --no-install-recommends libffi-dev libxml2-utils
 # python env
-sudo apt-get install -y --no-install-recommends libffi-dev
 . ${SCRIPTS}/setup-python-venv.sh
 pip3 install "junitparser==3.*" sel4-deps
 export PYTHONPATH="${ACTION_DIR}/seL4-platforms"

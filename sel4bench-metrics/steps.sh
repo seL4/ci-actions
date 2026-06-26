@@ -15,16 +15,10 @@
 # - result extraction from json in results/
 # - git commit/push to sel4bench-results repo
 
+set -e
+
 echo "::group::Setting up"
 export ACTION_DIR="${SCRIPTS}/.."
-
-# repo
-BINDIR="${RUNNER_TEMP}/bin"
-mkdir -p "${BINDIR}"
-curl https://storage.googleapis.com/git-repo-downloads/repo > "${BINDIR}/repo"
-chmod a+x "${BINDIR}/repo"
-
-PATH="${BINDIR}":$PATH
 
 sudo apt-get install -y --no-install-recommends libffi-dev libxml2-utils
 # python env
@@ -34,22 +28,17 @@ export PYTHONPATH="${ACTION_DIR}/seL4-platforms"
 echo "::endgroup::"
 
 echo "::group::Reading manifest"
-mkdir manifest
-cd manifest
-export MANIFEST_URL="https://github.com/seL4/sel4bench-manifest"
-export REPO_MANIFEST="default.xml"
-export REPO_BRANCH="${INPUT_MANIFEST_SHA}"
-export REPO_NO_SYNC="1"
-${SCRIPTS}/checkout-manifest.sh
+MANIFEST="${RUNNER_TEMP}/default.xml"
+curl -sSfL \
+  "https://raw.githubusercontent.com/seL4/sel4bench-manifest/${INPUT_MANIFEST_SHA}/default.xml" \
+  -o "${MANIFEST}"
 
-MANIFEST=.repo/manifests/default.xml
 manifest_revision() {
   xmllint --xpath "string(//project[@name='$1']/@revision)" "${MANIFEST}"
 }
 
 export INPUT_SEL4_SHA=$(manifest_revision seL4.git)
-export INPUT_SEL4BENCH_SHA=$(manifest_revision seL4bench.git)
-cd -
+export INPUT_SEL4BENCH_SHA=$(manifest_revision sel4bench.git)
 echo "::endgroup::"
 
 # extract results and update sel4bench-results working copy

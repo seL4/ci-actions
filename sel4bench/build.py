@@ -51,9 +51,11 @@ def hw_build(manifest_dir: str, build: Build):
 def extract_json(results: str, run: Run) -> int:
     """Process test logs to extract JSON results."""
 
+    # Only extract the first JSON OUTPUT block. In rare cases (mq failure to
+    # detect boot completion), there can be two, and both are valid results.
     res = subprocess.run(
         f"cat {results} | "
-        f"sed -e '/JSON OUTPUT/,/END JSON OUTPUT/!d' | "
+        f"sed -n '/JSON OUTPUT/,/END JSON OUTPUT/p; /END JSON OUTPUT/q' | "
         f"sed 's/END JSON OUTPUT//' | sed 's/JSON OUTPUT//' | jq '.' "
         f" > ../{run.name}.json",
         shell=True

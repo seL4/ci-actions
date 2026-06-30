@@ -41,6 +41,8 @@ use one or more of the following:
 - `march`: comma separated list of `march` flags, e.g. `armv7a, nehalem`
 - `mode`: one of `{32, 64}`
 - `xml`: [sel4bench][sel4bench-manifest] xml manifest to test
+- `iterations`: number of benchmark iterations to run, overrides the
+  `ITERATIONS` setting in [builds.yml][Build].
 
 ## Example
 

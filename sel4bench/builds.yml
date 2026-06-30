@@ -13,6 +13,7 @@ default:
         FASTPATH: "TRUE"
         HARDWARE: "TRUE"
         FAULT: "TRUE"
+        ITERATIONS: 5
 
 variants:
     smp: ['', SMP]

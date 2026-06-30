@@ -227,7 +227,8 @@ def gen_json(runs: List[Run], yml, file_name: str):
             with open(f"results/{run.name}.json") as f:
                 run_data = json.load(f)
             for col, key in metric_of_col.items():
-                value = find_benchmark(run_data, metrics_by_key[key])
+                iterations = find_benchmark(run_data, metrics_by_key[key])
+                value = iterations[0]  # for now show only first iteration on web
                 row[col] = (value[3], round(value[6]))  # 3 = mean, 6 = stddev
 
             adjust_build_settings(run.build)
@@ -247,11 +248,12 @@ def gen_json(runs: List[Run], yml, file_name: str):
         json.dump(final, f, indent=2)
 
 
-def find_benchmark(data: dict, metric: dict) -> Optional[List]:
-    """Find the benchmark specified by the metric dict (name + row matches), and extract
-       [min, q1, median, mean, q3, max, stddev, n]. Return None if not found."""
+def find_in_iteration(entries: List[dict], metric: dict) -> Optional[List]:
+    """Find the benchmark specified by the metric dict (name + row matches)
+       within the entries of a single iteration, and extract [min, q1, median,
+       mean, q3, max, stddev, n]. Return None if not found."""
 
-    for bench in data:
+    for bench in entries:
         if bench['Benchmark'] != metric['benchmark']:
             continue
         for row in bench['Results']:
@@ -266,6 +268,26 @@ def find_benchmark(data: dict, metric: dict) -> Optional[List]:
                 return [0, 0, 0, mean, 0, 0, stddev, n]
 
     return None
+
+
+def find_benchmark(data: List[dict], metric: dict) -> Optional[List[List]]:
+    """Find the benchmark specified by the metric dict (name + row matches) and
+       return a list of result arrays [min, q1, median, mean, q3, max, stddev,
+       n], one per iteration."""
+
+    # group by iteration first, so we can keep the iteration matching separate
+    # from the benchmark name matching
+    by_iteration = {}
+    for bench in data:
+        by_iteration.setdefault(bench.get('Iteration', 0), []).append(bench)
+
+    results = []
+    for iteration in sorted(by_iteration):
+        value = find_in_iteration(by_iteration[iteration], metric)
+        if value is not None:
+            results.append(value)
+
+    return results if results else None
 
 
 def jsonl_path(run: Run) -> str:

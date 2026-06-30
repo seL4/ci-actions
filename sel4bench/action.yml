@@ -20,6 +20,9 @@ inputs:
   xml:
     description: sel4bench xml manifest to test
     required: false
+  iterations:
+    description: Number of benchmark iterations to run
+    required: false
 
 runs:
   using: 'docker'

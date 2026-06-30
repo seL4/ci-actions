@@ -28,6 +28,11 @@ def adjust_build_settings(build: Build):
     if 'BAMBOO' in build.settings:
         del build.settings['BAMBOO']  # not used in this build, avoid warning
 
+    # allow the number of benchmark iterations to be overridden via the action input
+    iterations = os.getenv('INPUT_ITERATIONS')
+    if iterations:
+        build.settings['ITERATIONS'] = iterations
+
     # see discussion on https://github.com/seL4/sel4bench/pull/20 for hifive exclusion
     if build.is_smp() or build.get_platform().name == 'HIFIVE':
         build.settings['HARDWARE'] = 'FALSE'

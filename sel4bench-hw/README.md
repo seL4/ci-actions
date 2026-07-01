@@ -41,6 +41,7 @@ use one or more of the following:
 - `mode`: one of `{32, 64}`
 - `platform`: platform name, e.g. `pc99`
 - `req`: machine name, e.g. `haswell3`
+- `iterations`: number of benchmark iterations, for scaling job timeout
 
 ## Example
 

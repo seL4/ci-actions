@@ -443,7 +443,7 @@ def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> i
             ts = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
             decoded = line.decode().rstrip()
             lines.append(f"[{ts}] " + decoded)
-            sys.stdout.buffer.write(decoded)   # print without timestamp
+            sys.stdout.buffer.write(line)   # print without timestamp
             sys.stdout.flush()
             sys.stderr.flush()
         ret = process.wait()

@@ -33,6 +33,10 @@ def adjust_build_settings(build: Build):
     if iterations:
         build.settings['ITERATIONS'] = iterations
 
+    if build.settings['ITERATIONS']:
+        scale = max(1, float(build.settings['ITERATIONS']) * 0.75)
+        build.timeout = round(build.timeout * scale)
+
     # see discussion on https://github.com/seL4/sel4bench/pull/20 for hifive exclusion
     if build.is_smp() or build.get_platform().name == 'HIFIVE':
         build.settings['HARDWARE'] = 'FALSE'
@@ -81,6 +85,8 @@ def hw_run(manifest_dir: str, run: Run):
     if run.build.is_disabled():
         print(f"Run {run.name} disabled, skipping.")
         return SKIP
+
+    adjust_build_settings(run.build)
 
     tries = 3
     results = 'results.txt'

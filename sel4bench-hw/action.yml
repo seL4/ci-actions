@@ -26,6 +26,9 @@ inputs:
   index:
     description: job index in matrix build
     required: true
+  iterations:
+    description: Number of benchmark iterations, for scaling job timeout.
+    required: false
   action_name:
     description: 'internal -- do not use'
     required: false

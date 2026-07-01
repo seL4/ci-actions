@@ -24,6 +24,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 # exported names:
 __all__ = [
@@ -439,8 +440,10 @@ def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> i
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=sys.stderr, bufsize=0)
         lines = []
         for line in process.stdout:
-            lines.append(line.decode().rstrip())
-            sys.stdout.buffer.write(line)
+            ts = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+            decoded = line.decode().rstrip()
+            lines.append(f"[{ts}] " + decoded)
+            sys.stdout.buffer.write(decoded)   # print without timestamp
             sys.stdout.flush()
             sys.stderr.flush()
         ret = process.wait()

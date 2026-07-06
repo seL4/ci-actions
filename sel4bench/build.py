@@ -24,6 +24,24 @@ from datetime import datetime, timezone
 import time
 
 
+METRICS_FILE = "sel4bench-results/metrics.yml"
+
+
+def load_metrics() -> List[dict]:
+    """Load metrics definitions from METRICS_FILE."""
+
+    try:
+        metrics = load_yaml(METRICS_FILE)["metrics"]
+    except FileNotFoundError:
+        printc(ANSI_RED, f"Could not find metrics file {METRICS_FILE}.")
+        sys.exit(1)
+    except Exception as e:
+        printc(ANSI_RED, f"Failed to parse metrics file {METRICS_FILE}: {e}")
+        sys.exit(1)
+
+    return metrics
+
+
 def adjust_build_settings(build: Build):
     if 'BAMBOO' in build.settings:
         del build.settings['BAMBOO']  # not used in this build, avoid warning
@@ -174,7 +192,7 @@ def gen_json(runs: List[Run], yml, file_name: str):
     sections = yml["results"]
 
     # Read metrics definitions and turn the metrics list into a dict
-    metrics_by_key = {m['key']: m for m in load_yaml("sel4bench-results/metrics.yml")["metrics"]}
+    metrics_by_key = {m['key']: m for m in load_metrics()}
 
     # Map table column name to metrics.yml key
     metric_of_col = {
@@ -236,7 +254,10 @@ def gen_json(runs: List[Run], yml, file_name: str):
             row['clock'] = board.get('clock')
             row['compiler'] = board['compiler']
             with open(f"results/{run.name}.json") as f:
-                run_data = json.load(f)
+                try:
+                    run_data = json.load(f)
+                except json.JSONDecodeError as e:
+                    sys.exit(f"Failed to parse JSON from {f.name}: {e}")
             for col, key in metric_of_col.items():
                 iterations = find_benchmark(run_data, metrics_by_key[key])
                 value = iterations[0]  # for now show only first iteration on web
@@ -324,7 +345,7 @@ def add_metrics(runs: List[Run]) -> None:
     header['sha_bench'] = os.getenv('INPUT_SEL4BENCH_SHA')[0:8]
     header['run_id'] = int(os.getenv('GITHUB_RUN_ID'))
 
-    metrics = load_yaml("sel4bench-results/metrics.yml")["metrics"]
+    metrics = load_metrics()
 
     for run in runs:
         results_file = f"results/{run.name}.json"
@@ -333,7 +354,10 @@ def add_metrics(runs: List[Run]) -> None:
             continue
 
         with open(results_file) as f:
-            data = json.load(f)
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError as e:
+                sys.exit(f"Failed to parse JSON from {f.name}: {e}")
 
         entry = copy.deepcopy(header)
         for metric in metrics:

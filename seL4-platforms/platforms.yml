@@ -341,14 +341,10 @@ platforms:
     smp: [64]
     aarch_hyp: [64]
     platform: zynqmp
-    req: [zcu102_2]
+    req: [zcu102, zcu102_2]
     march: armv8a
     subgroup: 2
     microkit_boards: [zcu102]
-    # The ZCU102 in machine queue expects a binary image
-    # settings:
-    # Sel4testAllowSettingsOverride: true
-    # ElfloaderImage: "binary"
 
   KRIA_K26:
     arch: arm

@@ -624,6 +624,8 @@ sel4_running_markers = [
     # elfloader output
     "Jumping to kernel-image entry point",
     "Enabling MMU and paging",
+    "Enabling hypervisor MMU and jumping to entry point...",
+    "Enabling MMU and jumping to entry point...",
     # kernel output
     "Bootstrapping kernel",
     "reserved virt address space regions",

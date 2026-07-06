@@ -604,6 +604,8 @@ infra_failure_markers = [
 # component is the cause name in the summary. Earlier markers are matched first.
 sel4_failure_markers = [
     ("seL4 failed assertion", "Kernel assertion"),
+    ("Debug halt syscall from user thread", "Debug halt"),
+    ("Kernel entry via Unknown syscall", "Kernel entry via unknown syscall"),
 ]
 
 # Generic mq.sh completion-timeout marker. When this is present we will attempt

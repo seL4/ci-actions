@@ -29,7 +29,8 @@ import time
 # exported names:
 __all__ = [
     "Build", "load_builds", "run_builds", "run_build_script", "junit_results", "sanitise_junit",
-    "sim_script", "Step", "default_analysis", "Analysis"
+    "sim_script", "Step", "Analysis", "default_analysis", "ssh_repeat_analysis", "infra_analysis",
+    "seL4_analysis"
 ]
 
 # where to expect jUnit results by default
@@ -231,8 +232,8 @@ class Build:
         return self.get_platform().getISA(self.get_mode())
 
     # create a Run on the fly if we only want one Run per Build
-    def hw_run(self, log):
-        return Run(self).hw_run(log)
+    def hw_run(self, log, analyse=None):
+        return Run(self).hw_run(log, analyse)
 
 
 class Run:
@@ -251,7 +252,9 @@ class Run:
     def get_req(self) -> List[str]:
         return self.req or self.build.get_req()
 
-    def hw_run(self, log):
+    def hw_run(self, log, analyse=None):
+        """Return (script, final_script) for a hardware test run and optional
+           analysis function (default sel4_analysis)."""
         build = self.build
 
         if build.is_disabled():
@@ -276,7 +279,8 @@ class Run:
                    lock_held=True,
                    key=job_key(),
                    log=log,
-                   error_str=build.error)
+                   error_str=build.error,
+                   analyse=analyse)
         ], [
             mq_release(machine)
         ]
@@ -339,11 +343,13 @@ def mq_run(success_str: str,
            lock_held=False,
            keep_alive=False,
            key: Optional[str] = None,
-           error_str: Optional[str] = None):
+           error_str: Optional[str] = None,
+           analyse: Optional['Analysis'] = None):
     """Machine queue mq.sh run command with arguments.
 
        Expects success marker, machine name, and boot image file(s).
-       See output of mq.sh run for details on optional parameters."""
+       See output of mq.sh run for details on optional parameters.
+       Takes optional output analysis function (default sel4_analysis)."""
 
     command = ['time', 'mq.sh', 'run',
                '-c', success_str,
@@ -365,7 +371,7 @@ def mq_run(success_str: str,
     for f in files:
         command.extend(['-f', f])
 
-    return Step(command, analyse=ssh_repeat_analysis)
+    return Step(command, analyse=analyse or seL4_analysis)
 
 
 def mq_lock(machine: str):
@@ -396,9 +402,6 @@ FAILURE = 0
 SUCCESS = 1
 SKIP = 2
 REPEAT = 3
-
-# string for detecting ssh failure
-ssh_failure_str = "Unable to ssh to tftp.keg.cse.unsw.edu.au"
 
 
 def success_from_bool(success: bool) -> int:
@@ -581,15 +584,135 @@ def default_analysis(run, result, output):
     return result, output
 
 
+# Transient ssh problems where the test should be repeated.
+ssh_failure_markers = [
+    "Unable to ssh to tftp.keg.cse.unsw.edu.au",
+]
+
+
+# Infrastructure problems visible in log output, with cause name.
+# Usually not recoverable or already repeated. Earlier markers are matched first.
+infra_failure_markers = [
+    ("Connection closed by UNKNOWN port 65535", "ssh failure"),
+    ("[-- Console server shutting down --]", "console"),
+    ("Unable to connect to 10.13.1", "console"),
+    ("console is down", "console"),
+    ("[[Boot timeout]]", "boot failure"),
+]
+
+# kernel failure markers that are not standard junit test failures. Second
+# component is the cause name in the summary. Earlier markers are matched first.
+sel4_failure_markers = [
+    ("seL4 failed assertion", "Kernel assertion"),
+]
+
+# Generic mq.sh completion-timeout marker. When this is present we will attempt
+# to further classify.
+timeout_marker = "[[Timeout]]"
+
+# Console output detecting elfloader or seL4 is running. If none of these are
+# present, a timeout is a board boot problem.
+sel4_running_markers = [
+    # elfloader output
+    "Jumping to kernel-image entry point",
+    "Enabling MMU and paging",
+    # kernel output
+    "Bootstrapping kernel",
+    "reserved virt address space regions",
+    # common user space output
+    "Booting all finished, dropped to user space",
+    "Starting test suite",
+    "Running test",
+    "</testcase>",
+]
+
+
+def find_marker(output: Optional[List[str]], markers: List[str]) -> Optional[str]:
+    """Return the first output line containing any of the markers, else None."""
+    for line in output or []:
+        if any(marker in line for marker in markers):
+            return line
+    return None
+
+
+def output_around(output: List[str], marker: str, before: int = 15, after: int = 5) -> str:
+    """Return output centred on the line containing `marker` (-before, +after).
+       `marker` must occur in `output`."""
+    idx = next(i for i, line in enumerate(output) if marker in line)
+    return "\n".join(output[max(0, idx - before): idx + after + 1])
+
+
+def repeat_on_markers(result, output, markers: List[str], what: str) \
+        -> Optional[Tuple[int, Optional[List[str]]]]:
+    """Repeat if marker was found."""
+    if result == FAILURE:
+        marker = find_marker(output, markers)
+        if marker:
+            printc(ANSI_YELLOW, f"Detected {what}, repeating test:\n  {marker}")
+            return REPEAT, output
+    return None
+
+
 ssh_repeat_analysis: Analysis
 
 
 def ssh_repeat_analysis(run, result, output):
-    """Analysis for mq commands: on ssh connection failure, repeat the whole test;
-       otherwise fall back to `default_analysis`."""
-    if result == FAILURE and any(ssh_failure_str in line for line in output):
-        printc(ANSI_YELLOW, "Detected ssh failure, trying to repeat test.")
-        return REPEAT, output
+    """Repeat whole test on ssh failure, otherwise fall back to `default_analysis`."""
+    return (repeat_on_markers(result, output, ssh_failure_markers, "ssh failure")
+            or default_analysis(run, result, output))
+
+
+infra_analysis: Analysis
+
+
+def infra_analysis(run, result, output):
+    """Infrastructure analysis: repeat on ssh failure, otherwise detect infrastructure
+       failure and fail; falls back on default_analysis."""
+    return (repeat_on_markers(result, output, ssh_failure_markers, "ssh failure")
+            or infra_cause(run, result, output)
+            or default_analysis(run, result, output))
+
+
+def record_cause(run, cause: str, output, marker: str) -> Tuple[int, Optional[List[str]]]:
+    """Record a test summary failure cause with the output around `marker`; return FAILURE."""
+    record_summary(TestSummary(
+        name=run.name,
+        causes=[(cause, output_around(output, marker))]))
+    return FAILURE, output
+
+
+def infra_cause(run, result, output) -> Optional[Tuple[int, Optional[List[str]]]]:
+    """Detect and show cause for infrastructure failures in summary.
+       Return FAILURE if a failure was found, else None."""
+    if result == FAILURE:
+        marker = find_marker(output, [m for m, _ in infra_failure_markers])
+        if marker:
+            cause = next(c for m, c in infra_failure_markers if m in marker)
+            return record_cause(run, cause, output, marker)
+    return None
+
+
+seL4_analysis: Analysis
+
+
+def seL4_analysis(run, result, output):
+    """Repeat on transient ssh failures; record cause for infrastructure and
+       kernel failures; otherwise fall back to default_analysis."""
+    repeat = repeat_on_markers(result, output, ssh_failure_markers, "ssh failure")
+    if repeat:
+        return repeat
+    if result == FAILURE:
+        infra = infra_cause(run, result, output)
+        if infra:
+            return infra
+        marker = find_marker(output, [m for m, _ in sel4_failure_markers])
+        if marker:
+            cause = next(name for m, name in sel4_failure_markers if m in marker)
+            return record_cause(run, cause, output, marker)
+        timeout = find_marker(output, [timeout_marker])
+        if timeout:
+            cause = "Test timeout" if find_marker(output, sel4_running_markers) else "Boot timeout"
+            return record_cause(run, cause, output, timeout)
     return default_analysis(run, result, output)
 
 

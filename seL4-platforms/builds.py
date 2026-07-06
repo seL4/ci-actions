@@ -605,7 +605,13 @@ infra_failure_markers = [
 sel4_failure_markers = [
     ("seL4 failed assertion", "Kernel assertion"),
     ("Debug halt syscall from user thread", "Debug halt"),
-    ("Kernel entry via Unknown syscall", "Kernel entry via unknown syscall"),
+    ("Kernel entry via Unknown", "Unknown kernel entry"),
+    ("KERNEL DATA ABORT!", "Kernel data abort"),
+    ("KERNEL PREFETCH ABORT!", "Kernel prefetch abort"),
+    ("KERNEL UNDEFINED INSTRUCTION!", "Kernel undefined instruction"),
+    ("KERNEL EXCEPTION", "Kernel exception"),
+    ("KERNEL ABORT", "Kernel abort"),
+    ("halting...", "Kernel halt"),
 ]
 
 # Generic mq.sh completion-timeout marker. When this is present we will attempt
@@ -621,6 +627,10 @@ sel4_running_markers = [
     # kernel output
     "Bootstrapping kernel",
     "reserved virt address space regions",
+    # microkit
+    "LDR|INFO: loader for seL4 starting",
+    "LDR|INFO|CPU0: jumping to kernel",
+    "MON|INFO: Microkit Monitor started!",
     # common user space output
     "Booting all finished, dropped to user space",
     "Starting test suite",

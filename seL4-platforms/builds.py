@@ -365,12 +365,13 @@ def mq_run(success_str: str,
     for f in files:
         command.extend(['-f', f])
 
-    return wrap_ssh_failure(command)
+    return Step(command, analyse=ssh_repeat_analysis)
 
 
 def mq_lock(machine: str):
     """Get lock for a machine. Allow lock to be reclaimed after 30min."""
-    return wrap_ssh_failure(['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800'])
+    return Step(['time', 'mq.sh', 'sem', '-wait', machine, '-k', job_key(), '-T', '1800'],
+                analyse=ssh_repeat_analysis)
 
 
 def mq_release(machine: str) -> List[str]:
@@ -387,7 +388,7 @@ def mq_cancel(machine: str) -> List[str]:
 
 def mq_print_lock(machine: str):
     """Print lock status for machine."""
-    return wrap_ssh_failure(['mq.sh', 'sem', '-info', machine])
+    return Step(['mq.sh', 'sem', '-info', machine], analyse=ssh_repeat_analysis)
 
 
 # return codes for a test run or single step of a run
@@ -398,20 +399,6 @@ REPEAT = 3
 
 # string for detecting ssh failure
 ssh_failure_str = "Unable to ssh to tftp.keg.cse.unsw.edu.au"
-
-
-def wrap_ssh_failure(cmd: List[str]):
-    """Wrap a list of commands in a check for failing to connect via ssh.
-    Signal test repeat instead of failure in that case
-    """
-    def wrapped_cmd(run, prev_output):
-        result, output = run_cmd(cmd, run, prev_output)
-        if result == FAILURE:
-            if any(ssh_failure_str in line for line in output):
-                printc(ANSI_YELLOW, "Detected ssh failure, trying to repeat test.")
-                return REPEAT, output
-        return result, output
-    return wrapped_cmd
 
 
 def success_from_bool(success: bool) -> int:
@@ -592,6 +579,18 @@ def default_analysis(run, result, output):
             name=run.name,
             causes=[("Incomplete", "\n".join(output[-20:]))]))
     return result, output
+
+
+ssh_repeat_analysis: Analysis
+
+
+def ssh_repeat_analysis(run, result, output):
+    """Analysis for mq commands: on ssh connection failure, repeat the whole test;
+       otherwise fall back to `default_analysis`."""
+    if result == FAILURE and any(ssh_failure_str in line for line in output):
+        printc(ANSI_YELLOW, "Detected ssh failure, trying to repeat test.")
+        return REPEAT, output
+    return default_analysis(run, result, output)
 
 
 def run_build_script(manifest_dir: str,

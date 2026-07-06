@@ -14,7 +14,7 @@ them, `run_build_script` for a standard test driver frame, and
 
 from platforms import ValidationException, Platform, platforms, load_yaml, mcs_unsupported
 
-from typing import Optional, List, Tuple, Union
+from typing import Callable, Optional, List, Tuple, Union
 from junitparser import JUnitXml
 from dataclasses import dataclass, field
 
@@ -29,7 +29,7 @@ import time
 # exported names:
 __all__ = [
     "Build", "load_builds", "run_builds", "run_build_script", "junit_results", "sanitise_junit",
-    "sim_script"
+    "sim_script", "Step", "default_analysis", "Analysis"
 ]
 
 # where to expect jUnit results by default
@@ -562,6 +562,38 @@ def sim_script(success: str, failure=None, timeout=1200):
     ]
 
 
+# Analysis function that gets result and output of a single script step. Can
+# return a new result (e.g. FAILURE -> REPEAT) and/or record a test summary.
+# Should pass on output.
+Analysis = Callable[[Union[Run, Build], int, List[str]], Tuple[int, List[str]]]
+
+
+@dataclass
+class Step:
+    """A script step: command plus optional output analysis."""
+
+    #  list of command-line arguments or callable (see `run_cmd`)
+    command: Union[list, Callable]
+    analyse: Optional[Analysis] = None
+
+
+def as_step(line) -> Step:
+    """Accept command line, Callable, or Step. Return a Step."""
+    return line if isinstance(line, Step) else Step(line)
+
+
+default_analysis: Analysis
+
+
+def default_analysis(run, result, output):
+    """Default step analysis: record an `Incomplete` summary on failure"""
+    if result == FAILURE:
+        record_summary(TestSummary(
+            name=run.name,
+            causes=[("Incomplete", "\n".join(output[-20:]))]))
+    return result, output
+
+
 def run_build_script(manifest_dir: str,
                      run: Union[Run, Build],
                      script,
@@ -607,22 +639,24 @@ def run_build_script(manifest_dir: str,
         result = SUCCESS
         output = None
         for line in script:
-            result, output = run_cmd(line, run, output)
+            step = as_step(line)
+            result, output = run_cmd(step.command, run, output)
+            result, output = (step.analyse or default_analysis)(run, result, output)
             if result != SUCCESS:
                 break
-
         if result == FAILURE:
             printc(ANSI_RED, ">>> command failed, aborting.")
-            record_summary(TestSummary(
-                name=run.name,
-                causes=[("Incomplete", "\n".join(output[-20:]))]))
         elif result == SKIP:
             printc(ANSI_YELLOW, ">>> skipping this test.")
 
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
             for line in final_script:
-                r, output = run_cmd(line, run, output)
+                step = as_step(line)
+                r, output = run_cmd(step.command, run, output)
+                # Skip default analysis for final scripts, but run analysis if explicitly provided.
+                if step.analyse:
+                    r, output = step.analyse(run, r, output)
                 if r == FAILURE:
                     # If a final script task fails, the overall task fails unless
                     # we have already decided to repeat. In either case we stop

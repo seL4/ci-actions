@@ -78,6 +78,15 @@ def hw_build(manifest_dir: str, build: Build):
 def extract_json(results: str, run: Run) -> int:
     """Process test logs to extract JSON results."""
 
+    # Make sure there is at least one JSON OUTPUT block. This can happen when
+    # mq.sh fails catastrophically at its job, sel4bench gets interrupted, something
+    # else boots and runs instead, produces "All is well", but no sel4bench output.
+    # This should really not be necessary, but here we are.
+    if subprocess.run(f"grep -q 'JSON OUTPUT' {results}", shell=True).returncode != 0:
+        printc(ANSI_RED, f"Run {run.name} produced no JSON OUTPUT results.")
+        sys.stdout.flush()
+        return REPEAT
+
     # Only extract the first JSON OUTPUT block. In rare cases (mq failure to
     # detect boot completion), there can be two, and both are valid results.
     res = subprocess.run(

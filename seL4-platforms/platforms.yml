@@ -447,6 +447,17 @@ platforms:
     microkit_no_hw_test: true
     microkit_boards: [rpi4b_8gb]
 
+  RPI5:
+    arch: arm
+    modes: [64]
+    platform: rpi5
+    req: []
+    image_platform: bcm2712
+    march: armv8a
+    subgroup: 5
+    # the seL4 foundation has no RPI5 hardware
+    no_hw_test: true
+
   TX1:
     arch: arm
     modes: [64]

@@ -450,7 +450,7 @@ platforms:
   RPI5:
     arch: arm
     modes: [64]
-    platform: rpi5
+    platform: bcm2712
     req: []
     image_platform: bcm2712
     march: armv8a

@@ -814,7 +814,7 @@ def run_build_script(manifest_dir: str,
                 result = FAILURE
             except Exception as e:
                 printc(ANSI_RED, f"Error parsing {junit_file}")
-                print("Exception: " + e)
+                print(f"Exception: {e}")
                 result = FAILURE
 
         if result == REPEAT and tries_left > 0:

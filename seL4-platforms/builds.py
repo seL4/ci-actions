@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import time
+import traceback
 
 # exported names:
 __all__ = [
@@ -815,6 +816,7 @@ def run_build_script(manifest_dir: str,
             except Exception as e:
                 printc(ANSI_RED, f"Error parsing {junit_file}")
                 print(f"Exception: {e}")
+                traceback.print_exc()
                 result = FAILURE
 
         if result == REPEAT and tries_left > 0:

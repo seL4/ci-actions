@@ -46,5 +46,5 @@ fi
 
 if [ -z "${REPO_NO_SYNC}" ]
 then
-  $REPO sync -j 4 --tags
+  $REPO sync -j 4
 fi

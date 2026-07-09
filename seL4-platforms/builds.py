@@ -639,6 +639,7 @@ sel4_running_markers = [
     "Starting test suite",
     "Running test",
     "</testcase>",
+    "se\033[32mL4\033[37m Benchmark",
 ]
 
 

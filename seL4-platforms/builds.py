@@ -22,6 +22,7 @@ import copy
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -403,6 +404,7 @@ FAILURE = 0
 SUCCESS = 1
 SKIP = 2
 REPEAT = 3
+INTERRUPTED = 4
 
 
 def success_from_bool(success: bool) -> int:
@@ -412,7 +414,7 @@ def success_from_bool(success: bool) -> int:
         return FAILURE
 
 
-def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> int:
+def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> tuple[int, list[str]]:
     """If the command is a List[str], echo + run command with arguments, otherwise
     expect a function, and run that function on the supplied Run plus outputs from
     previous command."""
@@ -438,6 +440,15 @@ def run_cmd(cmd, run: Union[Run, Build], prev_output: Optional[str] = None) -> i
             sys.stdout.flush()
             sys.stderr.flush()
         ret = process.wait()
+
+        # Follow the Bash WCE protocol and propagate SIGINT upwards
+        # ... https://www.cons.org/cracauer/sigint.html
+        # A negative value -N indicates the process was terminated by the signal N.
+        if ret < 0 and (-ret) == int(signal.SIGINT):
+            return INTERRUPTED, lines
+        elif ret == 130:
+            # 130 is another return status that is commonly used to mean SIGINT
+            return INTERRUPTED, lines
 
         return success_from_bool(ret == 0), lines
     else:
@@ -786,6 +797,8 @@ def run_build_script(manifest_dir: str,
             printc(ANSI_RED, ">>> command failed, aborting.")
         elif result == SKIP:
             printc(ANSI_YELLOW, ">>> skipping this test.")
+        elif result == INTERRUPTED:
+            printc(ANSI_RED, ">>> command interrupted (SIGINT), exiting after cleanup")
 
         # run final script tasks even in case of failure, but not for SKIP
         if result != SKIP:
@@ -805,6 +818,10 @@ def run_build_script(manifest_dir: str,
                     # If a final script task repeats, the overall task repeats,
                     # but we continue the final script.
                     result = REPEAT
+                elif r == INTERRUPTED:
+                    # Exited in final state, just immediately die.
+                    printc(ANSI_RED, ">>> cleanup interrupted, exiting immediately")
+                    result = INTERRUPTED
                 # for SKIP and SUCCESS in final script do not change overall result
 
         failures = []
@@ -842,6 +859,8 @@ def run_build_script(manifest_dir: str,
             max_print = 10
             printc(ANSI_RED, "Failed cases: " + ", ".join(failures[:max_print]) +
                    (" ..." if len(failures) > max_print else ""))
+    elif result == INTERRUPTED:
+        raise KeyboardInterrupt("received SIGINT during execution")
     else:
         printc(ANSI_RED, f"{run.name} with REPEAT at end of test, we should not see this.")
     print("")

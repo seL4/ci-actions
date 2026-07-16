@@ -66,7 +66,7 @@ def get_projects() -> dict:
             # lower-case name as key to remain case insensitive; store manifest name as value
             project_dict[repo.lower()] = (path.strip(), repo)
     except:
-        print("Failed to get project list from `repo`")
+        print("Failed to get project list from `repo`", file=sys.stderr)
         project_dict = {}
 
     return project_dict

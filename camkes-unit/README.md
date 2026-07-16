@@ -12,7 +12,8 @@ for `capdl`.
 
 ## Arguments
 
-None
+- `token`: GitHub token for read access to the repository. Optional, but
+           improves rate limits.
 
 ## Example
 
@@ -32,6 +33,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: seL4/ci-actions/camkes-unit@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Build

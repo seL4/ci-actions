@@ -7,7 +7,10 @@ description: |
   Runs unit tests for the `camkes-tool` repository.
 author: Gerwin Klein <gerwin.klein@proofcraft.systems>
 
-# no inputs
+inputs:
+  token:
+    description: 'GitHub token for read access to repository'
+    required: false
 
 runs:
   using: 'docker'

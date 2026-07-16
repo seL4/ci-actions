@@ -6,7 +6,9 @@
 
 FROM trustworthysystems/camkes:latest
 
-COPY scripts/*.sh camkes-unit/steps.sh /usr/bin/
+RUN pip3 install --break-system-packages PyGithub
+
+COPY scripts/* camkes-unit/steps.sh /usr/bin/
 
 RUN mkdir /workspace
 WORKDIR /workspace

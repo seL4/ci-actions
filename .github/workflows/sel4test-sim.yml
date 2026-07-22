@@ -20,7 +20,7 @@ jobs:
         march: [armv7a, armv8a, nehalem, rv32imac, rv64imac]
         compiler: [gcc, clang]
     concurrency:
-      group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      group: ${{ github.workflow }}-sel4sim-pr-${{ github.event.number }}-${{ matrix.march }}-${{ matrix.compiler }}
       cancel-in-progress: true
     steps:
     - uses: seL4/ci-actions/sel4test-sim@master

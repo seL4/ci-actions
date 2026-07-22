@@ -62,7 +62,7 @@ jobs:
     # To reduce the load (especially on the machine queue) we cancel any older
     # runs of this workflow for the current PR.
     concurrency:
-      group: ${{ github.workflow }}-sel4test-build-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      group: ${{ github.workflow }}-sel4test-build-pr-${{ github.event.number }}-${{ matrix.march }}-${{ matrix.compiler }}-${{ matrix.subgroup }}
       cancel-in-progress: true
     strategy:
       fail-fast: false
@@ -105,7 +105,7 @@ jobs:
                (contains(github.event.pull_request.labels.*.name, 'hw-test') ||
                 github.event.label.name == 'hw-test')) }}
     concurrency:
-      group: ${{ github.workflow }}-sel4test-hw-run-pr-${{ github.event.number }}-${{ strategy.job-index }}
+      group: ${{ github.workflow }}-sel4test-hw-run-pr-${{ github.event.number }}-${{ matrix.platform }}-${{ matrix.compiler }}-${{ matrix.mode }}
       cancel-in-progress: true
     strategy:
       fail-fast: false

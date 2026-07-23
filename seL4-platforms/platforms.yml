@@ -457,6 +457,9 @@ platforms:
     subgroup: 5
     # the seL4 foundation has no RPI5 hardware
     no_hw_test: true
+    # cannot be tested
+    microkit_no_hw_test: true
+    microkit_boards: [rpi5b_2gb]
 
   TX1:
     arch: arm

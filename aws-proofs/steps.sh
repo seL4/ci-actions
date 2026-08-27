@@ -23,7 +23,7 @@ echo "::group::AWS"
 # fail on any error
 set -e
 
-aws configure set default.region ap-southeast-4
+aws configure set default.region us-east-2
 aws configure set default.output json
 
 echo "Starting AWS instance..."

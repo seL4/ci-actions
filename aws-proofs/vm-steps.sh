@@ -92,8 +92,8 @@ FAIL=0
 
 L4V_DIR="$PWD/l4v"
 do_run_tests() {
-  # 2 parallel jobs, scale timeouts by 50%
-  (cd "$L4V_DIR" && ./run_tests --scale-timeouts 1.5 -j 2 ${INPUT_SESSION} "$@");
+  # scale timeouts by 50%
+  (cd "$L4V_DIR" && ./run_tests --scale-timeouts 1.5 ${INPUT_SESSION} "$@");
 }
 
 do_run_tests || FAIL=1

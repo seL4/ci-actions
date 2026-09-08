@@ -136,12 +136,9 @@ platforms:
     arch: arm
     modes: [64]
     platform: rockpro64
-    req: [rockpro64a]
+    req: [rockpro64b]
     march: armv8a
     subgroup: 4
-    # no board in machine queue
-    no_hw_test: true
-    microkit_no_hw_test: true
 
   ROCK3B:
     arch: arm

@@ -23,11 +23,15 @@ echo "::group::AWS"
 # fail on any error
 set -e
 
+ACTION_DIR="${SCRIPTS}/../${INPUT_ACTION_NAME}"
+AWS_RETRY="${ACTION_DIR}/aws-retry.sh"
+
 aws configure set default.region us-east-2
 aws configure set default.output json
 
 echo "Starting AWS instance..."
-aws ec2 run-instances --launch-template "LaunchTemplateName=l4v-runner" --count 1 > instance.txt
+"${AWS_RETRY}" aws ec2 run-instances --launch-template "LaunchTemplateName=l4v-runner" \
+                                     --count 1 > instance.txt
 
 ID=$(cat instance.txt | jq -r '.Instances[0].InstanceId')
 

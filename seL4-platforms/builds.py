@@ -259,7 +259,7 @@ class Run:
         build = self.build
 
         if build.is_disabled():
-            return [lambda r: SKIP], []
+            return [lambda run, prev_output: (SKIP, prev_output)], []
 
         machine = get_machine(self.get_req())
         if not machine:

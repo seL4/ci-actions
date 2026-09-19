@@ -33,6 +33,8 @@ use one or more of the following:
 
 - `name`: comma separated list of full test names, e.g. `optiplex9020`.
 - `march`: comma separated list of march, e.g. `armv7a, armv8a`.
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.
 
 ## Example
 

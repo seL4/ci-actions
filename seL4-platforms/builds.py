@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 
 import copy
 import os
+import random
 import re
 import shutil
 import subprocess
@@ -274,6 +275,7 @@ class Run:
         # for the actual test run without lock wait time.
         return [
             ['tar', 'xvzf', f"../{self.build.name}-images.tar.gz"],
+            hw_start_delay,
             mq_lock(machine),
             mq_run(build.success, machine, build.files,
                    completion_timeout=build.timeout,
@@ -332,6 +334,43 @@ def job_key():
         os.environ.get('GITHUB_RUN_ID') + "-" + \
         os.environ.get('GITHUB_JOB') + "-" + \
         os.environ.get('INPUT_INDEX', '0')
+
+
+# Maximum seconds to wait before the first hardware run of a job.
+# Override with INPUT_START_DELAY env variable.
+DEFAULT_START_DELAY = 60
+
+# Whether this job has already waited (only first job should be delayed).
+_start_delayed = False
+
+
+def start_delay_max() -> int:
+    """Parse `INPUT_START_DELAY` for maximum start delay in seconds."""
+    val = os.environ.get('INPUT_START_DELAY')
+    if val is None or val.strip() == '':
+        return DEFAULT_START_DELAY
+    try:
+        return max(0, int(val))
+    except ValueError:
+        printc(ANSI_YELLOW, f">>> ignoring invalid start_delay '{val}'")
+        return DEFAULT_START_DELAY
+
+
+def hw_start_delay(run, prev_output=None):
+    """Avoid starting too many boards at exactly the same time. Wait a random
+       amount of time, up to start_delay_max() before the first hardware run."""
+    global _start_delayed
+
+    if not _start_delayed:
+        _start_delayed = True
+        max_delay = start_delay_max()
+        if max_delay > 0:
+            delay = random.randint(0, max_delay)
+            printc(ANSI_YELLOW, f"+++ delaying start by {delay}s to stagger board start-up")
+            sys.stdout.flush()
+            time.sleep(delay)
+
+    return SUCCESS, prev_output
 
 
 def mq_run(success_str: str,

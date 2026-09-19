@@ -51,6 +51,8 @@ use one or more of the following:
   verification}`  to filter on.
 - `platform`: platform name for a test run
 - `index`: **(required)** job index in matrix builds (use 0 if no matrix build)
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.
 
 ## Environment
 

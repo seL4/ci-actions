@@ -33,3 +33,5 @@ use one or more of the following:
 - `req`: comma separated list of hardware requirements, e.g `haswell3`.
 - `mode`: comma separated list of modes, e.g. `32`.
 - `name`: comma separated list of full test names, e.g. `PC99_32_sim`.
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.

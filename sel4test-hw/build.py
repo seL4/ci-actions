@@ -108,10 +108,6 @@ def build_filter(build: Build) -> bool:
         if plat.name == 'ZYNQMP' and build.get_mode() == 32 and build.is_mcs():
             return False
 
-        # SMP tests do not work on STM32MP2 yet
-        if plat.name == 'STM32MP2' and build.is_smp():
-            return False
-
     if plat.arch == 'x86':
         # Bamboo config says no VTX for verification
         if build.is_hyp() and build.is_verification():

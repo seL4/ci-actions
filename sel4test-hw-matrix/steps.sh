@@ -11,6 +11,7 @@ echo "::group::Setting up"
 export ACTION_DIR="${SCRIPTS}/.."
 
 # python env
+sudo apt-get update
 sudo apt-get install -y --no-install-recommends libffi-dev
 . ${SCRIPTS}/setup-python-venv.sh
 pip3 install "junitparser==3.*" sel4-deps

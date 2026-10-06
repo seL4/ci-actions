@@ -20,6 +20,7 @@ set -e
 echo "::group::Setting up"
 export ACTION_DIR="${SCRIPTS}/.."
 
+sudo apt-get update
 sudo apt-get install -y --no-install-recommends libffi-dev libxml2-utils
 # python env
 . ${SCRIPTS}/setup-python-venv.sh

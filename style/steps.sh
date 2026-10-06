@@ -14,6 +14,7 @@ echo "Installing seL4 python deps"
 pip3 install -q sel4-deps
 
 echo "Installing astyle"
+sudo apt-get update
 sudo apt-get install -qq astyle > /dev/null
 
 . ${SCRIPTS}/fetch-sel4-tools.sh

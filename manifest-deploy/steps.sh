@@ -34,6 +34,7 @@ echo "Installing python dependencies"
 pip3 install -r ${GITHUB_WORKSPACE}/seL4_release/requirements.txt
 
 echo "Install doxygen"
+sudo apt-get update
 sudo apt-get install -qq doxygen
 echo "::endgroup::"
 

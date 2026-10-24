@@ -84,11 +84,6 @@ def build_filter(build: Build) -> bool:
         return False
 
     if plat.arch == 'arm':
-        # Bamboo says: don't build release for hikey when in aarch64 arm_hyp mode
-        if build.is_hyp() and build.get_mode() == 64 and build.is_release() and \
-           plat.name == 'HIKEY':
-            return False
-
         # MCS exclusions:
         # No MCS + SMP for platforms with global timer for now (see seL4/seL4#513)
         if plat.name == 'SABRE' and build.is_smp() and build.is_mcs():

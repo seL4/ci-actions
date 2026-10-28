@@ -386,6 +386,10 @@ platforms:
     req: [stm32mp]
     march: armv8a
     subgroup: 5
+    settings:
+      # override the default of 4 for sel4test; ignored in non-SMP builds
+      # if the platform is enabled for other apps this may need manual override
+      NUM_NODES: 2
 
   TK1:
     arch: arm

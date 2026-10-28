@@ -54,6 +54,8 @@ of the following action inputs:
 - `config`: comma separated list of Microkit config names, e.g. `debug,release`.
 - `march`: comma separated list of Microkit board architectures, e.g. `aarch64,riscv64,x86_64`.
 - `index`: **(required)** job index in matrix builds (use 0 if no matrix build)
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.
 
 ## Environment
 

@@ -13,6 +13,13 @@ inputs:
   index:
     description: job index in matrix build
     required: true
+  start_delay:
+    description: |
+      Maximum delay in seconds before the hardware run starts. The real delay at
+      runtime is uniformly random in the interval `[0, start_delay]` to stagger
+      board start-up times. Set to 0 to disable.
+    required: false
+    default: '60'
   action_name:
     description: 'internal -- do not use'
     required: false

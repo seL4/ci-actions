@@ -38,6 +38,8 @@ use one or more of the following:
 - `name`: comma separated list of full test names, e.g. `PC99_cakeml_tipc_64`.
 - `matrix`: if set, output build matrix in json and exit.
 - `index`:  **(required)** the index in the build matrix. Used to get unique lock names.
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.
 
 ## Environment
 

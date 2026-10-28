@@ -33,6 +33,8 @@ use one or more of the following:
 
 - `platform`: comma separated list of platforms to filter on, e.g. `ODROID_XU4`.
 - `index`: index of the hardware job in the build matrix.
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.
 
 ## Example
 

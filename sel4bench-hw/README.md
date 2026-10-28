@@ -42,6 +42,8 @@ use one or more of the following:
 - `platform`: platform name, e.g. `pc99`
 - `req`: machine name, e.g. `haswell3`
 - `iterations`: number of benchmark iterations, for scaling job timeout
+- `start_delay`: uniformly random wait for `[0.. start_delay]` seconds to
+                 stagger board start-up (default 60s). Pass 0 to disable.
 
 ## Example
 

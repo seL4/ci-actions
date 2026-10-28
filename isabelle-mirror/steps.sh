@@ -39,10 +39,14 @@ export IM_DIR="$(pwd)"
 "${IM_DIR}/bin/im-setup"
 
 rm -rf repos lib
+
+# Supply the token via an auth header for newer libcurl versions.
+AUTH_HEADER="$(printf 'x-access-token:%s' "${ISA_MIRROR_TOKEN}" | base64 -w0)"
+git config --global http.https://github.com/.extraheader "AUTHORIZATION: basic ${AUTH_HEADER}"
 echo "::endgroup::"
 
 echo "::group::Running mirror script"
 
-exec "$IM_DIR/bin/im-env" "$IM_DIR" im-main https://${ISA_MIRROR_TOKEN}@github.com
+exec "$IM_DIR/bin/im-env" "$IM_DIR" im-main https://github.com
 
 echo "::endgroup::"

@@ -45,7 +45,7 @@ jobs:
         sha: ${{ github.event.pull_request.head.sha }}
 
   build-matrix:
-    name: Build Matrix
+    name: HW Build Matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}

@@ -7,11 +7,16 @@
 set -e
 
 echo "::group::Setting up"
-# install astyle before install-python.sh: that script switches /usr/bin/python3
-# to a version without apt_pkg, which breaks apt-get update hooks.
-echo "Installing astyle"
-sudo apt-get update
-sudo apt-get install -qq astyle > /dev/null
+# Use a pinned static astyle binary
+ASTYLE_URL=https://github.com/seL4/ci-actions/releases/download/astyle-3.1/astyle-linux-x86_64
+ASTYLE_SHA256=1209feea9864407e61cec6646c052d3c9c674076fadd8e5096080dd64e7b36b9
+
+echo "Installing astyle 3.1"
+ASTYLE_TMP=$(mktemp -d)
+curl -sSfL --retry 3 -o "${ASTYLE_TMP}/astyle" "${ASTYLE_URL}"
+echo "${ASTYLE_SHA256}  ${ASTYLE_TMP}/astyle" | sha256sum -c --quiet -
+sudo install -m 755 "${ASTYLE_TMP}/astyle" /usr/local/bin/astyle
+rm -rf "${ASTYLE_TMP}"
 
 install-python.sh
 
@@ -24,6 +29,14 @@ pip3 install -q sel4-deps
 checkout.sh
 # fetch pull request base if PR
 [ -n "${GITHUB_BASE_REF}" ] && fetch-base.sh
+
+# make sure the pinned astyle is the one the style scripts will pick up
+if [ "$(command -v astyle)" != /usr/local/bin/astyle ]
+then
+  echo "::error::Expected astyle in /usr/local/bin, found $(command -v astyle)"
+  exit 1
+fi
+astyle --version
 echo "::endgroup::"
 
 echo
